@@ -1,7 +1,8 @@
 import { TaskGroup } from './task-group'
 
 export interface ITaskGroupRepository {
-  findAll(): Array<TaskGroup>
-  save(): void
-  delete(taskId: string): void
+  findAll(): Promise<TaskGroup[]>
+  findById(taskGroupId: string): Promise<TaskGroup>
+  save(taskGroup: TaskGroup): Promise<TaskGroup>
+  delete(taskGroupId: string): Promise<void>
 }

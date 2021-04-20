@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { ITaskRepository } from '../task/i-task-repository'
 import { IUserBelongTaskRepository } from '../user-belong-task/i-user-belong-task-repository'
 import { ITaskGroupRepository } from './i-task-group-repository'
+import { TaskGroup } from './task-group'
 
 @Injectable()
 export class TaskGroupService {
@@ -25,14 +26,17 @@ export class TaskGroupService {
     this.userBelongTaskRepository = userBelongTaskRepository
   }
 
-  public delete(taskId: string) {
+  //  - 課題グループを削除した場合、そのグループに属する課題も自動的に削除される
+  public delete(taskGroup: TaskGroup) {
     // タスクグループ削除
-    this.taskGroupRepository.delete(taskId)
+    this.taskGroupRepository.delete(taskGroup.getAllProperties().id)
 
     // タスク削除
-    this.taskRepository.delete(taskId)
+    this.taskRepository.delete(taskGroup.getAllProperties().id)
 
     // ユーザーが所持するタスク削除
-    this.userBelongTaskRepository.delete(taskId)
+    taskGroup.getAllProperties().tasks.map((taskId) => {
+      this.userBelongTaskRepository.deleteByTaskId(taskId)
+    })
   }
 }

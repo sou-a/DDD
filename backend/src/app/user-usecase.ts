@@ -16,15 +16,19 @@ export class UserUseCase {
     this.userService = userService
   }
 
-  public findAll() {
+  public async findAll(): Promise<User[]> {
     try {
-      return this.userRepository.findAll()
+      return await this.userRepository.findAll()
     } catch (error) {
       throw error
     }
   }
 
-  public upsert(name: string, mailAddress: string, status: string) {
+  public async upsert(
+    name: string,
+    mailAddress: string,
+    status: string,
+  ): Promise<User> {
     const user = new User({
       id: createRandomIdString(),
       name: name,
@@ -33,25 +37,25 @@ export class UserUseCase {
     })
 
     try {
-      return this.userRepository.save(user)
+      return await this.userRepository.save(user)
     } catch (error) {
       throw error
     }
   }
 
   public async changeStatus(userId: string, status: string): Promise<User> {
-    const user = this.userRepository.findById(userId)
+    const user = await this.userRepository.findById(userId)
 
     try {
-      return (await user).changeStatus(status)
+      return user.changeStatus(status)
     } catch (error) {
       throw error
     }
   }
 
-  public delete(userId: string) {
+  public async delete(userId: string): Promise<void> {
     try {
-      return this.userService.delete(userId)
+      await this.userService.delete(userId)
     } catch (error) {
       throw error
     }

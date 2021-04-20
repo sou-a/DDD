@@ -60,4 +60,12 @@ export class Pair {
     })
     this.pairUsers.push(teamUser)
   }
+
+  public getAllProperties() {
+    return {
+      id: this.id,
+      name: this.name,
+      pairUsers: this.pairUsers,
+    }
+  }
 }

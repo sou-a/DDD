@@ -59,7 +59,7 @@ export class Team {
     return {
       id: this.id,
       name: this.name,
-      TeamUsers: this.teamUsers,
+      teamUsers: this.teamUsers,
     }
   }
 }

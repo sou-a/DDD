@@ -1,7 +1,8 @@
 import { Task } from './task'
 
 export interface ITaskRepository {
-  findAll(): Array<Task>
-  save(): void
-  delete(taskId: string): void
+  findAll(): Promise<Task[]>
+  findById(taskId: string): Promise<Task>
+  save(task: Task): Promise<Task>
+  delete(taskId: string): Promise<void>
 }

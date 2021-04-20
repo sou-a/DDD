@@ -33,4 +33,12 @@ export class UserBelongTask {
 
     this.status = status
   }
+
+  public getAllProperties() {
+    return {
+      userId: this.userId,
+      taskId: this.taskId,
+      status: this.status,
+    }
+  }
 }

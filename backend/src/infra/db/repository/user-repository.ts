@@ -25,29 +25,29 @@ export class UserRepository implements IUserRepository {
   }
 
   public async findById(userId: string): Promise<User> {
-    const UserModel = await this.prismaClient.user.findUnique({
+    const userModel = await this.prismaClient.user.findUnique({
       where: {
         id: userId,
       },
     })
-    if (UserModel === null) {
+    if (userModel === null) {
       throw new Error(`${userId}が見つかりませんでした`)
     }
 
-    const UserStatusModel = await this.prismaClient.userStatus.findUnique({
+    const userStatusModel = await this.prismaClient.userStatus.findUnique({
       where: {
         id: userId,
       },
     })
-    if (UserStatusModel === null) {
+    if (userStatusModel === null) {
       throw new Error('ステータスが見つかりませんでした')
     }
 
     const entity = new User({
-      id: UserModel.id,
-      name: UserModel.name,
-      mailAddress: UserModel.mailAddress,
-      status: UserStatusModel.name,
+      id: userModel.id,
+      name: userModel.name,
+      mailAddress: userModel.mailAddress,
+      status: userStatusModel.name,
     })
     return entity
   }
@@ -56,12 +56,12 @@ export class UserRepository implements IUserRepository {
     const { id, name, mailAddress, status } = user.getAllProperties()
 
     // TODO: findUnique
-    const UserStatusModel = await this.prismaClient.userStatus.findFirst({
+    const userStatusModel = await this.prismaClient.userStatus.findFirst({
       where: {
         name: status,
       },
     })
-    if (UserStatusModel === null) {
+    if (userStatusModel === null) {
       throw new Error('ステータスが見つかりませんでした')
     }
 
@@ -70,14 +70,14 @@ export class UserRepository implements IUserRepository {
         id,
         name,
         mailAddress,
-        userStatusId: UserStatusModel.id,
+        userStatusId: userStatusModel.id,
       },
     })
     const savedUserEntity = new User({
       id: savedUsermodel.id,
       name: savedUsermodel.name,
       mailAddress: savedUsermodel.mailAddress,
-      status: UserStatusModel.name,
+      status: userStatusModel.name,
     })
     return savedUserEntity
   }

@@ -21,4 +21,12 @@ export class PairUser {
     this.userId = userId
     this.status = status
   }
+
+  public getAllProperties() {
+    return {
+      pairId: this.pairId,
+      userId: this.userId,
+      status: this.status,
+    }
+  }
 }
