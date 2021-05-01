@@ -28,15 +28,15 @@ export class TaskGroupService {
 
   //  - 課題グループを削除した場合、そのグループに属する課題も自動的に削除される
   public delete(taskGroup: TaskGroup) {
-    // タスクグループ削除
-    this.taskGroupRepository.delete(taskGroup.getAllProperties().id)
-
-    // タスク削除
-    this.taskRepository.delete(taskGroup.getAllProperties().id)
-
     // ユーザーが所持するタスク削除
     taskGroup.getAllProperties().tasks.map((taskId) => {
       this.userBelongTaskRepository.deleteByTaskId(taskId)
     })
+
+    // タスク削除
+    this.taskRepository.deleteByTaskGroupId(taskGroup.getAllProperties().id)
+
+    // タスクグループ削除
+    this.taskGroupRepository.delete(taskGroup.getAllProperties().id)
   }
 }

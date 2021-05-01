@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { IUserBelongTaskRepository } from 'src/domain/entity/user-belong-task/i-user-belong-task-repository'
 import { UserBelongTask } from 'src/domain/entity/user-belong-task/user-belong-task'
+import { TaskStatus } from 'src/domain/valueOblect/task-status'
 
 export class UserBelongTaskRepository implements IUserBelongTaskRepository {
   private prismaClient: PrismaClient
@@ -10,13 +11,17 @@ export class UserBelongTaskRepository implements IUserBelongTaskRepository {
   }
 
   public async findAll(): Promise<UserBelongTask[]> {
-    const models = await this.prismaClient.taskUser.findMany()
+    const models = await this.prismaClient.taskUser.findMany({
+      include: {
+        taskUserStatus: true,
+      },
+    })
     const entities: UserBelongTask[] = models.map(
       (model): UserBelongTask => {
         return new UserBelongTask({
           userId: model.userId,
           taskId: model.taskId,
-          status: model.taskUserStatusId,
+          status: new TaskStatus(model.taskUserStatus.name),
         })
       },
     )
@@ -30,6 +35,7 @@ export class UserBelongTaskRepository implements IUserBelongTaskRepository {
       },
       include: {
         task: true,
+        taskUserStatus: true,
       },
     })
     if (models === null) {
@@ -40,7 +46,7 @@ export class UserBelongTaskRepository implements IUserBelongTaskRepository {
       return new UserBelongTask({
         userId: model.userId,
         taskId: model.taskId,
-        status: model.taskUserStatusId,
+        status: new TaskStatus(model.taskUserStatus.name),
       })
     })
     return entities // TODO: id渡されても不便じゃない？（taskを渡して欲しいことが多いはず）→クエリサービスを使う...？
@@ -48,18 +54,30 @@ export class UserBelongTaskRepository implements IUserBelongTaskRepository {
 
   public async save(UserBelongtask: UserBelongTask): Promise<UserBelongTask> {
     const { userId, taskId, status } = UserBelongtask.getAllProperties()
-
+    const taskUserStatusmodel = await this.prismaClient.taskUserStatus.findFirst(
+      {
+        where: {
+          name: status.getStatus(),
+        },
+      },
+    )
+    if (!taskUserStatusmodel) {
+      throw new Error(`${status.getStatus()}が見つかりませんでした`)
+    }
     const model = await this.prismaClient.taskUser.create({
       data: {
         userId,
         taskId,
-        taskUserStatusId: status,
+        taskUserStatusId: taskUserStatusmodel.id,
+      },
+      include: {
+        taskUserStatus: true,
       },
     })
     const entity = new UserBelongTask({
       userId: model.userId,
       taskId: model.taskId,
-      status: model.taskUserStatusId,
+      status: new TaskStatus(model.taskUserStatus.name),
     })
     return entity
   }

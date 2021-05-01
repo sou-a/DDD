@@ -1,8 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 import { ITeamRepository } from 'src/domain/entity/team/i-team-repository'
 import { Team } from 'src/domain/entity/team/team'
-import { TeamUser } from 'src/domain/entity/team/team-user'
+import { TeamUser } from 'src/domain/entity/team/team'
 import { User } from 'src/domain/entity/user/user'
+import { UserStatus } from 'src/domain/valueOblect/user-status'
 
 export class TeamRepository implements ITeamRepository {
   private prismaClient: PrismaClient
@@ -16,7 +17,11 @@ export class TeamRepository implements ITeamRepository {
       include: {
         users: {
           include: {
-            user: true,
+            user: {
+              include: {
+                userStatus: true,
+              },
+            },
           },
         },
       },
@@ -28,7 +33,7 @@ export class TeamRepository implements ITeamRepository {
             id: teamUser.user.id,
             name: teamUser.user.name,
             mailAddress: teamUser.user.mailAddress,
-            status: teamUser.user.userStatusId,
+            status: new UserStatus(teamUser.user.userStatus.name),
           })
         })
         return new Team({
@@ -49,7 +54,11 @@ export class TeamRepository implements ITeamRepository {
       include: {
         users: {
           include: {
-            user: true,
+            user: {
+              include: {
+                userStatus: true,
+              },
+            },
           },
         },
       },
@@ -63,7 +72,45 @@ export class TeamRepository implements ITeamRepository {
         id: teamUser.user.id,
         name: teamUser.user.name,
         mailAddress: teamUser.user.mailAddress,
-        status: teamUser.user.userStatusId,
+        status: new UserStatus(teamUser.user.userStatus.name),
+      })
+    })
+
+    const entity = new Team({
+      id: model.id,
+      name: model.name,
+      users: users,
+    })
+    return entity
+  }
+
+  public async findByUserId(userId: string): Promise<Team> {
+    const model = await this.prismaClient.team.findFirst({
+      include: {
+        users: {
+          where: {
+            userId,
+          },
+          include: {
+            user: {
+              include: {
+                userStatus: true,
+              },
+            },
+          },
+        },
+      },
+    })
+    if (model === null) {
+      throw new Error(`${userId}が見つかりませんでした`)
+    }
+
+    const users = model.users.map((teamUser) => {
+      return new User({
+        id: teamUser.user.id,
+        name: teamUser.user.name,
+        mailAddress: teamUser.user.mailAddress,
+        status: new UserStatus(teamUser.user.userStatus.name),
       })
     })
 
@@ -76,6 +123,7 @@ export class TeamRepository implements ITeamRepository {
   }
 
   public async findByName(name: string): Promise<Team> {
+    // TODO: findUnique
     const model = await this.prismaClient.team.findFirst({
       where: {
         name: name,
@@ -83,7 +131,11 @@ export class TeamRepository implements ITeamRepository {
       include: {
         users: {
           include: {
-            user: true,
+            user: {
+              include: {
+                userStatus: true,
+              },
+            },
           },
         },
       },
@@ -97,7 +149,7 @@ export class TeamRepository implements ITeamRepository {
         id: teamUser.user.id,
         name: teamUser.user.name,
         mailAddress: teamUser.user.mailAddress,
-        status: teamUser.user.userStatusId,
+        status: new UserStatus(teamUser.user.userStatus.name),
       })
     })
 
@@ -109,12 +161,16 @@ export class TeamRepository implements ITeamRepository {
     return entity
   }
 
-  public async findMostLeastTeam(): Promise<Team[]> {
+  public async findMostLeastTeams(): Promise<Team[]> {
     const models = await this.prismaClient.team.findMany({
       include: {
         users: {
           include: {
-            user: true,
+            user: {
+              include: {
+                userStatus: true,
+              },
+            },
           },
         },
         _count: {
@@ -122,7 +178,7 @@ export class TeamRepository implements ITeamRepository {
         },
       },
       where: {
-        users: {}, // ユーザーが最小のチームを取得したい...!!
+        users: {}, // TODO: ユーザーが最小のチームを取得したい...!!
       },
     })
     if (models === null) {
@@ -136,7 +192,7 @@ export class TeamRepository implements ITeamRepository {
             id: teamUser.user.id,
             name: teamUser.user.name,
             mailAddress: teamUser.user.mailAddress,
-            status: teamUser.user.userStatusId,
+            status: new UserStatus(teamUser.user.userStatus.name),
           })
         })
         return new Team({
@@ -165,7 +221,11 @@ export class TeamRepository implements ITeamRepository {
       include: {
         users: {
           include: {
-            user: true,
+            user: {
+              include: {
+                userStatus: true,
+              },
+            },
           },
         },
       },
@@ -176,7 +236,7 @@ export class TeamRepository implements ITeamRepository {
         id: teamUser.user.id,
         name: teamUser.user.name,
         mailAddress: teamUser.user.mailAddress,
-        status: teamUser.user.name,
+        status: new UserStatus(teamUser.user.userStatus.name),
       })
     })
     const entity = new Team({
@@ -191,6 +251,14 @@ export class TeamRepository implements ITeamRepository {
     await this.prismaClient.team.delete({
       where: {
         id: teamId,
+      },
+    })
+  }
+
+  public async deleteTeamUser(userId: string): Promise<void> {
+    await this.prismaClient.teamUser.delete({
+      where: {
+        userId,
       },
     })
   }

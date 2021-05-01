@@ -69,4 +69,12 @@ export class TaskRepository implements ITaskRepository {
       },
     })
   }
+
+  public async deleteByTaskGroupId(taskGroupId: string): Promise<void> {
+    await this.prismaClient.task.deleteMany({
+      where: {
+        taskGroupId,
+      },
+    })
+  }
 }

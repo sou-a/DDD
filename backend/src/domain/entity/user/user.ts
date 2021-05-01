@@ -1,16 +1,16 @@
+import { UserStatus } from 'src/domain/valueOblect/user-status'
+
 export class User {
   private id: string
   private name: string
   private mailAddress: string
-  private status: string
-
-  static active = '在籍中'
+  private status: UserStatus
 
   public constructor(props: {
     id: string
     name: string
     mailAddress: string
-    status: string
+    status: UserStatus
   }) {
     const { id, name, mailAddress, status } = props
 
@@ -20,7 +20,7 @@ export class User {
     this.status = status
   }
 
-  public changeStatus(status: string): User {
+  public changeStatus(status: UserStatus): User {
     this.status = status
     return this
   }

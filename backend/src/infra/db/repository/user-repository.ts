@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { IUserRepository } from 'src/domain/entity/user/i-user-repository'
 import { User } from 'src/domain/entity/user/user'
+import { UserStatus } from 'src/domain/valueOblect/user-status'
 
 export class UserRepository implements IUserRepository {
   private prismaClient: PrismaClient
@@ -10,14 +11,18 @@ export class UserRepository implements IUserRepository {
   }
 
   public async findAll(): Promise<User[]> {
-    const models = await this.prismaClient.user.findMany()
+    const models = await this.prismaClient.user.findMany({
+      include: {
+        userStatus: true,
+      },
+    })
     const entity: User[] = models.map(
       (model): User => {
         return new User({
           id: model.id,
           name: model.name,
           mailAddress: model.mailAddress,
-          status: model.userStatusId,
+          status: new UserStatus(model.userStatus.name),
         })
       },
     )
@@ -29,25 +34,19 @@ export class UserRepository implements IUserRepository {
       where: {
         id: userId,
       },
-    })
-    if (userModel === null) {
-      throw new Error(`${userId}が見つかりませんでした`)
-    }
-
-    const userStatusModel = await this.prismaClient.userStatus.findUnique({
-      where: {
-        id: userId,
+      include: {
+        userStatus: true,
       },
     })
-    if (userStatusModel === null) {
-      throw new Error('ステータスが見つかりませんでした')
+    if (userModel === null) {
+      throw new Error(`userId: ${userId}が見つかりませんでした`)
     }
 
     const entity = new User({
       id: userModel.id,
       name: userModel.name,
       mailAddress: userModel.mailAddress,
-      status: userStatusModel.name,
+      status: new UserStatus(userModel.userStatus.name),
     })
     return entity
   }
@@ -58,7 +57,7 @@ export class UserRepository implements IUserRepository {
     // TODO: findUnique
     const userStatusModel = await this.prismaClient.userStatus.findFirst({
       where: {
-        name: status,
+        name: status.getStatus(),
       },
     })
     if (userStatusModel === null) {
@@ -77,7 +76,7 @@ export class UserRepository implements IUserRepository {
       id: savedUsermodel.id,
       name: savedUsermodel.name,
       mailAddress: savedUsermodel.mailAddress,
-      status: userStatusModel.name,
+      status: new UserStatus(userStatusModel.name),
     })
     return savedUserEntity
   }

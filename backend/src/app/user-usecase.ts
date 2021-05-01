@@ -1,6 +1,7 @@
 import { IUserRepository } from 'src/domain/entity/user/i-user-repository'
 import { User } from 'src/domain/entity/user/user'
 import { UserService } from 'src/domain/entity/user/user-service'
+import { UserStatus } from 'src/domain/valueOblect/user-status'
 import { createRandomIdString } from 'src/util/random'
 
 // 参加者の一覧取得、新規追加、更新（少なくとも在籍ステータスを変更できること）、削除
@@ -33,7 +34,7 @@ export class UserUseCase {
       id: createRandomIdString(),
       name: name,
       mailAddress: mailAddress,
-      status: status,
+      status: new UserStatus(status),
     })
 
     try {
@@ -47,7 +48,7 @@ export class UserUseCase {
     const user = await this.userRepository.findById(userId)
 
     try {
-      return user.changeStatus(status)
+      return user.changeStatus(new UserStatus(status))
     } catch (error) {
       throw error
     }
@@ -55,7 +56,7 @@ export class UserUseCase {
 
   public async delete(userId: string): Promise<void> {
     try {
-      await this.userService.delete(userId)
+      this.userService.deleteUser(userId)
     } catch (error) {
       throw error
     }

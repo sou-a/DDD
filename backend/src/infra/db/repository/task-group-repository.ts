@@ -56,7 +56,7 @@ export class TaskGroupRepository implements ITaskGroupRepository {
   }
 
   public async save(taskGroup: TaskGroup): Promise<TaskGroup> {
-    const { id, name, tasks } = taskGroup.getAllProperties()
+    const { id, name } = taskGroup.getAllProperties()
 
     const model = await this.prismaClient.taskGroup.create({
       data: {
@@ -78,10 +78,10 @@ export class TaskGroupRepository implements ITaskGroupRepository {
     return entity
   }
 
-  public async delete(taskGroupId: string): Promise<void> {
+  public async delete(id: string): Promise<void> {
     await this.prismaClient.taskGroup.delete({
       where: {
-        id: taskGroupId,
+        id,
       },
     })
   }

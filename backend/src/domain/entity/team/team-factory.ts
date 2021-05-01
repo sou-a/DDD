@@ -11,8 +11,9 @@ export class TeamFactory {
     this.teamRepository = teamRepository
   }
 
-  public createTeam(name: string, users: Array<User>): Team {
-    if (this.teamRepository.findByName(name).length) {
+  public async createTeam(name: string, users: Array<User>): Promise<Team> {
+    const team = await this.teamRepository.findByName(name)
+    if (!team) {
       throw new Error('チーム名が重複しています')
     }
     return new Team({

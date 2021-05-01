@@ -1,5 +1,5 @@
+import { UserStatus } from 'src/domain/valueOblect/user-status'
 import { User } from '../user/user'
-import { PairUser } from './pair-user'
 
 export class Pair {
   private id: string
@@ -50,7 +50,7 @@ export class Pair {
    * ペアユーザーを追加する
    * @param user
    */
-  public addPairUser(user: User): void {
+  public addPairUser(user: User): Pair {
     const userProperties = user.getAllProperties()
 
     const teamUser = new PairUser({
@@ -59,6 +59,18 @@ export class Pair {
       status: userProperties.status,
     })
     this.pairUsers.push(teamUser)
+    return this
+  }
+
+  /**
+   * ペアユーザーを削除する
+   * @param user
+   */
+  public deletePairUser(userId: string): Pair {
+    this.pairUsers.filter((pairUser) => {
+      return userId === pairUser.getAllProperties().userId
+    })
+    return this
   }
 
   public getAllProperties() {
@@ -66,6 +78,40 @@ export class Pair {
       id: this.id,
       name: this.name,
       pairUsers: this.pairUsers,
+    }
+  }
+}
+
+// TODO: exportしないとリポジトリで型指定できない（interfaceだとprivateなプロパティはうまくいかない）
+export class PairUser {
+  private pairId: string
+  private userId: string
+  private status: UserStatus
+
+  public constructor(props: {
+    pairId: string
+    userId: string
+    status: UserStatus
+  }) {
+    const { pairId, userId, status } = props
+
+    // - 参加者の在籍ステータスが「休会中」か「退会済み」の場合どのペアにも所属してはいけない
+    if (!status.isActive()) {
+      throw new Error(
+        `${UserStatus.active}ではないユーザーはペアに所属できません`,
+      )
+    }
+
+    this.pairId = pairId
+    this.userId = userId
+    this.status = status
+  }
+
+  public getAllProperties() {
+    return {
+      pairId: this.pairId,
+      userId: this.userId,
+      status: this.status,
     }
   }
 }

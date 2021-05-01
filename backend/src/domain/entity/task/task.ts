@@ -9,7 +9,7 @@ export class Task {
     this.id = id
     this.name = name
     // - 全ての課題は、いずれかの課題グループに属している
-    this.taskGroupId = taskGroupId // IDあるかチェックすべきだが、仕様に書いてないので一旦パス
+    this.taskGroupId = taskGroupId
   }
 
   public getAllProperties() {
