@@ -1,8 +1,10 @@
 export class UserStatus {
   private status
 
-  static statusList = ['在籍中', '休会中', '退会済']
   static active = '在籍中'
+  static recess = '休会中'
+  static leave = '退会済'
+  static statusList = [UserStatus.active, UserStatus.recess, UserStatus.leave]
 
   constructor(status: string) {
     if (!UserStatus.statusList.includes(status)) {

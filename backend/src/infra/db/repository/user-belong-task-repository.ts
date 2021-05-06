@@ -28,10 +28,36 @@ export class UserBelongTaskRepository implements IUserBelongTaskRepository {
     return entities
   }
 
+  public async findByUserIdAndTaskId(
+    userId: string,
+    taskId: string,
+  ): Promise<UserBelongTask> {
+    // TODO: Unique
+    const model = await this.prismaClient.taskUser.findFirst({
+      where: {
+        userId,
+        taskId,
+      },
+      include: {
+        task: true,
+        taskUserStatus: true,
+      },
+    })
+    if (model === null) {
+      throw new Error(`${userId}が見つかりませんでした`)
+    }
+
+    return new UserBelongTask({
+      userId: model.userId,
+      taskId: model.taskId,
+      status: new TaskStatus(model.taskUserStatus.name),
+    })
+  }
+
   public async findByUserId(userId: string): Promise<UserBelongTask[]> {
     const models = await this.prismaClient.taskUser.findMany({
       where: {
-        userId: userId,
+        userId,
       },
       include: {
         task: true,

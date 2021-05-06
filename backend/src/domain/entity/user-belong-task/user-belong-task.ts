@@ -17,7 +17,7 @@ export class UserBelongTask {
     this.status = status
   }
 
-  public changeStatus(userId: string, status: TaskStatus): void {
+  public changeStatus(userId: string, status: TaskStatus): UserBelongTask {
     // - 進捗ステータスはいつでも変更可能
     // - ただし一度「完了」にした進捗ステータスを「レビュー待ち」「未着手」に戻すことはできない
     if (!status.isComplete()) {
@@ -31,6 +31,7 @@ export class UserBelongTask {
     }
 
     this.status = status
+    return this
   }
 
   public getAllProperties() {

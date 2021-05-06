@@ -144,7 +144,7 @@ describe('pair.ts', () => {
         expect(pair).toHaveLength(3)
       })
     })
-    describe('deletePairUser', () => {
+    describe('removePairUser', () => {
       it('ペアユーザーを削除できる', () => {
         const manyUsers: User[] = [
           new User({
@@ -171,7 +171,7 @@ describe('pair.ts', () => {
           name: 'a',
           users: manyUsers,
         })
-        pair.deletePairUser('1')
+        pair.removePairUser('1')
         expect(pair).toHaveLength(2)
       })
     })

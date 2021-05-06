@@ -165,12 +165,13 @@ export class PairRepository implements IPairRepository {
     return entity
   }
 
-  public async delete(pairId: string): Promise<void> {
+  public async delete(pairId: string): Promise<boolean> {
     await this.prismaClient.pair.delete({
       where: {
         id: pairId,
       },
     })
+    return true
   }
 
   public async deletePairUser(userId: string): Promise<void> {

@@ -5,6 +5,6 @@ export interface IPairRepository {
   findById(pairId: string): Promise<Pair>
   findByUserId(userId: string): Promise<Pair>
   save(pair: Pair): Promise<Pair>
-  delete(pairId: string): Promise<void>
+  delete(pairId: string): Promise<boolean>
   deletePairUser(userId: string): Promise<void>
 }

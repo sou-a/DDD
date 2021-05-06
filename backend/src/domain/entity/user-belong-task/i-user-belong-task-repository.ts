@@ -2,8 +2,9 @@ import { UserBelongTask } from './user-belong-task'
 
 export interface IUserBelongTaskRepository {
   findAll(): Promise<UserBelongTask[]>
-  findByUserId(userBelongTaskId: string): Promise<UserBelongTask[]>
+  findByUserIdAndTaskId(userId: string, TaskId: string): Promise<UserBelongTask>
+  findByUserId(userId: string): Promise<UserBelongTask[]>
   save(userBelongTask: UserBelongTask): Promise<UserBelongTask>
-  deleteByTaskId(userBelongTaskId: string): Promise<void>
-  deleteByUserId(userBelongTaskId: string): Promise<void>
+  deleteByTaskId(taskId: string): Promise<void>
+  deleteByUserId(userId: string): Promise<void>
 }

@@ -29,10 +29,10 @@ export class UserService {
     this.teamService = teamService
   }
 
-  public async deleteUser(userId: string) {
+  public async deleteUser(userId: string): Promise<boolean> {
     // ペアユーザー削除（ペアオブジェクト生成してそこに任せる）
     const pair: Pair = await this.pairRepository.findByUserId(userId)
-    const resultPair: Pair = pair.deletePairUser(userId)
+    const resultPair: Pair = pair.removePairUser(userId)
     this.pairRepository.save(resultPair)
 
     // チームユーザー削除
@@ -42,5 +42,7 @@ export class UserService {
 
     // ユーザー削除
     this.userRepository.delete(userId)
+
+    return true
   }
 }

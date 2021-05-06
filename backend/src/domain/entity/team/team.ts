@@ -4,11 +4,11 @@ import { User } from '../user/user'
 export class Team {
   private id: string
   private name: string
-  private teamUsers: Array<TeamUser>
+  private teamUsers: TeamUser[]
 
   static lowerLimit = 3
 
-  public constructor(props: { id: string; name: string; users: Array<User> }) {
+  public constructor(props: { id: string; name: string; users: User[] }) {
     const { id, name, users } = props
 
     // ユーザーを詰め替えてチームユーザーインスタンス生成
@@ -40,7 +40,7 @@ export class Team {
    * チームユーザーを追加する
    * @param user
    */
-  public addTeamUser(user: User): void {
+  public addTeamUser(user: User): Team {
     const userProperties = user.getAllProperties()
 
     const teamUser = new TeamUser({
@@ -49,6 +49,18 @@ export class Team {
       status: userProperties.status,
     })
     this.teamUsers.push(teamUser)
+    return this
+  }
+
+  /**
+   * チームユーザーを削除する
+   * @param user
+   */
+  public removeTeamUser(user: User): Team {
+    this.teamUsers.filter((teamUser) => {
+      return user.getAllProperties().id === teamUser.getAllProperties().userId
+    })
+    return this
   }
 
   public getAllProperties() {
@@ -60,7 +72,7 @@ export class Team {
   }
 }
 
-// TODO: exportしないとドメインサービス（別ファイル）で型指定できない...
+// TODO: exportしないと別ファイル（ドメインサービス等）で型指定できない...
 export class TeamUser {
   private teamId: string
   private userId: string

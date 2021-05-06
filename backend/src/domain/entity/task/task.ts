@@ -12,6 +12,11 @@ export class Task {
     this.taskGroupId = taskGroupId
   }
 
+  public changeTaskGroupId(taskGroupId: string): Task {
+    this.taskGroupId = taskGroupId
+    return this
+  }
+
   public getAllProperties() {
     return {
       id: this.id,

@@ -4,13 +4,13 @@ import { User } from '../user/user'
 export class Pair {
   private id: string
   private name: string
-  private pairUsers: Array<PairUser>
+  private pairUsers: PairUser[]
 
   lowerLimit = 2
   upperLimit = 3
   alphabetRegex = /^[A-Za-z]*$/
 
-  public constructor(props: { id: string; name: string; users: Array<User> }) {
+  public constructor(props: { id: string; name: string; users: User[] }) {
     const { id, name, users } = props
 
     // ユーザーを詰め替えてペアユーザーインスタンス生成
@@ -66,7 +66,7 @@ export class Pair {
    * ペアユーザーを削除する
    * @param user
    */
-  public deletePairUser(userId: string): Pair {
+  public removePairUser(userId: string): Pair {
     this.pairUsers.filter((pairUser) => {
       return userId === pairUser.getAllProperties().userId
     })

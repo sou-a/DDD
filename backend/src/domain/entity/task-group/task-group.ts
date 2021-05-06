@@ -1,7 +1,7 @@
 export class TaskGroup {
   private id: string
   private name: string
-  private tasks: Array<string>
+  private tasks: string[]
 
   public constructor(props: { id: string; name: string; tasks: string[] }) {
     const { id, name, tasks } = props
@@ -9,6 +9,11 @@ export class TaskGroup {
     this.id = id
     this.name = name
     this.tasks = tasks
+  }
+
+  public changeName(name: string): TaskGroup {
+    this.name = name
+    return this
   }
 
   public getAllProperties() {
