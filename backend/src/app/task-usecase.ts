@@ -69,7 +69,9 @@ export class TaskUseCase {
         changeduUerBelongTask,
       )
       return new UserBelongTaskDTO({
-        ...saveduUerBelongTask.getAllProperties(),
+        taskId: saveduUerBelongTask.getAllProperties().taskId,
+        userId: saveduUerBelongTask.getAllProperties().userId,
+        status: saveduUerBelongTask.getAllProperties().status.getStatus(),
       })
     } catch (error) {
       throw error

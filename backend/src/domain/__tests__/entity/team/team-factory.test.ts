@@ -19,7 +19,7 @@ describe('team-factory.ts', () => {
         teamRepository: mockTeamRepo,
       })
       const users = [createUser({}), createUser({}), createUser({})]
-      const team = await teamFactory.createTeam('1', users)
+      const team = await teamFactory.createTeam({ name: '1', users })
       expect(team).toHaveLength(1)
     })
 
@@ -33,7 +33,9 @@ describe('team-factory.ts', () => {
         teamRepository: mockTeamRepo,
       })
       const users = [createUser({}), createUser({}), createUser({})]
-      expect(teamFactory.createTeam('1', users)).rejects.toThrow()
+      expect(
+        await teamFactory.createTeam({ name: '1', users }),
+      ).rejects.toThrow()
     })
   })
 })

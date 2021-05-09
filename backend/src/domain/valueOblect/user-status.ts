@@ -13,6 +13,7 @@ export class UserStatus {
     this.status = status
   }
 
+  // TODO: 値オブジェクトでgetterは用意して良いのだろうか...？
   public getStatus() {
     return this.status
   }

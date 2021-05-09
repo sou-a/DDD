@@ -1,5 +1,3 @@
-import { TaskStatus } from 'src/domain/valueOblect/task-status'
-
 export class TaskDTO {
   public readonly id: string
   public readonly taskGroupId: string
@@ -15,11 +13,11 @@ export class TaskDTO {
 export class UserBelongTaskDTO {
   public readonly userId: string
   public readonly taskId: string
-  public readonly status: TaskStatus
+  public readonly status: string
   public constructor(props: {
     userId: string
     taskId: string
-    status: TaskStatus
+    status: string
   }) {
     const { userId, taskId, status } = props
     this.userId = userId

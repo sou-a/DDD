@@ -1,4 +1,4 @@
-import { PairUser } from 'src/domain/entity/pair/pair'
+import { PairUser } from 'src/domain/entity/pair/pair' // TODO: ドメインオブジェクトに依存して良いのだろうか...
 
 export class PairDTO {
   public readonly id: string
