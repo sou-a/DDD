@@ -16,10 +16,6 @@ export class CreateTaskRequest {
 export class UpdateTaskStatusRequest {
   @ApiProperty()
   @IsNotEmpty()
-  readonly taskId!: string
-
-  @ApiProperty()
-  @IsNotEmpty()
   readonly userId!: string
 
   @ApiProperty()
@@ -28,10 +24,6 @@ export class UpdateTaskStatusRequest {
 }
 
 export class UpdateTaskGroupRequest {
-  @ApiProperty()
-  @IsNotEmpty()
-  readonly taskId!: string
-
   @ApiProperty()
   @IsNotEmpty()
   readonly taskGroupId!: string

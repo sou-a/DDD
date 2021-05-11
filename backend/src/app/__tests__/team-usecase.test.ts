@@ -22,6 +22,7 @@ describe('team-usecase.ts', () => {
     mockTeamService = mocked(
       new TeamService({
         teamRepository: mockTeamRepo,
+        userRepository: mockUserRepo,
       }),
       true,
     )

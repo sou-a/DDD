@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common'
-import { ApiResponse } from '@nestjs/swagger'
+import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { PrismaClient } from '@prisma/client'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { PairRepository } from 'src/infra/db/repository/pair-repository'
@@ -15,6 +15,7 @@ import { PairUseCase } from 'src/app/pair-usecase'
 import { FindAllPairResponse } from './response/pair-response'
 import { CreatePairRequest, PairUserRequest } from './request/pair-request'
 
+@ApiTags('pairs')
 @Controller({
   path: '/pairs',
 })

@@ -64,8 +64,16 @@ export class UserRepository implements IUserRepository {
       throw new Error('ステータスが見つかりませんでした')
     }
 
-    const savedUsermodel = await this.prismaClient.user.create({
-      data: {
+    const savedUsermodel = await this.prismaClient.user.upsert({
+      where: {
+        id,
+      },
+      update: {
+        name,
+        mailAddress,
+        userStatusId: userStatusModel.id,
+      },
+      create: {
         id,
         name,
         mailAddress,

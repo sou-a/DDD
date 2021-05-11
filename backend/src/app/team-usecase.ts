@@ -85,11 +85,11 @@ export class TeamUseCase {
     const team: Team = await this.teamRepository.findById(teamId)
 
     try {
-      const deletedTeamUser = await this.teamService.deleteTeamUser(
+      const resultTeam = await this.teamService.deleteTeamUserAndSave(
         team,
         user.getAllProperties().id,
       )
-      return new TeamDTO({ ...deletedTeamUser.getAllProperties() })
+      return new TeamDTO({ ...resultTeam.getAllProperties() })
     } catch (error) {
       throw error
     }

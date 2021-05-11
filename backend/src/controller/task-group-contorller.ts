@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common'
-import { ApiResponse } from '@nestjs/swagger'
+import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { PrismaClient } from '@prisma/client'
 import { TaskRepository } from 'src/infra/db/repository/task-repository'
 import { UserBelongTaskRepository } from 'src/infra/db/repository/user-belong-task-repository'
@@ -20,13 +20,14 @@ import { TaskGroupRepository } from 'src/infra/db/repository/task-group-reposito
 import { TaskGroupService } from 'src/domain/entity/task-group/task-group-service'
 import { FindAllTaskGroupResponse } from './response/task-group-response'
 
+@ApiTags('task-groups')
 @Controller({
-  path: '/tasks',
+  path: '/task-groups',
 })
 export class TaskGroupController {
   @Get()
   @ApiResponse({ status: 200, type: FindAllTaskGroupResponse })
-  async findAllUser(): Promise<FindAllTaskGroupResponse> {
+  async findAllTaskGroup(): Promise<FindAllTaskGroupResponse> {
     const prisma = new PrismaClient()
     const taskRepository = new TaskRepository(prisma)
     const taskGroupRepository = new TaskGroupRepository(prisma)
@@ -43,7 +44,7 @@ export class TaskGroupController {
   }
 
   @Post()
-  async createUser(
+  async CreateTaskGroup(
     @Body() postTaskGroupDto: CreateTaskGroupRequest,
   ): Promise<void> {
     const prisma = new PrismaClient()
@@ -58,7 +59,6 @@ export class TaskGroupController {
     const usecase = new TaskGroupUseCase(taskGroupRepository, taskGroupService)
     await usecase.create({
       name: postTaskGroupDto.name,
-      taskIds: postTaskGroupDto.taskIds,
     })
   }
 
@@ -84,7 +84,7 @@ export class TaskGroupController {
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id') id: string): Promise<void> {
+  async deleteTaskGroup(@Param('id') id: string): Promise<void> {
     const prisma = new PrismaClient()
     const taskRepository = new TaskRepository(prisma)
     const taskGroupRepository = new TaskGroupRepository(prisma)

@@ -84,7 +84,7 @@ export class TeamRepository implements ITeamRepository {
     return entity
   }
 
-  public async findByUserId(userId: string): Promise<Team> {
+  public async findByUserId(userId: string): Promise<Team | null> {
     const model = await this.prismaClient.team.findFirst({
       include: {
         users: {
@@ -102,7 +102,7 @@ export class TeamRepository implements ITeamRepository {
       },
     })
     if (model === null) {
-      throw new Error(`${userId}が見つかりませんでした`)
+      return model
     }
 
     const users = model.users.map((teamUser) => {
@@ -122,7 +122,7 @@ export class TeamRepository implements ITeamRepository {
     return entity
   }
 
-  public async findByName(name: string): Promise<Team> {
+  public async findByName(name: string): Promise<Team | null> {
     // TODO: findUnique
     const model = await this.prismaClient.team.findFirst({
       where: {
@@ -141,7 +141,7 @@ export class TeamRepository implements ITeamRepository {
       },
     })
     if (model === null) {
-      throw new Error(`${name}が見つかりませんでした`)
+      return null
     }
 
     const users = model.users.map((teamUser) => {
@@ -182,7 +182,7 @@ export class TeamRepository implements ITeamRepository {
       },
     })
     if (models === null) {
-      throw new Error(`見つかりませんでした`)
+      return models
     }
 
     const entities: Team[] = models.map(
@@ -208,13 +208,29 @@ export class TeamRepository implements ITeamRepository {
   public async save(team: Team): Promise<Team> {
     const { id, name, teamUsers } = team.getAllProperties()
 
-    const model = await this.prismaClient.team.create({
-      data: {
+    const model = await this.prismaClient.team.upsert({
+      where: {
+        id,
+      },
+      update: {
+        name,
+        users: {
+          deleteMany: {},
+          create: teamUsers.map((teamUser: TeamUser) => {
+            return {
+              userId: teamUser.getAllProperties().userId,
+            }
+          }),
+        },
+      },
+      create: {
         id,
         name,
         users: {
           create: teamUsers.map((teamUser: TeamUser) => {
-            return teamUser.getAllProperties()
+            return {
+              userId: teamUser.getAllProperties().userId,
+            }
           }),
         },
       },
@@ -248,6 +264,18 @@ export class TeamRepository implements ITeamRepository {
   }
 
   public async delete(teamId: string): Promise<void> {
+    // 関連するテーブル（チームユーザー）を削除
+    // TODO: ドメインサービスかユースケースで定義すべき...？
+    await this.prismaClient.team.update({
+      where: {
+        id: teamId,
+      },
+      data: {
+        users: {
+          deleteMany: {},
+        },
+      },
+    })
     await this.prismaClient.team.delete({
       where: {
         id: teamId,

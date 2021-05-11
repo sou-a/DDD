@@ -1,51 +1,66 @@
 import { Team } from './team'
 import { ITeamRepository } from './i-team-repository'
-import { TeamUser } from './team'
+import { IUserRepository } from '../user/i-user-repository'
+import { User } from '../user/user'
 
 export class TeamService {
   private teamRepository: ITeamRepository
-  public constructor(props: { teamRepository: ITeamRepository }) {
-    const { teamRepository } = props
+  private userRepository: IUserRepository
+  public constructor(props: {
+    teamRepository: ITeamRepository
+    userRepository: IUserRepository
+  }) {
+    const { teamRepository, userRepository } = props
 
     this.teamRepository = teamRepository
+    this.userRepository = userRepository
   }
 
   /**
-   * チームユーザーを削除する
+   * TODO: saveはドメインサービスでするべきか、ユースケースでするべきか
+   * TODO: 仕様を書きたいので、ゴチャゴチャ手続き的に書きたくない。
+   *
+   * チームユーザーを削除する（saveもします）
    * @param user
    */
-  public async deleteTeamUser(team: Team, userId: string): Promise<Team> {
-    if (team.getAllProperties().teamUsers.length === Team.lowerLimit) {
-      throw new Error(`参加者は${Team.lowerLimit}名以上必要です`)
-    }
-    const resultTeamUsers = team
-      .getAllProperties()
-      .teamUsers.filter((teamUser: TeamUser) => {
-        teamUser.getAllProperties().userId !== userId
-      })
+  public async deleteTeamUserAndSave(
+    team: Team,
+    userId: string,
+  ): Promise<Team> {
+    const resultTeam = team.removeTeamUser(userId)
 
     // もし2名以下になった場合チームは存続できず、他のチームに合併する必要がある。合併先は、最も参加人数が少ないチームから優先的に選ばれる
-    if (resultTeamUsers.length >= Team.lowerLimit) {
-      return team
+    if (resultTeam.getAllProperties().teamUsers.length >= Team.lowerLimit) {
+      return await this.teamRepository.save(team)
     } else {
       // 最も参加人数が少ないチームを選ぶ
-      const mergeTeam = await this.teamRepository.findMostLeastTeams()
+      const mostLeastTeams = await this.teamRepository.findMostLeastTeams()
 
-      // 最も参加人数が少ないチームは複数いる可能性があるが、仕様にないので今回はとりあえず配列の最初のチームにする
-      if (!mergeTeam[0]) {
-        throw new Error('チームがいない')
+      // TODO: 最も参加人数が少ないチームは複数いる可能性があるが、仕様にないので今回はとりあえず配列の最初のチームにする
+      const mergeTeam = mostLeastTeams[0]
+
+      if (!mergeTeam) {
+        // もし自動的に合併できない（例：プラハチャレンジ全体の参加者が2名しかいない）場合は合併せず、エラーも発生しない
+        return team
       }
-      const mergeTeamId = mergeTeam[0].getAllProperties().id
 
       // 合併処理
-      resultTeamUsers.filter((teamUser: TeamUser) => {
-        teamUser.changeTeamId(mergeTeamId)
+      const users: User[] = await Promise.all(
+        resultTeam.getAllProperties().teamUsers.map((teamUser) => {
+          return this.userRepository.findById(
+            teamUser.getAllProperties().userId,
+          )
+        }),
+      )
+      users.map((user: User) => {
+        mergeTeam.addTeamUser(user)
       })
 
       // 存続できないチームを削除
-      this.teamRepository.delete(team.getAllProperties().id)
+      this.teamRepository.delete(resultTeam.getAllProperties().id)
 
-      return team
+      // TODO: ↑と↓で１トランザクションになっているか確認したい
+      return await this.teamRepository.save(mergeTeam)
     }
   }
 }

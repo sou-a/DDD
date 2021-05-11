@@ -84,7 +84,7 @@ export class PairRepository implements IPairRepository {
     return entity
   }
 
-  public async findByUserId(userId: string): Promise<Pair> {
+  public async findByUserId(userId: string): Promise<Pair | null> {
     // TODO: findUnique
     const model = await this.prismaClient.pair.findFirst({
       include: {
@@ -103,7 +103,7 @@ export class PairRepository implements IPairRepository {
       },
     })
     if (model === null) {
-      throw new Error(`userId: ${userId}が見つかりませんでした`)
+      return model
     }
 
     const users = model.users.map((pairUser) => {
@@ -126,13 +126,31 @@ export class PairRepository implements IPairRepository {
   public async save(pair: Pair): Promise<Pair> {
     const { id, name, pairUsers } = pair.getAllProperties()
 
-    const model = await this.prismaClient.pair.create({
-      data: {
+    const model = await this.prismaClient.pair.upsert({
+      where: {
+        id,
+      },
+      update: {
+        name,
+        users: {
+          // ペアユーザー（子集約）全削除してcreateし直している（増減に対応するため）
+          // @see https://github.com/little-hands/ddd-q-and-a/issues/129
+          deleteMany: {},
+          create: pairUsers.map((pairUser: PairUser) => {
+            return {
+              userId: pairUser.getAllProperties().userId,
+            }
+          }),
+        },
+      },
+      create: {
         id,
         name,
         users: {
           create: pairUsers.map((pairUser: PairUser) => {
-            return pairUser.getAllProperties()
+            return {
+              userId: pairUser.getAllProperties().userId,
+            }
           }),
         },
       },
@@ -166,6 +184,18 @@ export class PairRepository implements IPairRepository {
   }
 
   public async delete(pairId: string): Promise<boolean> {
+    // 関連するテーブル（ペアユーザー）を削除
+    // TODO: ドメインサービスかユースケースで定義すべき...？
+    await this.prismaClient.pair.update({
+      where: {
+        id: pairId,
+      },
+      data: {
+        users: {
+          deleteMany: {},
+        },
+      },
+    })
     await this.prismaClient.pair.delete({
       where: {
         id: pairId,

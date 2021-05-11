@@ -3,6 +3,7 @@ import { seedTeam } from '@testUtil/team-factory'
 import { createUser } from '@testUtil/user-factory'
 import { TeamService } from 'src/domain/entity/team/team-service'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
+import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { createRandomIdString } from 'src/util/random'
 import { MockedObjectDeep } from 'ts-jest/dist/utils/testing'
 import { mocked } from 'ts-jest/utils'
@@ -10,9 +11,11 @@ import { mocked } from 'ts-jest/utils'
 describe('team-service.ts', () => {
   describe('deleteTeamUser', () => {
     let mockTeamRepo: MockedObjectDeep<TeamRepository>
+    let mockUserRepo: MockedObjectDeep<UserRepository>
     beforeAll(() => {
       const prisma = new PrismaClient()
       mockTeamRepo = mocked(new TeamRepository(prisma), true)
+      mockUserRepo = mocked(new UserRepository(prisma), true)
     })
     it('[正常系]チームユーザーを削除できる', async () => {
       const team = await seedTeam({
@@ -26,8 +29,9 @@ describe('team-service.ts', () => {
       })
       const teamService = new TeamService({
         teamRepository: mockTeamRepo,
+        userRepository: mockUserRepo,
       })
-      teamService.deleteTeamUser(team, '1')
+      teamService.deleteTeamUserAndSave(team, '1')
       expect(team.getAllProperties().teamUsers).toHaveLength(2)
     })
 
@@ -52,8 +56,9 @@ describe('team-service.ts', () => {
       })
       const teamService = new TeamService({
         teamRepository: mockTeamRepo,
+        userRepository: mockUserRepo,
       })
-      teamService.deleteTeamUser(team, '1')
+      teamService.deleteTeamUserAndSave(team, '1')
       expect(team.getAllProperties().teamUsers).toHaveLength(5)
     })
   })

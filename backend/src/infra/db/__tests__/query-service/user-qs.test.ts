@@ -5,7 +5,6 @@ import { UserStatus } from 'src/domain/valueOblect/user-status'
 import { seedTaskGroup } from '@testUtil/task-group-factory'
 import { seedAllTaskStatus } from '@testUtil/task-user-status-factory'
 
-// TODO: 実装
 describe('user-qs.ts', () => {
   const userQS = new UserQS(prisma)
   beforeAll(async () => {

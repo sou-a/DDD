@@ -57,7 +57,6 @@ describe('task-group-usecase.ts', () => {
       return expect(
         usecase.create({
           name: 'task1',
-          taskIds: ['1', '2'],
         }),
       ).resolves.toBe(undefined)
     })
@@ -71,7 +70,6 @@ describe('task-group-usecase.ts', () => {
       return expect(
         usecase.create({
           name: 'task1',
-          taskIds: ['1', '2'],
         }),
       ).rejects.toEqual(ERROR_MESSAGE)
     })

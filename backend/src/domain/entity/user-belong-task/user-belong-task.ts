@@ -20,7 +20,7 @@ export class UserBelongTask {
   public changeStatus(userId: string, status: TaskStatus): UserBelongTask {
     // - 進捗ステータスはいつでも変更可能
     // - ただし一度「完了」にした進捗ステータスを「レビュー待ち」「未着手」に戻すことはできない
-    if (!status.isComplete()) {
+    if (this.status.isComplete()) {
       throw new Error(`${TaskStatus.complete}ステータスは変更できません`)
     }
 

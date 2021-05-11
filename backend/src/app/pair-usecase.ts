@@ -78,8 +78,8 @@ export class PairUseCase {
     const pair: Pair = await this.pairRepository.findById(pairId)
 
     try {
-      const removedPairUser = pair.removePairUser(userId)
-      const savedPair = await this.pairRepository.save(removedPairUser)
+      const removedPair = pair.removePairUser(userId)
+      const savedPair = await this.pairRepository.save(removedPair)
       return new PairDTO({ ...savedPair.getAllProperties() })
     } catch (error) {
       throw error

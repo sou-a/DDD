@@ -6,7 +6,8 @@ export class Team {
   private name: string
   private teamUsers: TeamUser[]
 
-  static lowerLimit = 3
+  static lowerLimit = 3 // TODO: staticありかなしか（pairと比較）
+  static numberRegex = /^([1-9]d*|0)$/
 
   public constructor(props: { id: string; name: string; users: User[] }) {
     const { id, name, users } = props
@@ -22,7 +23,7 @@ export class Team {
     })
 
     // - 名前がある（1,2,3,4のような数字でなければいけない。）
-    if (!Number.isInteger(name)) {
+    if (name.match(Team.numberRegex) === null) {
       throw new Error('チーム名は数字のみです')
     }
 
@@ -53,13 +54,16 @@ export class Team {
   }
 
   /**
+   * TODO: ドメインサービスからのみ呼び出して欲しい。（直接呼び出されると、合併処理のルールが破られるため）
+   *
    * チームユーザーを削除する
-   * @param user
+   * @param userId
    */
-  public removeTeamUser(user: User): Team {
-    this.teamUsers.filter((teamUser) => {
-      return user.getAllProperties().id === teamUser.getAllProperties().userId
-    })
+  public removeTeamUser(userId: string): Team {
+    const removeTeamUser = this.teamUsers.filter(
+      (teamUser) => userId !== teamUser.getAllProperties().userId,
+    )
+    this.teamUsers = removeTeamUser
     return this
   }
 
@@ -95,10 +99,6 @@ export class TeamUser {
     this.teamId = teamId
     this.userId = userId
     this.status = status
-  }
-
-  public changeTeamId(teamId: string) {
-    this.teamId = teamId
   }
 
   public getAllProperties() {

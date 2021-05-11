@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common'
-import { ApiResponse } from '@nestjs/swagger'
+import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { PrismaClient } from '@prisma/client'
 import { FindAllTaskResponse } from './response/task-response'
 import { TaskUseCase } from 'src/app/task-usecase'
@@ -19,6 +19,7 @@ import {
   UpdateTaskGroupRequest,
 } from './request/task-request'
 
+@ApiTags('tasks')
 @Controller({
   path: '/tasks',
 })
@@ -47,7 +48,7 @@ export class TaskController {
     })
   }
 
-  @Patch(':id')
+  @Patch(':id/status')
   async updateTaskStatus(
     @Param('id') id: string,
     @Body() postTaskDto: UpdateTaskStatusRequest,
@@ -63,7 +64,7 @@ export class TaskController {
     })
   }
 
-  @Patch(':id')
+  @Patch(':id/task-group')
   async updateTaskGroup(
     @Param('id') id: string,
     @Body() postTaskDto: UpdateTaskGroupRequest,

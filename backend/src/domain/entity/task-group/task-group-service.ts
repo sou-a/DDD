@@ -27,16 +27,21 @@ export class TaskGroupService {
   }
 
   //  - 課題グループを削除した場合、そのグループに属する課題も自動的に削除される
-  public delete(taskGroup: TaskGroup) {
-    // ユーザーが所持するタスク削除
-    taskGroup.getAllProperties().tasks.map((taskId) => {
-      this.userBelongTaskRepository.deleteByTaskId(taskId)
-    })
+  // TODO: 外部キー制約でどのみち削除できないので、リポジトリに書いても良さそうだけど...？
+  public async delete(taskGroup: TaskGroup) {
+    await Promise.all(
+      // ユーザーが所持するタスク削除
+      taskGroup.getAllProperties().tasks.map((taskId) => {
+        this.userBelongTaskRepository.deleteByTaskId(taskId)
+      }),
+    )
 
     // タスク削除
-    this.taskRepository.deleteByTaskGroupId(taskGroup.getAllProperties().id)
+    await this.taskRepository.deleteByTaskGroupId(
+      taskGroup.getAllProperties().id,
+    )
 
     // タスクグループ削除
-    this.taskGroupRepository.delete(taskGroup.getAllProperties().id)
+    await this.taskGroupRepository.delete(taskGroup.getAllProperties().id)
   }
 }

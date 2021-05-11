@@ -90,8 +90,19 @@ export class UserBelongTaskRepository implements IUserBelongTaskRepository {
     if (!taskUserStatusmodel) {
       throw new Error(`${status.getStatus()}が見つかりませんでした`)
     }
-    const model = await this.prismaClient.taskUser.create({
-      data: {
+    const model = await this.prismaClient.taskUser.upsert({
+      where: {
+        taskId_userId: {
+          taskId,
+          userId,
+        },
+      },
+      update: {
+        userId,
+        taskId,
+        taskUserStatusId: taskUserStatusmodel.id,
+      },
+      create: {
         userId,
         taskId,
         taskUserStatusId: taskUserStatusmodel.id,

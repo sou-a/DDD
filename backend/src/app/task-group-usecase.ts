@@ -28,15 +28,12 @@ export class TaskGroupUseCase {
     }
   }
 
-  public async create(props: {
-    name: string
-    taskIds: string[]
-  }): Promise<TaskGroupDTO> {
-    const { name, taskIds } = props
+  public async create(props: { name: string }): Promise<TaskGroupDTO> {
+    const { name } = props
     const taskGroup: TaskGroup = new TaskGroup({
       id: createRandomIdString(),
       name,
-      tasks: taskIds,
+      tasks: [], // TODO: 微妙？
     })
     try {
       const savedTaskGroup = await this.taskGroupRepository.save(taskGroup)
@@ -75,7 +72,7 @@ export class TaskGroupUseCase {
       taskGroupId,
     )
     try {
-      return this.taskGroupService.delete(taskGroup)
+      this.taskGroupService.delete(taskGroup)
     } catch (error) {
       throw error
     }

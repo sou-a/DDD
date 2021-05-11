@@ -17,7 +17,8 @@ export class TeamFactory {
   }): Promise<Team> {
     const { name, users } = props
     const team = await this.teamRepository.findByName(name)
-    if (!team) {
+    // 重複不可
+    if (team) {
       throw new Error('チーム名が重複しています')
     }
     return new Team({

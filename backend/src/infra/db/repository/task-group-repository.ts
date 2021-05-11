@@ -58,8 +58,14 @@ export class TaskGroupRepository implements ITaskGroupRepository {
   public async save(taskGroup: TaskGroup): Promise<TaskGroup> {
     const { id, name } = taskGroup.getAllProperties()
 
-    const model = await this.prismaClient.taskGroup.create({
-      data: {
+    const model = await this.prismaClient.taskGroup.upsert({
+      where: {
+        id,
+      },
+      update: {
+        name,
+      },
+      create: {
         id,
         name,
       },

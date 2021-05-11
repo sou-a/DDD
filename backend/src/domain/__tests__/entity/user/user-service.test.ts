@@ -24,7 +24,10 @@ describe('user-service.ts', () => {
       mockPairRepo = mocked(new PairRepository(prisma), true)
       mockTeamRepo = mocked(new TeamRepository(prisma), true)
       mockTeamService = mocked(
-        new TeamService({ teamRepository: mockTeamRepo }),
+        new TeamService({
+          teamRepository: mockTeamRepo,
+          userRepository: mockUserRepo,
+        }),
         true,
       )
     })

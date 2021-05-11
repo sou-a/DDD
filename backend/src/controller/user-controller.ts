@@ -8,7 +8,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common'
-import { ApiResponse } from '@nestjs/swagger'
+import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { PrismaClient } from '@prisma/client'
 import {
   FindAllUserResponse,
@@ -26,6 +26,7 @@ import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { TeamService } from 'src/domain/entity/team/team-service'
 import { UserQS } from 'src/infra/db/query-service/user-qs'
 
+@ApiTags('users')
 @Controller({
   path: '/users',
 })
@@ -37,7 +38,7 @@ export class UserController {
     const userRepository = new UserRepository(prisma)
     const pairRepository = new PairRepository(prisma)
     const teamRepository = new TeamRepository(prisma)
-    const teamService = new TeamService({ teamRepository })
+    const teamService = new TeamService({ teamRepository, userRepository })
     const userQS = new UserQS(prisma)
     const userService = new UserService({
       userRepository,
@@ -62,7 +63,7 @@ export class UserController {
     const userRepository = new UserRepository(prisma)
     const pairRepository = new PairRepository(prisma)
     const teamRepository = new TeamRepository(prisma)
-    const teamService = new TeamService({ teamRepository })
+    const teamService = new TeamService({ teamRepository, userRepository })
     const userQS = new UserQS(prisma)
     const userService = new UserService({
       userRepository,
@@ -86,7 +87,7 @@ export class UserController {
     const userRepository = new UserRepository(prisma)
     const pairRepository = new PairRepository(prisma)
     const teamRepository = new TeamRepository(prisma)
-    const teamService = new TeamService({ teamRepository })
+    const teamService = new TeamService({ teamRepository, userRepository })
     const userQS = new UserQS(prisma)
     const userService = new UserService({
       userRepository,
@@ -111,7 +112,7 @@ export class UserController {
     const userRepository = new UserRepository(prisma)
     const pairRepository = new PairRepository(prisma)
     const teamRepository = new TeamRepository(prisma)
-    const teamService = new TeamService({ teamRepository })
+    const teamService = new TeamService({ teamRepository, userRepository })
     const userQS = new UserQS(prisma)
     const userService = new UserService({
       userRepository,
@@ -132,7 +133,7 @@ export class UserController {
     const userRepository = new UserRepository(prisma)
     const pairRepository = new PairRepository(prisma)
     const teamRepository = new TeamRepository(prisma)
-    const teamService = new TeamService({ teamRepository })
+    const teamService = new TeamService({ teamRepository, userRepository })
     const userQS = new UserQS(prisma)
     const userService = new UserService({
       userRepository,

@@ -31,14 +31,21 @@ export class UserService {
 
   public async deleteUser(userId: string): Promise<boolean> {
     // ペアユーザー削除（ペアオブジェクト生成してそこに任せる）
-    const pair: Pair = await this.pairRepository.findByUserId(userId)
-    const resultPair: Pair = pair.removePairUser(userId)
-    this.pairRepository.save(resultPair)
+    const pair: Pair | null = await this.pairRepository.findByUserId(userId)
+    if (pair) {
+      const resultPair: Pair = pair.removePairUser(userId)
+      this.pairRepository.save(resultPair)
+    }
 
     // チームユーザー削除
-    const team: Team = await this.teamRepository.findByUserId(userId)
-    const resultTeam: Team = await this.teamService.deleteTeamUser(team, userId)
-    this.teamRepository.save(resultTeam)
+    const team: Team | null = await this.teamRepository.findByUserId(userId)
+    if (team) {
+      const resultTeam: Team = await this.teamService.deleteTeamUserAndSave(
+        team,
+        userId,
+      )
+      this.teamRepository.save(resultTeam)
+    }
 
     // ユーザー削除
     this.userRepository.delete(userId)

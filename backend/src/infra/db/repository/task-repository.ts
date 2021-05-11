@@ -47,11 +47,18 @@ export class TaskRepository implements ITaskRepository {
   public async save(task: Task): Promise<Task> {
     const { id, name, taskGroupId } = task.getAllProperties()
 
-    const model = await this.prismaClient.task.create({
-      data: {
+    const model = await this.prismaClient.task.upsert({
+      where: {
         id,
+      },
+      update: {
         taskGroupId,
         name,
+      },
+      create: {
+        id,
+        name,
+        taskGroupId,
       },
     })
     const entity = new Task({

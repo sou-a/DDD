@@ -51,6 +51,12 @@ export class Pair {
    * @param user
    */
   public addPairUser(user: User): Pair {
+    // - 上限は3名まで。4名以上のペアは存続できない（他のペアに合併する必要がある）
+    if (this.pairUsers.length === this.upperLimit) {
+      throw new Error(
+        `ペアユーザーは${this.upperLimit}名以下である必要があります`,
+      )
+    }
     const userProperties = user.getAllProperties()
 
     const teamUser = new PairUser({
@@ -67,9 +73,14 @@ export class Pair {
    * @param user
    */
   public removePairUser(userId: string): Pair {
-    this.pairUsers.filter((pairUser) => {
-      return userId === pairUser.getAllProperties().userId
-    })
+    const removedPairUser = this.pairUsers.filter(
+      (pairUser) => userId !== pairUser.getAllProperties().userId,
+    )
+    // - 参加者2名以上から成る（TODO: 生成時のルールと重複）
+    if (removedPairUser.length < this.lowerLimit) {
+      throw new Error(`ペアユーザーは${this.lowerLimit}名以上必要です`)
+    }
+    this.pairUsers = removedPairUser
     return this
   }
 
