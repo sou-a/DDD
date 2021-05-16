@@ -9,9 +9,9 @@ describe('user-belong-task.ts', () => {
         new UserBelongTask({
           userId: createRandomIdString(),
           taskId: createRandomIdString(),
-          status: new TaskStatus(TaskStatus.complete),
+          status: new TaskStatus(TaskStatus.notYet),
         }),
-      ).toHaveLength(1)
+      ).toEqual(expect.any(UserBelongTask))
     })
   })
   describe('changeStatus', () => {
@@ -19,7 +19,7 @@ describe('user-belong-task.ts', () => {
       const userBelongTask = new UserBelongTask({
         userId: '1',
         taskId: createRandomIdString(),
-        status: new TaskStatus('未着手'),
+        status: new TaskStatus(TaskStatus.notYet),
       })
       userBelongTask.changeStatus('1', new TaskStatus(TaskStatus.complete))
     })
@@ -29,19 +29,19 @@ describe('user-belong-task.ts', () => {
         taskId: createRandomIdString(),
         status: new TaskStatus(TaskStatus.complete),
       })
-      expect(
-        userBelongTask.changeStatus('1', new TaskStatus('未着手')),
-      ).toThrow()
+      expect(() =>
+        userBelongTask.changeStatus('1', new TaskStatus(TaskStatus.notYet)),
+      ).toThrow(Error)
     })
     it('[準正常系]課題の所有者以外は進捗ステータスを変更できない', () => {
       const userBelongTask = new UserBelongTask({
         userId: '1',
         taskId: createRandomIdString(),
-        status: new TaskStatus('未着手'),
+        status: new TaskStatus(TaskStatus.notYet),
       })
-      expect(
+      expect(() =>
         userBelongTask.changeStatus('2', new TaskStatus(TaskStatus.complete)),
-      ).toThrow()
+      ).toThrow(Error)
     })
   })
 })

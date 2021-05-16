@@ -10,10 +10,11 @@ describe('user.ts', () => {
         mailAddress: 'sample@example.com',
         status: new UserStatus(UserStatus.active),
       })
-      user.changeStatus(new UserStatus('休会中'))
-      return expect(user.getAllProperties().status).toBe(
-        new UserStatus('休会中'),
-      )
+
+      user.changeStatus(new UserStatus(UserStatus.recess))
+      expect(user.getAllProperties().status).toEqual({
+        status: UserStatus.recess,
+      })
     })
   })
 })

@@ -86,11 +86,15 @@ export class TeamRepository implements ITeamRepository {
 
   public async findByUserId(userId: string): Promise<Team | null> {
     const model = await this.prismaClient.team.findFirst({
-      include: {
+      where: {
         users: {
-          where: {
+          some: {
             userId,
           },
+        },
+      },
+      include: {
+        users: {
           include: {
             user: {
               include: {

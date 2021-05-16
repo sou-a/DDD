@@ -87,11 +87,15 @@ export class PairRepository implements IPairRepository {
   public async findByUserId(userId: string): Promise<Pair | null> {
     // TODO: findUnique
     const model = await this.prismaClient.pair.findFirst({
-      include: {
+      where: {
         users: {
-          where: {
+          some: {
             userId,
           },
+        },
+      },
+      include: {
+        users: {
           include: {
             user: {
               include: {

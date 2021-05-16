@@ -3,21 +3,6 @@ import { prisma } from '@testUtil/prisma'
 import { User } from 'src/domain/entity/user/user'
 import { UserStatus } from 'src/domain/valueOblect/user-status'
 
-export const createUser = (params: {
-  id?: string
-  name?: string
-  mailAddress?: string
-  status?: UserStatus
-}) => {
-  const { id, name, mailAddress, status } = params
-  return new User({
-    id: id ?? faker.random.uuid(),
-    name: name ?? 'A',
-    mailAddress: mailAddress ?? 'B',
-    status: status ?? new UserStatus(UserStatus.active),
-  })
-}
-
 export const seedUser = async (params: {
   id?: string
   name?: string
@@ -26,9 +11,10 @@ export const seedUser = async (params: {
 }) => {
   let { id, name, mailAddress, userStatusId } = params
   id = id ?? faker.random.uuid()
-  name = name ?? 'A'
+  name = name ?? faker.name.findName()
   mailAddress = mailAddress ?? 'B'
-  userStatusId = userStatusId ?? faker.random.uuid()
+  userStatusId = userStatusId ?? '1'
+
   await prisma.user.create({
     data: {
       id,
@@ -36,5 +22,19 @@ export const seedUser = async (params: {
       mailAddress,
       userStatusId,
     },
+  })
+  const userStatus = await prisma.userStatus.findFirst({
+    where: {
+      id: userStatusId,
+    },
+  })
+  if (!userStatus) {
+    throw new Error('想定外のエラー')
+  }
+  return new User({
+    id,
+    name,
+    mailAddress,
+    status: new UserStatus(userStatus.name),
   })
 }

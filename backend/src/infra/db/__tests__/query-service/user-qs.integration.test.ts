@@ -2,8 +2,8 @@ import { prisma } from '@testUtil/prisma'
 import { UserQS } from '../../query-service/user-qs'
 import { TaskStatus } from 'src/domain/valueOblect/task-status'
 import { UserStatus } from 'src/domain/valueOblect/user-status'
-import { seedTaskGroup } from '@testUtil/task-group-factory'
-import { seedAllTaskStatus } from '@testUtil/task-user-status-factory'
+import { seedAllTaskStatus } from '@testUtil/task-status-factory'
+import { seedTaskGroup } from '@testUtil/task-group/seed-task-group'
 
 describe('user-qs.ts', () => {
   const userQS = new UserQS(prisma)

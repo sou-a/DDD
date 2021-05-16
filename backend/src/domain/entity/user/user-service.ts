@@ -34,21 +34,17 @@ export class UserService {
     const pair: Pair | null = await this.pairRepository.findByUserId(userId)
     if (pair) {
       const resultPair: Pair = pair.removePairUser(userId)
-      this.pairRepository.save(resultPair)
+      await this.pairRepository.save(resultPair)
     }
 
     // チームユーザー削除
     const team: Team | null = await this.teamRepository.findByUserId(userId)
     if (team) {
-      const resultTeam: Team = await this.teamService.deleteTeamUserAndSave(
-        team,
-        userId,
-      )
-      this.teamRepository.save(resultTeam)
+      await this.teamService.deleteTeamUserAndSave(team, userId)
     }
 
     // ユーザー削除
-    this.userRepository.delete(userId)
+    await this.userRepository.delete(userId)
 
     return true
   }

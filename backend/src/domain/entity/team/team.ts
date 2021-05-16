@@ -7,7 +7,7 @@ export class Team {
   private teamUsers: TeamUser[]
 
   static lowerLimit = 3 // TODO: staticありかなしか（pairと比較）
-  static numberRegex = /^([1-9]d*|0)$/
+  static numberRegex = /^[0-9]+$/
 
   public constructor(props: { id: string; name: string; users: User[] }) {
     const { id, name, users } = props

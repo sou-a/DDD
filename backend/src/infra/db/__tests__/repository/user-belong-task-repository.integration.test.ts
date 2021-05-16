@@ -1,13 +1,11 @@
-import { createRandomIdString } from 'src/util/random'
 import { prisma } from '@testUtil/prisma'
-import { Task } from 'src/domain/entity/task/task'
 import { UserBelongTaskRepository } from '../../repository/user-belong-task-repository'
-import { seedTaskGroup } from '@testUtil/task-group-factory'
-import { seedTask } from '@testUtil/task-factory'
-import { seedUser } from '@testUtil/user-factory'
-import { seedAllTaskStatus } from '@testUtil/task-user-status-factory'
+import { seedAllTaskStatus } from '@testUtil/task-status-factory'
 import { UserBelongTask } from 'src/domain/entity/user-belong-task/user-belong-task'
 import { TaskStatus } from 'src/domain/valueOblect/task-status'
+import { seedUser } from '@testUtil/user/seed-user'
+import { seedTaskGroup } from '@testUtil/task-group/seed-task-group'
+import { seedTask } from '@testUtil/task/seed-task'
 
 describe('user-belong-task-repository.ts', () => {
   const userBelongTaskRepo = new UserBelongTaskRepository(prisma)

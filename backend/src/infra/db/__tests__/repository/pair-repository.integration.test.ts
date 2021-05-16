@@ -2,7 +2,7 @@ import { createRandomIdString } from 'src/util/random'
 import { prisma } from '@testUtil/prisma'
 import { PairRepository } from '../../repository/pair-repository'
 import { Pair } from 'src/domain/entity/pair/pair'
-import { createUser } from '@testUtil/user-factory'
+import { createUser } from '@testUtil/user/user-factory'
 
 describe('pair-repository.ts', () => {
   const pairRepo = new PairRepository(prisma)

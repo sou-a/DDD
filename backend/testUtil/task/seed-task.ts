@@ -2,19 +2,6 @@ import * as faker from 'faker'
 import { prisma } from '@testUtil/prisma'
 import { Task } from 'src/domain/entity/task/task'
 
-export const createTask = (params: {
-  id?: string
-  name?: string
-  taskGroupId?: string
-}) => {
-  const { id, name, taskGroupId } = params
-  return new Task({
-    id: id ?? faker.random.uuid(),
-    name: name ?? 'A',
-    taskGroupId: taskGroupId ?? faker.random.uuid(),
-  })
-}
-
 export const seedTask = async (params: {
   id?: string
   name?: string
@@ -31,4 +18,5 @@ export const seedTask = async (params: {
       taskGroupId,
     },
   })
+  return new Task({ id, name, taskGroupId })
 }

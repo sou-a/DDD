@@ -1,6 +1,6 @@
 import { createRandomIdString } from 'src/util/random'
 import { prisma } from '@testUtil/prisma'
-import { createUser } from '@testUtil/user-factory'
+import { createUser } from '@testUtil/user/user-factory'
 import { TeamRepository } from '../../repository/team-repository'
 import { Team } from 'src/domain/entity/team/team'
 

@@ -34,6 +34,7 @@ export class TeamService {
       return await this.teamRepository.save(team)
     } else {
       // 最も参加人数が少ないチームを選ぶ
+      // TODO: fix: 自分（存続できないチーム(resultTeam)）が選ばれる可能性がある
       const mostLeastTeams = await this.teamRepository.findMostLeastTeams()
 
       // TODO: 最も参加人数が少ないチームは複数いる可能性があるが、仕様にないので今回はとりあえず配列の最初のチームにする
