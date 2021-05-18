@@ -1,4 +1,5 @@
 import { prisma } from '@testUtil/prisma'
+import { resetDatabase } from '@testUtil/resetDB'
 import { seedTeamAndUsers } from '@testUtil/team/seed-team'
 import { seedAllUserStatus } from '@testUtil/user-status-factory'
 import { createUser } from '@testUtil/user/user-factory'
@@ -8,7 +9,7 @@ import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { MockedObjectDeep } from 'ts-jest/dist/utils/testing'
 import { mocked } from 'ts-jest/utils'
 
-// TODO: 遅い。このファイルで6sかかる。
+// TODO: 遅い。このファイルだけで9sかかる。（他にも遅いファイルあり）
 describe('team-service.integration.ts', () => {
   describe('deleteTeamUser', () => {
     let mockTeamRepo: MockedObjectDeep<TeamRepository>
@@ -18,12 +19,7 @@ describe('team-service.integration.ts', () => {
       mockUserRepo = mocked(new UserRepository(prisma), true)
     })
     beforeEach(async () => {
-      await prisma.pairUser.deleteMany()
-      await prisma.teamUser.deleteMany()
-      await prisma.team.deleteMany()
-      await prisma.taskUser.deleteMany()
-      await prisma.user.deleteMany()
-      await prisma.userStatus.deleteMany()
+      await resetDatabase()
     })
     afterAll(async () => {
       await prisma.$disconnect()

@@ -165,8 +165,23 @@ export class TeamRepository implements ITeamRepository {
     return entity
   }
 
-  public async findMostLeastTeams(): Promise<Team[]> {
-    const models = await this.prismaClient.team.findMany({
+  public async findMostLeastTeam(): Promise<Team | null> {
+    const teamsCountUsers = await this.prismaClient.team.findMany({
+      include: {
+        _count: {
+          select: { users: true },
+        },
+      },
+    })
+    // TODO: 最小のチームを決めるロジックがリポジトリに存在している
+    const mostLeastTeam = teamsCountUsers.reduce((a, b) => {
+      if (!a._count || !b._count) {
+        throw new Error('想定外のエラー')
+      }
+      return a._count.users < b._count.users ? a : b
+    })
+
+    const model = await this.prismaClient.team.findUnique({
       include: {
         users: {
           include: {
@@ -177,36 +192,28 @@ export class TeamRepository implements ITeamRepository {
             },
           },
         },
-        _count: {
-          select: { users: true },
-        },
       },
       where: {
-        users: {}, // TODO: ユーザーが最小のチームを取得したい...!!
+        id: mostLeastTeam.id,
       },
     })
-    if (models === null) {
-      return models
+    if (model === null) {
+      return model
     }
+    const userEntity = model.users.map((teamUser) => {
+      return new User({
+        id: teamUser.user.id,
+        name: teamUser.user.name,
+        mailAddress: teamUser.user.mailAddress,
+        status: new UserStatus(teamUser.user.userStatus.name),
+      })
+    })
 
-    const entities: Team[] = models.map(
-      (model): Team => {
-        const users = model.users.map((teamUser) => {
-          return new User({
-            id: teamUser.user.id,
-            name: teamUser.user.name,
-            mailAddress: teamUser.user.mailAddress,
-            status: new UserStatus(teamUser.user.userStatus.name),
-          })
-        })
-        return new Team({
-          id: model.id,
-          name: model.name,
-          users: users,
-        })
-      },
-    )
-    return entities
+    return new Team({
+      id: model.id,
+      name: model.name,
+      users: userEntity,
+    })
   }
 
   public async save(team: Team): Promise<Team> {

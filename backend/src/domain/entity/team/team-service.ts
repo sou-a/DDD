@@ -35,10 +35,10 @@ export class TeamService {
     } else {
       // 最も参加人数が少ないチームを選ぶ
       // TODO: fix: 自分（存続できないチーム(resultTeam)）が選ばれる可能性がある
-      const mostLeastTeams = await this.teamRepository.findMostLeastTeams()
+      const mostLeastTeam = await this.teamRepository.findMostLeastTeam()
 
-      // TODO: 最も参加人数が少ないチームは複数いる可能性があるが、仕様にないので今回はとりあえず配列の最初のチームにする
-      const mergeTeam = mostLeastTeams[0]
+      // TODO: 最も参加人数が少ないチームは複数いる可能性があるが、それを決めるロジックがリポジトリのfindMostLeastTeam()に入ってしまっている
+      const mergeTeam = mostLeastTeam
 
       if (!mergeTeam) {
         // もし自動的に合併できない（例：プラハチャレンジ全体の参加者が2名しかいない）場合は合併せず、エラーも発生しない

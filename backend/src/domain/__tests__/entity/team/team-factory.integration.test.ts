@@ -1,4 +1,5 @@
 import { prisma } from '@testUtil/prisma'
+import { resetDatabase } from '@testUtil/resetDB'
 import { seedTeamAndUsers } from '@testUtil/team/seed-team'
 import { seedAllUserStatus } from '@testUtil/user-status-factory'
 import { createUser } from '@testUtil/user/user-factory'
@@ -12,12 +13,7 @@ describe('team-factory.integration.ts', () => {
   describe('createTeam', () => {
     let mockTeamRepo: MockedObjectDeep<TeamRepository>
     beforeEach(async () => {
-      // TODO: 関係ありそうなテーブルを削除し無いといけないのは面倒
-      await prisma.teamUser.deleteMany()
-      await prisma.pairUser.deleteMany()
-      await prisma.team.deleteMany()
-      await prisma.user.deleteMany()
-      await prisma.userStatus.deleteMany()
+      await resetDatabase()
     })
     afterAll(async () => {
       await prisma.$disconnect()

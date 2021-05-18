@@ -16,6 +16,21 @@ export const seedTeam = async (params: { id?: string; name?: string }) => {
   })
 }
 
+export const seedTeamUser = async (params: {
+  userId?: string
+  teamId?: string
+}) => {
+  let { userId, teamId } = params
+  userId = userId ?? faker.random.uuid()
+  teamId = teamId ?? faker.random.uuid()
+  await prisma.teamUser.create({
+    data: {
+      userId,
+      teamId,
+    },
+  })
+}
+
 export const seedTeamAndUsers = async (params: {
   id?: string
   name?: string

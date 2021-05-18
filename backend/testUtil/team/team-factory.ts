@@ -1,5 +1,5 @@
 import * as faker from 'faker'
-import { Team, TeamUser } from 'src/domain/entity/team/team'
+import { TeamUser } from 'src/domain/entity/team/team'
 import { UserStatus } from 'src/domain/valueOblect/user-status'
 
 export const createTeamUser = (params: {

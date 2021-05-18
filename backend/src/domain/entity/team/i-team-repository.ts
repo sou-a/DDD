@@ -5,7 +5,7 @@ export interface ITeamRepository {
   findById(teamId: string): Promise<Team>
   findByUserId(userId: string): Promise<Team | null>
   findByName(name: string): Promise<Team | null>
-  findMostLeastTeams(): Promise<Team[]>
+  findMostLeastTeam(): Promise<Team | null>
   save(team: Team): Promise<Team>
   delete(teamId: string): Promise<void>
   deleteTeamUser(userId: string): Promise<void>

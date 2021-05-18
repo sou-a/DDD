@@ -2,180 +2,141 @@ import { createRandomIdString } from 'src/util/random'
 import { prisma } from '@testUtil/prisma'
 import { PairRepository } from '../../repository/pair-repository'
 import { Pair } from 'src/domain/entity/pair/pair'
-import { createUser } from '@testUtil/user/user-factory'
+import { seedUser } from '@testUtil/user/seed-user'
+import { seedAllUserStatus } from '@testUtil/user-status-factory'
+import { seedPair, seedPairUser } from '@testUtil/pair/seed-pair'
 
-describe('pair-repository.ts', () => {
+describe('pair-repository.integration.ts', () => {
   const pairRepo = new PairRepository(prisma)
   beforeAll(async () => {
-    await prisma.pair.deleteMany({})
+    await prisma.pair.deleteMany()
   })
   afterAll(async () => {
+    await prisma.pairUser.deleteMany()
+    await prisma.user.deleteMany()
+    await prisma.userStatus.deleteMany()
+    await prisma.pair.deleteMany()
+
     await prisma.$disconnect()
+  })
+  beforeEach(async () => {
+    await prisma.pairUser.deleteMany()
+    await prisma.user.deleteMany()
+    await prisma.userStatus.deleteMany()
+    await prisma.pair.deleteMany()
   })
 
   describe('findAll', () => {
-    afterEach(async () => {
-      await prisma.pair.deleteMany({})
-    })
     it('[正常系]pairを全て取得できる', async () => {
-      const pairsExpected = [
-        {
-          id: createRandomIdString(),
-          name: 'a',
-        },
-        {
-          id: createRandomIdString(),
-          name: 'b',
-        },
-      ]
-      await prisma.pair.createMany({ data: pairsExpected })
-      expect(await pairRepo.findAll()).toHaveLength(2)
+      await seedAllUserStatus()
+      await seedUser({ id: '1' })
+      await seedUser({ id: '2' })
+      await seedPair({ id: '1' })
+      await seedPairUser({ userId: '1', pairId: '1' })
+      await seedPairUser({ userId: '2', pairId: '1' })
+
+      const pair = await pairRepo.findAll()
+      expect(pair).toHaveLength(1)
+      expect(pair[0]?.getAllProperties().pairUsers).toHaveLength(2)
     })
   })
 
   describe('findById', () => {
-    afterEach(async () => {
-      await prisma.pair.deleteMany({})
-    })
     it('[正常系]特定のidのpairを取得できる', async () => {
-      const pairsExpected = [
-        {
-          id: '1',
-          name: 'a',
-        },
-        {
-          id: '2',
-          name: 'b',
-        },
-      ]
-      await prisma.pair.createMany({ data: pairsExpected })
-      expect(await pairRepo.findById('1')).toHaveLength(1)
+      await seedAllUserStatus()
+      await seedUser({ id: '1' })
+      await seedUser({ id: '2' })
+      await seedPair({ id: '1' })
+      await seedPairUser({ userId: '1', pairId: '1' })
+      await seedPairUser({ userId: '2', pairId: '1' })
+
+      const pair = await pairRepo.findById('1')
+      expect(pair).toEqual(expect.any(Pair))
     })
   })
 
   describe('findByUserId', () => {
-    afterEach(async () => {
-      await prisma.pair.deleteMany({})
-    })
     it('[正常系]特定のuserIdのpairを取得できる', async () => {
-      const pairExpected = [
-        {
-          id: '1',
-          name: 'a',
-        },
-      ]
-      const usersExpected = [
-        {
-          id: '1',
-          userStatusId: '1',
-          name: 'user1',
-          mailAddress: 'sample@example.com',
-        },
-        {
-          id: '2',
-          userStatusId: '1',
-          name: 'user2',
-          mailAddress: '2sample@example.com',
-        },
-      ]
-      const pairUsersExpected = [
-        {
-          pairId: '1',
-          userId: '1',
-        },
-        {
-          pairId: '1',
-          userId: '2',
-        },
-      ]
-      await prisma.pair.createMany({ data: pairExpected })
-      await prisma.user.createMany({ data: usersExpected })
-      await prisma.pairUser.createMany({ data: pairUsersExpected })
-      expect(await pairRepo.findByUserId('1')).toHaveLength(1)
+      await seedAllUserStatus()
+      await seedUser({ id: '1' })
+      await seedUser({ id: '2' })
+      await seedPair({ id: '1' })
+      await seedPairUser({ userId: '1', pairId: '1' })
+      await seedPairUser({ userId: '2', pairId: '1' })
+
+      const pair = await pairRepo.findByUserId('1')
+      expect(pair).toEqual(expect.any(Pair))
+      expect(pair?.getAllProperties().id).toEqual('1')
     })
   })
 
   describe('save', () => {
-    afterEach(async () => {
-      await prisma.pair.deleteMany({})
-    })
     it('[正常系]pairを保存できる', async () => {
+      await seedAllUserStatus()
+      const user1 = await seedUser({ id: '1' })
+      const user2 = await seedUser({ id: '2' })
       const pairExpected = {
         id: createRandomIdString(),
-        name: 'user1',
-        users: [createUser({}), createUser({})],
+        name: 'a',
+        users: [user1, user2],
       }
+
+      let allPairs = await prisma.pair.findMany()
+      expect(allPairs).toHaveLength(0)
+
       await pairRepo.save(new Pair(pairExpected))
 
-      const allPairs = await prisma.pair.findMany({})
+      allPairs = await prisma.pair.findMany()
       expect(allPairs).toHaveLength(1)
-      expect(allPairs[0]).toEqual(pairExpected)
     })
   })
 
   describe('delete', () => {
-    afterEach(async () => {
-      await prisma.pair.deleteMany({})
-    })
     it('[正常系]特定のidのpairを削除できる', async () => {
-      const pairsExpected = [
-        {
-          id: '1',
-          name: 'user1',
-        },
-        {
-          id: '2',
-          name: 'user2',
-        },
-      ]
-      await prisma.pair.createMany({ data: pairsExpected })
+      await seedAllUserStatus()
+      await seedUser({ id: '1' })
+      await seedUser({ id: '2' })
+      await seedUser({ id: '3' })
+      await seedUser({ id: '4' })
+      await seedPair({ id: '1' })
+      await seedPair({ id: '2' })
+      await seedPairUser({ userId: '1', pairId: '1' })
+      await seedPairUser({ userId: '2', pairId: '1' })
+      await seedPairUser({ userId: '3', pairId: '2' })
+      await seedPairUser({ userId: '4', pairId: '2' })
+
+      let allPairs = await prisma.pair.findMany()
+      expect(allPairs).toHaveLength(2)
       await pairRepo.delete('1')
-      const allPairs = await prisma.pair.findMany({})
+      allPairs = await prisma.pair.findMany()
       expect(allPairs).toHaveLength(1)
     })
   })
 
   describe('deletePairUser', () => {
-    afterEach(async () => {
-      await prisma.pair.deleteMany({})
-    })
     it('[正常系]特定のidのpairUserを削除できる', async () => {
-      const pairExpected = [
-        {
-          id: '1',
-          name: 'a',
+      await seedAllUserStatus()
+      await seedUser({ id: '1' })
+      await seedUser({ id: '2' })
+      await seedUser({ id: '3' })
+      await seedPair({ id: '1' })
+      await seedPairUser({ userId: '1', pairId: '1' })
+      await seedPairUser({ userId: '2', pairId: '1' })
+      await seedPairUser({ userId: '3', pairId: '1' })
+
+      let allPairs = await prisma.pair.findFirst({
+        include: {
+          users: true,
         },
-      ]
-      const usersExpected = [
-        {
-          id: '1',
-          userStatusId: '1',
-          name: 'user1',
-          mailAddress: 'sample@example.com',
-        },
-        {
-          id: '2',
-          userStatusId: '1',
-          name: 'user2',
-          mailAddress: '2sample@example.com',
-        },
-      ]
-      const pairUsersExpected = [
-        {
-          pairId: '1',
-          userId: '1',
-        },
-        {
-          pairId: '1',
-          userId: '2',
-        },
-      ]
-      await prisma.pair.createMany({ data: pairExpected })
-      await prisma.user.createMany({ data: usersExpected })
-      await prisma.pairUser.createMany({ data: pairUsersExpected })
+      })
+      expect(allPairs?.users).toHaveLength(3)
       await pairRepo.deletePairUser('1')
-      const allPairs = await prisma.pairUser.findMany({})
-      expect(allPairs).toHaveLength(1)
+      allPairs = await prisma.pair.findFirst({
+        include: {
+          users: true,
+        },
+      })
+      expect(allPairs?.users).toHaveLength(2)
     })
   })
 })

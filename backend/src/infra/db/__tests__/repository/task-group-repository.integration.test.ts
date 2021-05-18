@@ -2,60 +2,48 @@ import { createRandomIdString } from 'src/util/random'
 import { prisma } from '@testUtil/prisma'
 import { TaskGroupRepository } from '../../repository/task-group-repository'
 import { TaskGroup } from 'src/domain/entity/task-group/task-group'
+import { seedTaskGroup } from '@testUtil/task-group/seed-task-group'
 
-describe('task-group-repository.ts', () => {
+describe('task-group-repository.integration.ts', () => {
   const taskGroupRepo = new TaskGroupRepository(prisma)
-  beforeAll(async () => {
-    await prisma.taskGroup.deleteMany({})
+  beforeEach(async () => {
+    await prisma.task.deleteMany()
+    await prisma.taskGroup.deleteMany()
   })
   afterAll(async () => {
+    await prisma.task.deleteMany()
+    await prisma.taskGroup.deleteMany()
+
     await prisma.$disconnect()
   })
 
   describe('findAll', () => {
-    afterEach(async () => {
-      await prisma.taskGroup.deleteMany({})
-    })
     it('[正常系]taskGroupを全て取得できる', async () => {
-      const taskGroupExpected = [
-        {
-          id: '1',
-          name: '1',
-        },
-        {
-          id: '2',
-          name: '2',
-        },
-      ]
-      await prisma.taskGroup.createMany({ data: taskGroupExpected })
-      expect(await taskGroupRepo.findAll()).toHaveLength(2)
+      await seedTaskGroup({})
+      await seedTaskGroup({})
+      const taskGroups = await taskGroupRepo.findAll()
+      taskGroups.map((taskGroup) => {
+        expect(taskGroup).toEqual(expect.any(TaskGroup))
+      })
     })
   })
 
   describe('findById', () => {
-    afterEach(async () => {
-      await prisma.taskGroup.deleteMany({})
-    })
     it('[正常系]特定のidのtaskGroupを取得できる', async () => {
-      const taskGroupExpected = [
-        {
-          id: '1',
-          name: '1',
-        },
-        {
-          id: '2',
-          name: '2',
-        },
-      ]
-      await prisma.taskGroup.createMany({ data: taskGroupExpected })
-      expect(await taskGroupRepo.findById('1')).toHaveLength(1)
+      await seedTaskGroup({ id: '1' })
+      await seedTaskGroup({ id: '2' })
+
+      const taskGroup = await taskGroupRepo.findById('1')
+      expect(taskGroup).toEqual(expect.any(TaskGroup))
+      expect(taskGroup).toEqual({
+        id: '1',
+        name: expect.any(String),
+        tasks: expect.any(Array),
+      })
     })
   })
 
   describe('save', () => {
-    afterEach(async () => {
-      await prisma.taskGroup.deleteMany({})
-    })
     it('[正常系]taskGroupを保存できる', async () => {
       const taskGroupExpected = {
         id: createRandomIdString(),
@@ -64,31 +52,30 @@ describe('task-group-repository.ts', () => {
       }
       await taskGroupRepo.save(new TaskGroup(taskGroupExpected))
 
-      const task = await prisma.taskGroup.findMany({})
-      expect(task).toHaveLength(1)
-      expect(task[0]).toEqual(taskGroupExpected)
+      const taskGroups = await prisma.taskGroup.findMany()
+      taskGroups.map((taskGroup) => {
+        expect(taskGroup).toEqual({
+          id: expect.any(String),
+          name: expect.any(String),
+        })
+      })
     })
   })
 
   describe('delete', () => {
-    afterEach(async () => {
-      await prisma.taskGroup.deleteMany({})
-    })
     it('[正常系]特定のidのtaskGroupを削除できる', async () => {
-      const taskGroupExpected = [
-        {
-          id: '1',
-          name: '1',
-        },
-        {
-          id: '2',
-          name: '2',
-        },
-      ]
-      await prisma.taskGroup.createMany({ data: taskGroupExpected })
+      await seedTaskGroup({ id: '1' })
+      await seedTaskGroup({ id: '2' })
+
       await taskGroupRepo.delete('1')
-      const allTasks = await prisma.taskGroup.findMany({})
-      expect(allTasks).toHaveLength(1)
+      const taskGroups = await prisma.taskGroup.findMany()
+      expect(taskGroups).toHaveLength(1)
+      taskGroups.map((taskGroup) => {
+        expect(taskGroup).toEqual({
+          id: '2',
+          name: expect.any(String),
+        })
+      })
     })
   })
 })
