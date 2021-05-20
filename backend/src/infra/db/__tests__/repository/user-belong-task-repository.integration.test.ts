@@ -7,7 +7,7 @@ import { seedUser } from '@testUtil/user/seed-user'
 import { seedTaskGroup } from '@testUtil/task-group/seed-task-group'
 import { seedTask } from '@testUtil/task/seed-task'
 import { seedAllUserStatus } from '@testUtil/user-status-factory'
-import { seedUserBelongTask } from '@testUtil/user-belong-task.ts/seed-user-belomg-task'
+import { seedUserBelongTask } from '@testUtil/user-belong-task/seed-user-belong-task'
 
 describe('user-belong-task-repository.integration.ts', () => {
   const userBelongTaskRepo = new UserBelongTaskRepository(prisma)

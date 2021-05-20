@@ -9,9 +9,13 @@ import { PairRepository } from 'src/infra/db/repository/pair-repository'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { UserStatus } from 'src/domain/valueOblect/user-status'
 import { UserQS } from 'src/infra/db/query-service/user-qs'
+import { createUser } from '@testUtil/user/user-factory'
+import { UserDTO } from '../dto/user-dto'
 
 jest.mock('@prisma/client')
 jest.mock('src/infra/db/repository/user-repository')
+jest.mock('src/domain/entity/user/user-service')
+jest.mock('src/infra/db/query-service/user-qs')
 
 describe('user-usecase.ts', () => {
   let mockUserRepo: MockedObjectDeep<UserRepository>
@@ -32,31 +36,79 @@ describe('user-usecase.ts', () => {
       }),
       true,
     )
+    mockUserQS = mocked(new UserQS(prisma), true)
   })
   describe('findAll', () => {
-    const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
-    it('[正常系]: 例外が発生しない', async () => {
-      return expect(usecase.findAll()).resolves.toBe(undefined)
+    it('[正常系]: DTOを返す', async () => {
+      const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
+      mockUserRepo.findAll.mockResolvedValueOnce([
+        createUser({}),
+        createUser({}),
+      ])
+
+      const userDTOs = await usecase.findAll()
+      userDTOs.map((userDTO) => {
+        expect(userDTO).toEqual(expect.any(UserDTO))
+      })
     })
     it('[準正常系]: findAllで例外が発生した場合、例外が発生する', () => {
+      const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
+
       const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
-      return expect(usecase.findAll()).rejects.toEqual(ERROR_MESSAGE)
+      mockUserRepo.findAll.mockRejectedValueOnce(ERROR_MESSAGE)
+      expect(usecase.findAll()).rejects.toEqual(ERROR_MESSAGE)
+    })
+  })
+
+  describe('findUsersByTasks', () => {
+    it('[正常系]: DTOを返す', async () => {
+      const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
+      mockUserQS.findUsersByTasks.mockResolvedValue([
+        new UserDTO({
+          id: '1',
+          name: 'n',
+          mailAddress: 'mail',
+          status: '在籍中',
+        }),
+      ])
+
+      const userDTOs = await usecase.findUsersByTasks({
+        taskIds: ['1'],
+        taskStatus: '完了',
+        offset: 1,
+      })
+      userDTOs.map((userDTO) => {
+        expect(userDTO).toEqual(expect.any(UserDTO))
+      })
+    })
+    it('[準正常系]: findUsersByTasksで例外が発生した場合、例外が発生する', () => {
+      const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
+      const ERROR_MESSAGE = 'error!'
+      mockUserQS.findUsersByTasks.mockRejectedValueOnce(ERROR_MESSAGE)
+
+      expect(
+        usecase.findUsersByTasks({
+          taskIds: ['1'],
+          taskStatus: '完了',
+          offset: 1,
+        }),
+      ).rejects.toEqual(ERROR_MESSAGE)
     })
   })
 
   describe('create', () => {
-    it('[正常系]: 例外が発生しない', async () => {
+    it('[正常系]: DTOを返す', async () => {
       const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
+      mockUserRepo.save.mockResolvedValueOnce(createUser({}))
       return expect(
         usecase.create({
           name: 'user1',
           mailAddress: 'mail1',
           status: UserStatus.active,
         }),
-      ).resolves.toBe(undefined)
+      ).resolves.toEqual(expect.any(UserDTO))
     })
-    it('[準正常系]: createで例外が発生した場合、例外が発生する', () => {
+    it('[準正常系]: saveで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
       mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
@@ -71,14 +123,18 @@ describe('user-usecase.ts', () => {
   })
 
   describe('changeStatus', () => {
-    it('[正常系]: 例外が発生しない', async () => {
+    it('[正常系]: DTOを返す', async () => {
       const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
+      mockUserRepo.save.mockResolvedValueOnce(createUser({}))
+      mockUserRepo.findById.mockResolvedValueOnce(createUser({}))
+
       return expect(
         usecase.changeStatus({ userId: '1', status: UserStatus.leave }),
-      ).resolves.toBe(undefined)
+      ).resolves.toEqual(expect.any(UserDTO))
     })
-    it('[準正常系]: changeStatusで例外が発生した場合、例外が発生する', () => {
+    it('[準正常系]: saveで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
+      mockUserRepo.findById.mockResolvedValueOnce(createUser({}))
       mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
       return expect(
@@ -90,11 +146,12 @@ describe('user-usecase.ts', () => {
   describe('delete', () => {
     it('[正常系]: 例外が発生しない', async () => {
       const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
-      return expect(usecase.delete({ userId: '1' })).resolves.toBe(undefined)
+      mockUserService.deleteUser.mockResolvedValueOnce(true)
+      return expect(usecase.delete({ userId: '1' })).resolves.toBe(true)
     })
     it('[準正常系]: deleteで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
+      mockUserService.deleteUser.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
       return expect(usecase.delete({ userId: '1' })).rejects.toEqual(
         ERROR_MESSAGE,

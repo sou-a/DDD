@@ -1,18 +1,19 @@
 import { PrismaClient } from '@prisma/client'
 import { mocked } from 'ts-jest/utils'
 import { MockedObjectDeep } from 'ts-jest/dist/utils/testing'
-import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { TaskRepository } from 'src/infra/db/repository/task-repository'
 import { UserBelongTaskRepository } from 'src/infra/db/repository/user-belong-task-repository'
 import { TaskGroupService } from 'src/domain/entity/task-group/task-group-service'
 import { TaskGroupRepository } from 'src/infra/db/repository/task-group-repository'
 import { TaskGroupUseCase } from '../task-group-usecase'
+import { createTaskGroup } from '@testUtil/task-group/task-group-factory'
+import { TaskGroupDTO } from '../dto/task-group-dto'
 
 jest.mock('@prisma/client')
-jest.mock('src/infra/db/repository/user-repository')
+jest.mock('src/infra/db/repository/task-group-repository')
+jest.mock('src/domain/entity/task-group/task-group-service')
 
 describe('task-group-usecase.ts', () => {
-  let mockUserRepo: MockedObjectDeep<UserRepository>
   let mockTaskRepo: MockedObjectDeep<TaskRepository>
   let mockTaskGroupRepo: MockedObjectDeep<TaskGroupRepository>
   let mockTaskGroupService: MockedObjectDeep<TaskGroupService>
@@ -20,7 +21,6 @@ describe('task-group-usecase.ts', () => {
 
   beforeAll(() => {
     const prisma = new PrismaClient()
-    mockUserRepo = mocked(new UserRepository(prisma), true)
     mockTaskRepo = mocked(new TaskRepository(prisma), true)
     mockTaskGroupRepo = mocked(new TaskGroupRepository(prisma), true)
     mockUserBelongTaskRepo = mocked(new UserBelongTaskRepository(prisma), true)
@@ -34,35 +34,47 @@ describe('task-group-usecase.ts', () => {
     )
   })
   describe('findAll', () => {
-    const usecase = new TaskGroupUseCase(
-      mockTaskGroupRepo,
-      mockTaskGroupService,
-    )
-    it('[正常系]: 例外が発生しない', async () => {
-      return expect(usecase.findAll()).resolves.toBe(undefined)
+    it('[正常系]: DTOを返す', async () => {
+      const usecase = new TaskGroupUseCase(
+        mockTaskGroupRepo,
+        mockTaskGroupService,
+      )
+      mockTaskGroupRepo.findAll.mockResolvedValueOnce([
+        createTaskGroup({}),
+        createTaskGroup({}),
+      ])
+      const taskGroupDTOs = await usecase.findAll()
+      taskGroupDTOs.map((taskGroupDTO) => {
+        return expect(taskGroupDTO).toEqual(expect.any(TaskGroupDTO))
+      })
     })
     it('[準正常系]: findAllで例外が発生した場合、例外が発生する', () => {
+      const usecase = new TaskGroupUseCase(
+        mockTaskGroupRepo,
+        mockTaskGroupService,
+      )
       const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
+      mockTaskGroupRepo.findAll.mockRejectedValueOnce(ERROR_MESSAGE)
       return expect(usecase.findAll()).rejects.toEqual(ERROR_MESSAGE)
     })
   })
 
   describe('create', () => {
-    it('[正常系]: 例外が発生しない', async () => {
+    it('[正常系]: DTOを返す', () => {
       const usecase = new TaskGroupUseCase(
         mockTaskGroupRepo,
         mockTaskGroupService,
       )
+      mockTaskGroupRepo.save.mockResolvedValueOnce(createTaskGroup({}))
       return expect(
         usecase.create({
           name: 'task1',
         }),
-      ).resolves.toBe(undefined)
+      ).resolves.toEqual(expect.any(TaskGroupDTO))
     })
-    it('[準正常系]: createで例外が発生した場合、例外が発生する', () => {
+    it('[準正常系]: saveで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
+      mockTaskGroupRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new TaskGroupUseCase(
         mockTaskGroupRepo,
         mockTaskGroupService,
@@ -76,21 +88,25 @@ describe('task-group-usecase.ts', () => {
   })
 
   describe('changeName', () => {
-    it('[正常系]: 例外が発生しない', async () => {
+    it('[正常系]: 例外が発生しない', () => {
       const usecase = new TaskGroupUseCase(
         mockTaskGroupRepo,
         mockTaskGroupService,
       )
+      mockTaskGroupRepo.findById.mockResolvedValueOnce(createTaskGroup({}))
+      mockTaskGroupRepo.save.mockResolvedValueOnce(createTaskGroup({}))
+
       return expect(
         usecase.changeName({
           taskGroupId: '1',
           name: 'name1',
         }),
-      ).resolves.toBe(undefined)
+      ).resolves.toEqual(expect.any(TaskGroupDTO))
     })
-    it('[準正常系]: changeNameで例外が発生した場合、例外が発生する', () => {
+    it('[準正常系]: saveで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
+      mockTaskGroupRepo.findById.mockResolvedValueOnce(createTaskGroup({}))
+      mockTaskGroupRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new TaskGroupUseCase(
         mockTaskGroupRepo,
         mockTaskGroupService,
@@ -105,18 +121,22 @@ describe('task-group-usecase.ts', () => {
   })
 
   describe('delete', () => {
-    it('[正常系]: 例外が発生しない', async () => {
+    it('[正常系]: 例外が発生しない', () => {
       const usecase = new TaskGroupUseCase(
         mockTaskGroupRepo,
         mockTaskGroupService,
       )
+      mockTaskGroupRepo.findById.mockResolvedValueOnce(createTaskGroup({}))
+      mockTaskGroupService.delete.mockResolvedValueOnce()
+
       return expect(usecase.delete({ taskGroupId: '1' })).resolves.toBe(
         undefined,
       )
     })
     it('[準正常系]: deleteで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
+      mockTaskGroupRepo.findById.mockResolvedValueOnce(createTaskGroup({}))
+      mockTaskGroupService.delete.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new TaskGroupUseCase(
         mockTaskGroupRepo,
         mockTaskGroupService,

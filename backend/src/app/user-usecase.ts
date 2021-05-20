@@ -45,7 +45,7 @@ export class UserUseCase {
     offset: number
   }): Promise<UserDTO[]> {
     const { taskIds, taskStatus, offset } = props
-    return this.userQS.findUsersByTasks({ taskIds, taskStatus, offset }) // TODO: awaitあってもなくてもエラーにはならないが、その違いは...？
+    return this.userQS.findUsersByTasks({ taskIds, taskStatus, offset })
   }
 
   public async create(props: {
@@ -74,7 +74,6 @@ export class UserUseCase {
     }
   }
 
-  // TODO: メールアドレス等変更したい場合はどうするんだろ（ドメインオブジェクト側で全部用意するのかな（new User で詰め替えるのはNGな気がするし））
   public async changeStatus(props: {
     userId: string
     status: string

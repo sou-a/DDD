@@ -6,9 +6,15 @@ import { TeamUseCase } from '../team-usecase'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { TeamService } from 'src/domain/entity/team/team-service'
 import { TeamFactory } from 'src/domain/entity/team/team-factory'
+import { TeamDTO } from '../dto/team-dto'
+import { createTeam } from '@testUtil/team/team-factory'
+import { createUser } from '@testUtil/user/user-factory'
 
 jest.mock('@prisma/client')
 jest.mock('src/infra/db/repository/user-repository')
+jest.mock('src/infra/db/repository/team-repository')
+jest.mock('src/domain/entity/team/team-service')
+jest.mock('src/domain/entity/team/team-factory')
 
 describe('team-usecase.ts', () => {
   let mockUserRepo: MockedObjectDeep<UserRepository>
@@ -34,46 +40,68 @@ describe('team-usecase.ts', () => {
     )
   })
   describe('findAll', () => {
-    const usecase = new TeamUseCase(
-      mockTeamRepo,
-      mockUserRepo,
-      mockTeamService,
-      mockTeamFactory,
-    )
-    it('[正常系]: 例外が発生しない', async () => {
-      return expect(usecase.findAll()).resolves.toBe(undefined)
+    it('[正常系]: DTOを返す', async () => {
+      const usecase = new TeamUseCase(
+        mockTeamRepo,
+        mockUserRepo,
+        mockTeamService,
+        mockTeamFactory,
+      )
+      mockTeamRepo.findAll.mockResolvedValueOnce([
+        createTeam({}),
+        createTeam({}),
+      ])
+
+      const teamDTOs = await usecase.findAll()
+      teamDTOs.map((teamDTO) => {
+        return expect(teamDTO).toEqual(expect.any(TeamDTO))
+      })
     })
     it('[準正常系]: findAllで例外が発生した場合、例外が発生する', () => {
+      const usecase = new TeamUseCase(
+        mockTeamRepo,
+        mockUserRepo,
+        mockTeamService,
+        mockTeamFactory,
+      )
       const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
+      mockTeamRepo.findAll.mockRejectedValueOnce(ERROR_MESSAGE)
+
       return expect(usecase.findAll()).rejects.toEqual(ERROR_MESSAGE)
     })
   })
 
   describe('create', () => {
-    it('[正常系]: 例外が発生しない', async () => {
+    it('[正常系]: DTOを返す', () => {
       const usecase = new TeamUseCase(
         mockTeamRepo,
         mockUserRepo,
         mockTeamService,
         mockTeamFactory,
       )
+      mockUserRepo.findById.mockResolvedValue(createUser({}))
+      mockTeamFactory.createTeam.mockResolvedValueOnce(createTeam({}))
+      mockTeamRepo.save.mockResolvedValueOnce(createTeam({}))
+
       return expect(
         usecase.create({
           name: 'team1',
           userIds: ['1', '2'],
         }),
-      ).resolves.toBe(undefined)
+      ).resolves.toEqual(expect.any(TeamDTO))
     })
-    it('[準正常系]: createで例外が発生した場合、例外が発生する', () => {
+    it('[準正常系]: saveで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
+      mockUserRepo.findById.mockResolvedValue(createUser({}))
+      mockTeamFactory.createTeam.mockResolvedValueOnce(createTeam({}))
+      mockTeamRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new TeamUseCase(
         mockTeamRepo,
         mockUserRepo,
         mockTeamService,
         mockTeamFactory,
       )
+
       return expect(
         usecase.create({
           name: 'team1',
@@ -91,19 +119,26 @@ describe('team-usecase.ts', () => {
         mockTeamService,
         mockTeamFactory,
       )
+      mockUserRepo.findById.mockResolvedValue(createUser({}))
+      mockTeamRepo.findById.mockResolvedValueOnce(createTeam({}))
+      mockTeamRepo.save.mockResolvedValueOnce(createTeam({}))
+
       return expect(
         usecase.createTeamUser({ teamId: '1', userId: '1' }),
-      ).resolves.toBe(undefined)
+      ).resolves.toEqual(expect.any(TeamDTO))
     })
     it('[準正常系]: createTeamUserで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new TeamUseCase(
         mockTeamRepo,
         mockUserRepo,
         mockTeamService,
         mockTeamFactory,
       )
+      mockUserRepo.findById.mockResolvedValue(createUser({}))
+      mockTeamRepo.findById.mockResolvedValueOnce(createTeam({}))
+      mockTeamRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
+
       return expect(
         usecase.createTeamUser({ teamId: '1', userId: '1' }),
       ).rejects.toEqual(ERROR_MESSAGE)
@@ -118,19 +153,28 @@ describe('team-usecase.ts', () => {
         mockTeamService,
         mockTeamFactory,
       )
+      mockUserRepo.findById.mockResolvedValue(createUser({}))
+      mockTeamRepo.findById.mockResolvedValueOnce(createTeam({}))
+      mockTeamService.deleteTeamUserAndSave.mockResolvedValueOnce(
+        createTeam({}),
+      )
+
       return expect(
         usecase.deleteTeamUser({ teamId: '1', userId: '1' }),
-      ).resolves.toBe(undefined)
+      ).resolves.toEqual(expect.any(TeamDTO))
     })
     it('[準正常系]: deleteTeamUserで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new TeamUseCase(
         mockTeamRepo,
         mockUserRepo,
         mockTeamService,
         mockTeamFactory,
       )
+      mockUserRepo.findById.mockResolvedValue(createUser({}))
+      mockTeamRepo.findById.mockResolvedValueOnce(createTeam({}))
+      mockTeamService.deleteTeamUserAndSave.mockRejectedValueOnce(ERROR_MESSAGE)
+
       return expect(
         usecase.deleteTeamUser({ teamId: '1', userId: '1' }),
       ).rejects.toEqual(ERROR_MESSAGE)
@@ -138,24 +182,27 @@ describe('team-usecase.ts', () => {
   })
 
   describe('delete', () => {
-    it('[正常系]: 例外が発生しない', async () => {
+    it('[正常系]: 例外が発生しない', () => {
       const usecase = new TeamUseCase(
         mockTeamRepo,
         mockUserRepo,
         mockTeamService,
         mockTeamFactory,
       )
+      mockTeamRepo.delete.mockResolvedValueOnce()
+
       return expect(usecase.delete({ teamId: '1' })).resolves.toBe(undefined)
     })
     it('[準正常系]: deleteで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new TeamUseCase(
         mockTeamRepo,
         mockUserRepo,
         mockTeamService,
         mockTeamFactory,
       )
+      mockTeamRepo.delete.mockRejectedValueOnce(ERROR_MESSAGE)
+
       return expect(usecase.delete({ teamId: '1' })).rejects.toEqual(
         ERROR_MESSAGE,
       )

@@ -1,5 +1,4 @@
 import { prisma } from '@testUtil/prisma'
-import { resetDatabase } from '@testUtil/resetDB'
 import { seedTeamAndUsers } from '@testUtil/team/seed-team'
 import { seedAllUserStatus } from '@testUtil/user-status-factory'
 import { createUser } from '@testUtil/user/user-factory'
@@ -12,10 +11,21 @@ import { mocked } from 'ts-jest/utils'
 describe('team-factory.integration.ts', () => {
   describe('createTeam', () => {
     let mockTeamRepo: MockedObjectDeep<TeamRepository>
+    afterAll(async () => {
+      await prisma.$disconnect()
+    })
     beforeEach(async () => {
-      await resetDatabase()
+      await prisma.teamUser.deleteMany()
+      await prisma.user.deleteMany()
+      await prisma.team.deleteMany()
+      await prisma.userStatus.deleteMany()
     })
     afterAll(async () => {
+      await prisma.teamUser.deleteMany()
+      await prisma.user.deleteMany()
+      await prisma.team.deleteMany()
+      await prisma.userStatus.deleteMany()
+
       await prisma.$disconnect()
     })
     it('[正常系]チームを生成できる', async () => {

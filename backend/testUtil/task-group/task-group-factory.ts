@@ -1,7 +1,7 @@
 import * as faker from 'faker'
 import { TaskGroup } from 'src/domain/entity/task-group/task-group'
 
-export const createTaskGroup = async (params: {
+export const createTaskGroup = (params: {
   id?: string
   name?: string
   tasks?: string[]

@@ -72,7 +72,7 @@ export class TaskGroupUseCase {
       taskGroupId,
     )
     try {
-      this.taskGroupService.delete(taskGroup)
+      await this.taskGroupService.delete(taskGroup)
     } catch (error) {
       throw error
     }

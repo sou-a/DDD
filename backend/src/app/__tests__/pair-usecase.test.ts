@@ -4,9 +4,13 @@ import { MockedObjectDeep } from 'ts-jest/dist/utils/testing'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { PairRepository } from 'src/infra/db/repository/pair-repository'
 import { PairUseCase } from '../pair-usecase'
+import { PairDTO } from '../dto/pair-dto'
+import { createPair } from '@testUtil/pair/pair-factory'
+import { createUser } from '@testUtil/user/user-factory'
 
 jest.mock('@prisma/client')
 jest.mock('src/infra/db/repository/user-repository')
+jest.mock('src/infra/db/repository/pair-repository')
 
 describe('pair-usecase.ts', () => {
   let mockUserRepo: MockedObjectDeep<UserRepository>
@@ -17,34 +21,46 @@ describe('pair-usecase.ts', () => {
     mockPairRepo = mocked(new PairRepository(prisma), true)
   })
   describe('findAll', () => {
-    const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
-    it('[正常系]: 例外が発生しない', async () => {
-      return expect(usecase.findAll()).resolves.toBe(undefined)
+    it('[正常系]: DTOを返す', async () => {
+      const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
+      mockPairRepo.findAll.mockResolvedValueOnce([
+        createPair({}),
+        createPair({}),
+      ])
+
+      const pairDTOs = await usecase.findAll()
+      pairDTOs.map((pairDTO) => {
+        expect(pairDTO).toEqual(expect.any(PairDTO))
+      })
     })
     it('[準正常系]: findAllで例外が発生した場合、例外が発生する', () => {
+      const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
       const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
-      return expect(usecase.findAll()).rejects.toEqual(ERROR_MESSAGE)
+      mockPairRepo.findAll.mockRejectedValueOnce(ERROR_MESSAGE)
+
+      expect(usecase.findAll()).rejects.toEqual(ERROR_MESSAGE)
     })
   })
 
   describe('create', () => {
-    it('[正常系]: 例外が発生しない', async () => {
+    it('[正常系]: DTOを返す', () => {
       const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
-      return expect(
-        usecase.create({
-          name: 'pair1',
-          userIds: ['1', '2'],
-        }),
-      ).resolves.toBe(undefined)
+      mockUserRepo.findById.mockResolvedValue(createUser({}))
+      mockPairRepo.save.mockResolvedValueOnce(createPair({}))
+
+      expect(
+        usecase.create({ name: 'a', userIds: ['1', '2'] }),
+      ).resolves.toEqual(expect.any(PairDTO))
     })
-    it('[準正常系]: createで例外が発生した場合、例外が発生する', () => {
-      const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
+    it('[準正常系]: saveで例外が発生した場合、例外が発生する', () => {
       const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
+      const ERROR_MESSAGE = 'error!'
+      mockUserRepo.findById.mockResolvedValueOnce(createUser({}))
+      mockPairRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
+
       return expect(
         usecase.create({
-          name: 'pair1',
+          name: 'a',
           userIds: ['1', '2'],
         }),
       ).rejects.toEqual(ERROR_MESSAGE)
@@ -52,16 +68,23 @@ describe('pair-usecase.ts', () => {
   })
 
   describe('addPairUser', () => {
-    it('[正常系]: 例外が発生しない', async () => {
+    it('[正常系]: DTOを返す', () => {
       const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
+      mockUserRepo.findById.mockResolvedValueOnce(createUser({}))
+      mockPairRepo.findById.mockResolvedValueOnce(createPair({}))
+      mockPairRepo.save.mockResolvedValueOnce(createPair({}))
+
       return expect(
         usecase.addPairUser({ pairId: '1', userId: '1' }),
-      ).resolves.toBe(undefined)
+      ).resolves.toEqual(expect.any(PairDTO))
     })
-    it('[準正常系]: addPairUserで例外が発生した場合、例外が発生する', () => {
-      const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
+    it('[準正常系]: saveで例外が発生した場合、例外が発生する', () => {
       const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
+      const ERROR_MESSAGE = 'error!'
+      mockUserRepo.findById.mockResolvedValueOnce(createUser({}))
+      mockPairRepo.findById.mockResolvedValueOnce(createPair({}))
+      mockPairRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
+
       return expect(
         usecase.addPairUser({ pairId: '1', userId: '1' }),
       ).rejects.toEqual(ERROR_MESSAGE)
@@ -69,16 +92,21 @@ describe('pair-usecase.ts', () => {
   })
 
   describe('removePairUser', () => {
-    it('[正常系]: 例外が発生しない', async () => {
+    it('[正常系]: DTOを返す', () => {
       const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
+      mockPairRepo.findById.mockResolvedValueOnce(createPair({}))
+      mockPairRepo.save.mockResolvedValueOnce(createPair({}))
+
       return expect(
         usecase.removePairUser({ pairId: '1', userId: '1' }),
-      ).resolves.toBe(undefined)
+      ).resolves.toEqual(expect.any(PairDTO))
     })
     it('[準正常系]: removePairUserで例外が発生した場合、例外が発生する', () => {
-      const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
+      const ERROR_MESSAGE = 'error!'
+      mockPairRepo.findById.mockResolvedValueOnce(createPair({}))
+      mockPairRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
+
       return expect(
         usecase.removePairUser({ pairId: '1', userId: '1' }),
       ).rejects.toEqual(ERROR_MESSAGE)
@@ -86,14 +114,17 @@ describe('pair-usecase.ts', () => {
   })
 
   describe('delete', () => {
-    it('[正常系]: 例外が発生しない', async () => {
+    it('[正常系]: 例外が発生しない', () => {
       const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
-      return expect(usecase.delete({ pairId: '1' })).resolves.toBe(undefined)
+      mockPairRepo.delete.mockResolvedValueOnce(true)
+
+      return expect(usecase.delete({ pairId: '1' })).resolves.toBe(true)
     })
     it('[準正常系]: deleteで例外が発生した場合、例外が発生する', () => {
-      const ERROR_MESSAGE = 'error!'
-      mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
+      const ERROR_MESSAGE = 'error!'
+      mockPairRepo.delete.mockRejectedValueOnce(ERROR_MESSAGE)
+
       return expect(usecase.delete({ pairId: '1' })).rejects.toEqual(
         ERROR_MESSAGE,
       )

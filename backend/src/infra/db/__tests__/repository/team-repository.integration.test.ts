@@ -121,7 +121,7 @@ describe('team-repository.integration.ts', () => {
       await seedTeamUser({ userId: '6', teamId: '2' })
       await seedTeamUser({ userId: '7', teamId: '2' })
 
-      const team = await teamRepo.findMostLeastTeam()
+      const team = await teamRepo.findMostLeastTeam('2')
       expect(team).toEqual(expect.any(Team))
       expect(team).toEqual({
         id: '1',

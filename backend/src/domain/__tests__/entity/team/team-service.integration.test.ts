@@ -1,5 +1,4 @@
 import { prisma } from '@testUtil/prisma'
-import { resetDatabase } from '@testUtil/resetDB'
 import { seedTeamAndUsers } from '@testUtil/team/seed-team'
 import { seedAllUserStatus } from '@testUtil/user-status-factory'
 import { createUser } from '@testUtil/user/user-factory'
@@ -19,9 +18,17 @@ describe('team-service.integration.ts', () => {
       mockUserRepo = mocked(new UserRepository(prisma), true)
     })
     beforeEach(async () => {
-      await resetDatabase()
+      await prisma.teamUser.deleteMany()
+      await prisma.user.deleteMany()
+      await prisma.team.deleteMany()
+      await prisma.userStatus.deleteMany()
     })
     afterAll(async () => {
+      await prisma.teamUser.deleteMany()
+      await prisma.user.deleteMany()
+      await prisma.team.deleteMany()
+      await prisma.userStatus.deleteMany()
+
       await prisma.$disconnect()
     })
     it('[正常系]チームユーザーを削除できる', async () => {
@@ -47,9 +54,9 @@ describe('team-service.integration.ts', () => {
       // マージ対象のチーム
       await seedTeamAndUsers({
         users: [
+          createUser({ id: '4' }),
+          createUser({ id: '5' }),
           createUser({ id: '6' }),
-          createUser({ id: '7' }),
-          createUser({ id: '8' }),
         ],
       })
       const team = await seedTeamAndUsers({

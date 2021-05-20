@@ -165,11 +165,16 @@ export class TeamRepository implements ITeamRepository {
     return entity
   }
 
-  public async findMostLeastTeam(): Promise<Team | null> {
+  public async findMostLeastTeam(exceptId: string): Promise<Team | null> {
     const teamsCountUsers = await this.prismaClient.team.findMany({
       include: {
         _count: {
           select: { users: true },
+        },
+      },
+      where: {
+        NOT: {
+          id: exceptId,
         },
       },
     })

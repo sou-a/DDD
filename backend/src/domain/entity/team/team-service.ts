@@ -35,7 +35,9 @@ export class TeamService {
     } else {
       // 最も参加人数が少ないチームを選ぶ
       // TODO: fix: 自分（存続できないチーム(resultTeam)）が選ばれる可能性がある
-      const mostLeastTeam = await this.teamRepository.findMostLeastTeam()
+      const mostLeastTeam = await this.teamRepository.findMostLeastTeam(
+        resultTeam.getAllProperties().id,
+      )
 
       // TODO: 最も参加人数が少ないチームは複数いる可能性があるが、それを決めるロジックがリポジトリのfindMostLeastTeam()に入ってしまっている
       const mergeTeam = mostLeastTeam
@@ -58,9 +60,9 @@ export class TeamService {
       })
 
       // 存続できないチームを削除
-      this.teamRepository.delete(resultTeam.getAllProperties().id)
+      await this.teamRepository.delete(resultTeam.getAllProperties().id)
 
-      // TODO: ↑と↓で１トランザクションになっているか確認したい
+      // TODO: ↑と↓で１トランザクションはっているか確認したい
       return await this.teamRepository.save(mergeTeam)
     }
   }

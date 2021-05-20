@@ -11,8 +11,7 @@ import { seedUser } from '@testUtil/user/seed-user'
 import { seedTask } from '@testUtil/task/seed-task'
 import { seedAllTaskStatus } from '@testUtil/task-status-factory'
 import { seedAllUserStatus } from '@testUtil/user-status-factory'
-import { seedUserBelongTask } from '@testUtil/user-belong-task.ts/seed-user-belomg-task'
-import { resetDatabase } from '@testUtil/resetDB'
+import { seedUserBelongTask } from '@testUtil/user-belong-task/seed-user-belong-task'
 
 describe('task-group-service.integration.ts', () => {
   let mockTaskRepo: MockedObjectDeep<TaskRepository>
@@ -24,7 +23,22 @@ describe('task-group-service.integration.ts', () => {
     mockUserBelongTaskRepo = mocked(new UserBelongTaskRepository(prisma), true)
   })
   beforeEach(async () => {
-    await resetDatabase()
+    await prisma.taskUser.deleteMany()
+    await prisma.user.deleteMany()
+    await prisma.task.deleteMany()
+    await prisma.taskGroup.deleteMany()
+    await prisma.userStatus.deleteMany()
+    await prisma.taskUserStatus.deleteMany()
+  })
+  afterAll(async () => {
+    await prisma.taskUser.deleteMany()
+    await prisma.user.deleteMany()
+    await prisma.task.deleteMany()
+    await prisma.taskGroup.deleteMany()
+    await prisma.userStatus.deleteMany()
+    await prisma.taskUserStatus.deleteMany()
+
+    await prisma.$disconnect()
   })
   describe('delete', () => {
     it('[正常系]タスクを削除したとき関連する中間テーブルからも削除する', async () => {
