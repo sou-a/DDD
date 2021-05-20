@@ -1,9 +1,8 @@
-import { PairUser } from 'src/domain/entity/pair/pair' // TODO: ドメインオブジェクトに依存して良いのだろうか...
-
+import { PairUser } from 'src/domain/entity/pair/pair'
 export class PairDTO {
   public readonly id: string
   public readonly name: string
-  public readonly pairUsers: PairUser[] // TODO: idとかもらっても嬉しくないよね...？（Userとかが欲しいはず...）
+  public readonly pairUsers: PairUser[]
   public constructor(props: {
     id: string
     name: string

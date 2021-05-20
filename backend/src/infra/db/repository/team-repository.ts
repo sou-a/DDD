@@ -127,8 +127,7 @@ export class TeamRepository implements ITeamRepository {
   }
 
   public async findByName(name: string): Promise<Team | null> {
-    // TODO: findUnique
-    const model = await this.prismaClient.team.findFirst({
+    const model = await this.prismaClient.team.findUnique({
       where: {
         name: name,
       },
@@ -178,7 +177,6 @@ export class TeamRepository implements ITeamRepository {
         },
       },
     })
-    // TODO: 最小のチームを決めるロジックがリポジトリに存在している
     const mostLeastTeam = teamsCountUsers.reduce((a, b) => {
       if (!a._count || !b._count) {
         throw new Error('想定外のエラー')
@@ -281,7 +279,6 @@ export class TeamRepository implements ITeamRepository {
 
   public async delete(teamId: string): Promise<void> {
     // 関連するテーブル（チームユーザー）を削除
-    // TODO: ドメインサービスかユースケースで定義すべき...？
     await this.prismaClient.team.update({
       where: {
         id: teamId,

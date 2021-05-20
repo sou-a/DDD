@@ -76,7 +76,7 @@ export class Pair {
     const removedPairUser = this.pairUsers.filter(
       (pairUser) => userId !== pairUser.getAllProperties().userId,
     )
-    // - 参加者2名以上から成る（TODO: 生成時のルールと重複）
+    // - 参加者2名以上から成る
     if (removedPairUser.length < this.lowerLimit) {
       throw new Error(`ペアユーザーは${this.lowerLimit}名以上必要です`)
     }
@@ -93,7 +93,6 @@ export class Pair {
   }
 }
 
-// TODO: exportしないとリポジトリで型指定できない（interfaceだとprivateなプロパティはうまくいかない）
 export class PairUser {
   private pairId: string
   private userId: string

@@ -54,8 +54,7 @@ export class UserRepository implements IUserRepository {
   public async save(user: User): Promise<User> {
     const { id, name, mailAddress, status } = user.getAllProperties()
 
-    // TODO: findUnique
-    const userStatusModel = await this.prismaClient.userStatus.findFirst({
+    const userStatusModel = await this.prismaClient.userStatus.findUnique({
       where: {
         name: status.getStatus(),
       },

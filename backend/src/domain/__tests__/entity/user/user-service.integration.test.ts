@@ -55,7 +55,6 @@ describe('user-service.integration.ts', () => {
         teamService: mockTeamService,
       })
 
-      // TODO: テストデータを作るのが面倒
       await seedAllUserStatus()
       await seedTeamAndUsers({
         users: [

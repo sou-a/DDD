@@ -33,7 +33,7 @@ export class TaskGroupUseCase {
     const taskGroup: TaskGroup = new TaskGroup({
       id: createRandomIdString(),
       name,
-      tasks: [], // TODO: 微妙？
+      tasks: [], // 微妙？
     })
     try {
       const savedTaskGroup = await this.taskGroupRepository.save(taskGroup)

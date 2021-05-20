@@ -78,7 +78,6 @@ export class TaskUseCase {
     }
   }
 
-  // TODO: changeStatus（おそらくユーザーが使用するもの）とchangeTaskGroup（おそらく管理者が使用するもの）が一緒になっているのは違和感
   public async changeTaskGroup(props: {
     taskId: string
     taskGroupId: string

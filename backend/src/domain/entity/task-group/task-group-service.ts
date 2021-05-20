@@ -25,12 +25,10 @@ export class TaskGroupService {
   }
 
   //  - 課題グループを削除した場合、そのグループに属する課題も自動的に削除される
-  // TODO: 外部キー制約でどのみち削除できないので、リポジトリに書いても良さそうだけど...？（リポジトリだとdeleteManyと書くだけなので、楽）
   public async delete(taskGroup: TaskGroup) {
     await Promise.all(
       // ユーザーが所持するタスク削除
       taskGroup.getAllProperties().tasks.map(async (taskId) => {
-        // TODO: タスクの数だけクエリ発行するのはよくなさそう...
         await this.userBelongTaskRepository.deleteByTaskId(taskId)
       }),
     )

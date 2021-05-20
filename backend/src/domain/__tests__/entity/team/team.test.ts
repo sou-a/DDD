@@ -78,7 +78,7 @@ describe('team.ts', () => {
     })
   })
 
-  describe('removeTeamUser', () => {
+  describe('removeTeamUserFromTeamService', () => {
     it('[正常系]チームユーザーを削除できる', () => {
       const team = new Team({
         id: createRandomIdString(),
@@ -91,7 +91,7 @@ describe('team.ts', () => {
         ],
       })
       expect(team.getAllProperties().teamUsers).toHaveLength(4)
-      team.removeTeamUser('1')
+      team.removeTeamUserFromTeamService('1')
       expect(team.getAllProperties().teamUsers).toHaveLength(3)
     })
   })

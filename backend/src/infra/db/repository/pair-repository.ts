@@ -85,7 +85,7 @@ export class PairRepository implements IPairRepository {
   }
 
   public async findByUserId(userId: string): Promise<Pair | null> {
-    // TODO: findUnique
+    // findUniqueで探したい...
     const model = await this.prismaClient.pair.findFirst({
       where: {
         users: {
@@ -189,7 +189,6 @@ export class PairRepository implements IPairRepository {
 
   public async delete(pairId: string): Promise<boolean> {
     // 関連するテーブル（ペアユーザー）を削除
-    // TODO: ドメインサービスかユースケースで定義すべき...？
     await this.prismaClient.pair.update({
       where: {
         id: pairId,

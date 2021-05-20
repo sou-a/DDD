@@ -6,7 +6,7 @@ export class Team {
   private name: string
   private teamUsers: TeamUser[]
 
-  static lowerLimit = 3 // TODO: staticありかなしか（pairと比較）
+  static lowerLimit = 3
   static numberRegex = /^[0-9]+$/
 
   public constructor(props: { id: string; name: string; users: User[] }) {
@@ -54,12 +54,11 @@ export class Team {
   }
 
   /**
-   * TODO: ドメインサービスからのみ呼び出して欲しい。（直接呼び出されると、合併処理のルールが破られるため）
    *
    * チームユーザーを削除する
    * @param userId
    */
-  public removeTeamUser(userId: string): Team {
+  public removeTeamUserFromTeamService(userId: string): Team {
     const removeTeamUser = this.teamUsers.filter(
       (teamUser) => userId !== teamUser.getAllProperties().userId,
     )
@@ -76,7 +75,6 @@ export class Team {
   }
 }
 
-// TODO: exportしないと別ファイル（ドメインサービス等）で型指定できない...
 export class TeamUser {
   private teamId: string
   private userId: string

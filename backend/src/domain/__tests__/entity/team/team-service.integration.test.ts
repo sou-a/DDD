@@ -8,7 +8,6 @@ import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { MockedObjectDeep } from 'ts-jest/dist/utils/testing'
 import { mocked } from 'ts-jest/utils'
 
-// TODO: 遅い。このファイルだけで9sかかる。（他にも遅いファイルあり）
 describe('team-service.integration.ts', () => {
   describe('deleteTeamUser', () => {
     let mockTeamRepo: MockedObjectDeep<TeamRepository>

@@ -32,11 +32,12 @@ export class UserBelongTaskRepository implements IUserBelongTaskRepository {
     userId: string,
     taskId: string,
   ): Promise<UserBelongTask> {
-    // TODO: Unique
-    const model = await this.prismaClient.taskUser.findFirst({
+    const model = await this.prismaClient.taskUser.findUnique({
       where: {
-        userId,
-        taskId,
+        taskId_userId: {
+          userId,
+          taskId,
+        },
       },
       include: {
         task: true,
@@ -75,7 +76,7 @@ export class UserBelongTaskRepository implements IUserBelongTaskRepository {
         status: new TaskStatus(model.taskUserStatus.name),
       })
     })
-    return entities // TODO: id渡されても不便じゃない？（taskを渡して欲しいことが多いはず）→クエリサービスを使う...？
+    return entities
   }
 
   public async save(UserBelongtask: UserBelongTask): Promise<UserBelongTask> {

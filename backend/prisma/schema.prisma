@@ -52,7 +52,7 @@ model PairUser {
 
 model Team {
   id   String @id
-  name String
+  name String @unique
 
   users TeamUser[]
 }
@@ -97,7 +97,7 @@ model TaskUser {
 
 model TaskUserStatus {
   id          String @id
-  name        String
+  name        String @unique
 
   taskUsers TaskUser[]
 }

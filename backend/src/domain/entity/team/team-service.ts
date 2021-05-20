@@ -17,8 +17,6 @@ export class TeamService {
   }
 
   /**
-   * TODO: saveはドメインサービスでするべきか、ユースケースでするべきか
-   * TODO: 仕様を書きたいので、ゴチャゴチャ手続き的に書きたくない。
    *
    * チームユーザーを削除する（saveもします）
    * @param user
@@ -27,19 +25,18 @@ export class TeamService {
     team: Team,
     userId: string,
   ): Promise<Team> {
-    const resultTeam = team.removeTeamUser(userId)
+    const resultTeam = team.removeTeamUserFromTeamService(userId)
 
     // もし2名以下になった場合チームは存続できず、他のチームに合併する必要がある。合併先は、最も参加人数が少ないチームから優先的に選ばれる
     if (resultTeam.getAllProperties().teamUsers.length >= Team.lowerLimit) {
       return await this.teamRepository.save(team)
     } else {
       // 最も参加人数が少ないチームを選ぶ
-      // TODO: fix: 自分（存続できないチーム(resultTeam)）が選ばれる可能性がある
       const mostLeastTeam = await this.teamRepository.findMostLeastTeam(
         resultTeam.getAllProperties().id,
       )
 
-      // TODO: 最も参加人数が少ないチームは複数いる可能性があるが、それを決めるロジックがリポジトリのfindMostLeastTeam()に入ってしまっている
+      // 最も参加人数が少ないチームは複数いる可能性があるが、それを決めるロジックがリポジトリのfindMostLeastTeam()に入ってしまっている
       const mergeTeam = mostLeastTeam
 
       if (!mergeTeam) {
@@ -62,7 +59,6 @@ export class TeamService {
       // 存続できないチームを削除
       await this.teamRepository.delete(resultTeam.getAllProperties().id)
 
-      // TODO: ↑と↓で１トランザクションはっているか確認したい
       return await this.teamRepository.save(mergeTeam)
     }
   }
