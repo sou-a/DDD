@@ -17,7 +17,7 @@ import {
 } from './request/task-group-request'
 import { TaskGroupUseCase } from 'src/app/task-group-usecase'
 import { TaskGroupRepository } from 'src/infra/db/repository/task-group-repository'
-import { TaskGroupService } from 'src/domain/entity/task-group/task-group-service'
+import { TaskGroupService } from 'src/domain/task-group/task-group-service'
 import { FindAllTaskGroupResponse } from './response/task-group-response'
 
 @ApiTags('task-groups')

@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
-import { IUserRepository } from 'src/domain/entity/user/i-user-repository'
-import { User } from 'src/domain/entity/user/user'
-import { UserStatus } from 'src/domain/valueOblect/user-status'
+import { IUserRepository } from 'src/domain/user/i-user-repository'
+import { User } from 'src/domain/user/user'
+import { UserStatus } from 'src/domain/user/user-status'
 
 export class UserRepository implements IUserRepository {
   private prismaClient: PrismaClient

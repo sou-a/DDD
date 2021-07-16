@@ -1,6 +1,6 @@
-import { ITaskGroupRepository } from 'src/domain/entity/task-group/i-task-group-repository'
-import { TaskGroup } from 'src/domain/entity/task-group/task-group'
-import { TaskGroupService } from 'src/domain/entity/task-group/task-group-service'
+import { ITaskGroupRepository } from 'src/domain/task-group/i-task-group-repository'
+import { TaskGroup } from 'src/domain/task-group/task-group'
+import { TaskGroupService } from 'src/domain/task-group/task-group-service'
 import { createRandomIdString } from 'src/util/random'
 import { TaskGroupDTO } from './dto/task-group-dto'
 
@@ -33,7 +33,7 @@ export class TaskGroupUseCase {
     const taskGroup: TaskGroup = new TaskGroup({
       id: createRandomIdString(),
       name,
-      tasks: [], // 微妙？
+      tasks: [],
     })
     try {
       const savedTaskGroup = await this.taskGroupRepository.save(taskGroup)

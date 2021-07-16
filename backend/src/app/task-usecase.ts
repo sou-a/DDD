@@ -1,8 +1,8 @@
-import { ITaskRepository } from 'src/domain/entity/task/i-task-repository'
-import { Task } from 'src/domain/entity/task/task'
-import { IUserBelongTaskRepository } from 'src/domain/entity/user-belong-task/i-user-belong-task-repository'
-import { UserBelongTask } from 'src/domain/entity/user-belong-task/user-belong-task'
-import { TaskStatus } from 'src/domain/valueOblect/task-status'
+import { ITaskRepository } from 'src/domain/task/i-task-repository'
+import { Task } from 'src/domain/task/task'
+import { IUserBelongTaskRepository } from 'src/domain/user-belong-task/i-user-belong-task-repository'
+import { UserBelongTask } from 'src/domain/user-belong-task/user-belong-task'
+import { TaskStatus } from 'src/domain/task/task-status'
 import { createRandomIdString } from 'src/util/random'
 import { TaskDTO, UserBelongTaskDTO } from './dto/task-dto'
 

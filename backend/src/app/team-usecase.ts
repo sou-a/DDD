@@ -1,9 +1,9 @@
-import { ITeamRepository } from 'src/domain/entity/team/i-team-repository'
-import { Team } from 'src/domain/entity/team/team'
-import { TeamFactory } from 'src/domain/entity/team/team-factory'
-import { TeamService } from 'src/domain/entity/team/team-service'
-import { IUserRepository } from 'src/domain/entity/user/i-user-repository'
-import { User } from 'src/domain/entity/user/user'
+import { ITeamRepository } from 'src/domain/team/i-team-repository'
+import { Team } from 'src/domain/team/team'
+import { TeamFactory } from 'src/domain/team/team-factory'
+import { TeamService } from 'src/domain/team/team-service'
+import { IUserRepository } from 'src/domain/user/i-user-repository'
+import { User } from 'src/domain/user/user'
 import { TeamDTO } from './dto/team-dto'
 
 // チームの一覧取得、新規追加、更新（少なくとも所属するペアを変更できること）、削除
@@ -29,7 +29,16 @@ export class TeamUseCase {
     try {
       const teams: Team[] = await this.teamRepository.findAll()
       return teams.map((team: Team) => {
-        return new TeamDTO({ ...team.getAllProperties() })
+        return new TeamDTO({
+          id: team.getAllProperties().id,
+          name: team.getAllProperties().name,
+          teamUsers: team.getAllProperties().teamUsers.map((teamUser) => {
+            return {
+              id: teamUser.getAllProperties().userId,
+              status: teamUser.getAllProperties().status.getStatus(),
+            }
+          }),
+        })
       })
     } catch (error) {
       throw error
@@ -52,7 +61,16 @@ export class TeamUseCase {
     })
     try {
       const savedTeam = await this.teamRepository.save(team)
-      return new TeamDTO({ ...savedTeam.getAllProperties() })
+      return new TeamDTO({
+        id: savedTeam.getAllProperties().id,
+        name: savedTeam.getAllProperties().name,
+        teamUsers: savedTeam.getAllProperties().teamUsers.map((teamUser) => {
+          return {
+            id: teamUser.getAllProperties().userId,
+            status: teamUser.getAllProperties().status.getStatus(),
+          }
+        }),
+      })
     } catch (error) {
       throw error
     }
@@ -70,7 +88,16 @@ export class TeamUseCase {
     try {
       const addedTeamUser = team.addTeamUser(user)
       const savedTeam = await this.teamRepository.save(addedTeamUser)
-      return new TeamDTO({ ...savedTeam.getAllProperties() })
+      return new TeamDTO({
+        id: savedTeam.getAllProperties().id,
+        name: savedTeam.getAllProperties().name,
+        teamUsers: savedTeam.getAllProperties().teamUsers.map((teamUser) => {
+          return {
+            id: teamUser.getAllProperties().userId,
+            status: teamUser.getAllProperties().status.getStatus(),
+          }
+        }),
+      })
     } catch (error) {
       throw error
     }
@@ -89,7 +116,16 @@ export class TeamUseCase {
         team,
         user.getAllProperties().id,
       )
-      return new TeamDTO({ ...resultTeam.getAllProperties() })
+      return new TeamDTO({
+        id: resultTeam.getAllProperties().id,
+        name: resultTeam.getAllProperties().name,
+        teamUsers: resultTeam.getAllProperties().teamUsers.map((teamUser) => {
+          return {
+            id: teamUser.getAllProperties().userId,
+            status: teamUser.getAllProperties().status.getStatus(),
+          }
+        }),
+      })
     } catch (error) {
       throw error
     }

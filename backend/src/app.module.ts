@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common'
 import { PairController } from './controller/pair-controller'
-import { SampleController } from './controller/sample/some-data.controller'
 import { TaskController } from './controller/task-controller'
 import { TaskGroupController } from './controller/task-group-contorller'
 import { TeamController } from './controller/team-controller'
@@ -10,7 +9,6 @@ import { UserController } from './controller/user-controller'
 @Module({
   imports: [],
   controllers: [
-    SampleController,
     UserController,
     PairController,
     TeamController,

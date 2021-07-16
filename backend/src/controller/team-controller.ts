@@ -13,8 +13,8 @@ import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { CreatePairRequest, PairUserRequest } from './request/pair-request'
 import { TeamUseCase } from 'src/app/team-usecase'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
-import { TeamService } from 'src/domain/entity/team/team-service'
-import { TeamFactory } from 'src/domain/entity/team/team-factory'
+import { TeamService } from 'src/domain/team/team-service'
+import { TeamFactory } from 'src/domain/team/team-factory'
 import { FindAllTeamResponse } from './response/team-response'
 
 @ApiTags('teams')

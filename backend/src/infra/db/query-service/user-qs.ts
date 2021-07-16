@@ -1,9 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 import { UserDTO } from 'src/app/dto/user-dto'
 import { IUserQS } from 'src/app/query-service-interface/i-user-qs'
-import { User } from 'src/domain/entity/user/user'
-import { TaskStatus } from 'src/domain/valueOblect/task-status'
-import { UserStatus } from 'src/domain/valueOblect/user-status'
+import { User } from 'src/domain/user/user'
+import { TaskStatus } from 'src/domain/task/task-status'
+import { UserStatus } from 'src/domain/user/user-status'
 
 export class UserQS implements IUserQS {
   private prismaClient: PrismaClient

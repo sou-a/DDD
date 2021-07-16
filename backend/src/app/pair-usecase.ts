@@ -1,7 +1,7 @@
-import { IPairRepository } from 'src/domain/entity/pair/i-pair-repository'
-import { Pair } from 'src/domain/entity/pair/pair'
-import { IUserRepository } from 'src/domain/entity/user/i-user-repository'
-import { User } from 'src/domain/entity/user/user'
+import { IPairRepository } from 'src/domain/pair/i-pair-repository'
+import { Pair } from 'src/domain/pair/pair'
+import { IUserRepository } from 'src/domain/user/i-user-repository'
+import { User } from 'src/domain/user/user'
 import { createRandomIdString } from 'src/util/random'
 import { PairDTO } from './dto/pair-dto'
 
@@ -22,7 +22,16 @@ export class PairUseCase {
     try {
       const pairs: Pair[] = await this.pairRepository.findAll()
       return pairs.map((pair: Pair) => {
-        return new PairDTO({ ...pair.getAllProperties() })
+        return new PairDTO({
+          id: pair.getAllProperties().id,
+          name: pair.getAllProperties().name,
+          pairUsers: pair.getAllProperties().pairUsers.map((pairUser) => {
+            return {
+              id: pairUser.getAllProperties().userId,
+              status: pairUser.getAllProperties().status.getStatus(),
+            }
+          }),
+        })
       })
     } catch (error) {
       throw error
@@ -46,7 +55,16 @@ export class PairUseCase {
     })
     try {
       const savedPair = await this.pairRepository.save(pair)
-      return new PairDTO({ ...savedPair.getAllProperties() })
+      return new PairDTO({
+        id: savedPair.getAllProperties().id,
+        name: savedPair.getAllProperties().name,
+        pairUsers: savedPair.getAllProperties().pairUsers.map((pairUser) => {
+          return {
+            id: pairUser.getAllProperties().userId,
+            status: pairUser.getAllProperties().status.getStatus(),
+          }
+        }),
+      })
     } catch (error) {
       throw error
     }
@@ -64,7 +82,16 @@ export class PairUseCase {
     try {
       const addedPairUser = pair.addPairUser(user)
       const savedPair = await this.pairRepository.save(addedPairUser)
-      return new PairDTO({ ...savedPair.getAllProperties() })
+      return new PairDTO({
+        id: savedPair.getAllProperties().id,
+        name: savedPair.getAllProperties().name,
+        pairUsers: savedPair.getAllProperties().pairUsers.map((pairUser) => {
+          return {
+            id: pairUser.getAllProperties().userId,
+            status: pairUser.getAllProperties().status.getStatus(),
+          }
+        }),
+      })
     } catch (error) {
       throw error
     }
@@ -80,7 +107,16 @@ export class PairUseCase {
     try {
       const removedPair = pair.removePairUser(userId)
       const savedPair = await this.pairRepository.save(removedPair)
-      return new PairDTO({ ...savedPair.getAllProperties() })
+      return new PairDTO({
+        id: savedPair.getAllProperties().id,
+        name: savedPair.getAllProperties().name,
+        pairUsers: savedPair.getAllProperties().pairUsers.map((pairUser) => {
+          return {
+            id: pairUser.getAllProperties().userId,
+            status: pairUser.getAllProperties().status.getStatus(),
+          }
+        }),
+      })
     } catch (error) {
       throw error
     }

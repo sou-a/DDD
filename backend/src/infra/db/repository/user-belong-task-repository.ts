@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
-import { IUserBelongTaskRepository } from 'src/domain/entity/user-belong-task/i-user-belong-task-repository'
-import { UserBelongTask } from 'src/domain/entity/user-belong-task/user-belong-task'
-import { TaskStatus } from 'src/domain/valueOblect/task-status'
+import { IUserBelongTaskRepository } from 'src/domain/user-belong-task/i-user-belong-task-repository'
+import { UserBelongTask } from 'src/domain/user-belong-task/user-belong-task'
+import { TaskStatus } from 'src/domain/task/task-status'
 
 export class UserBelongTaskRepository implements IUserBelongTaskRepository {
   private prismaClient: PrismaClient

@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
-import { ITaskGroupRepository } from 'src/domain/entity/task-group/i-task-group-repository'
-import { TaskGroup } from 'src/domain/entity/task-group/task-group'
+import { ITaskGroupRepository } from 'src/domain/task-group/i-task-group-repository'
+import { TaskGroup } from 'src/domain/task-group/task-group'
 
 export class TaskGroupRepository implements ITaskGroupRepository {
   private prismaClient: PrismaClient

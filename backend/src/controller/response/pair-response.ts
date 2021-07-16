@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { PairDTO } from 'src/app/dto/pair-dto'
-import { PairUser } from 'src/domain/entity/pair/pair'
+import { PairDTO, PairUserDTO } from 'src/app/dto/pair-dto'
 
 export class FindAllPairResponse {
   @ApiProperty({ type: () => [Pair] })
@@ -26,12 +25,12 @@ class Pair {
   name: string
 
   @ApiProperty()
-  pairUsers: PairUser[]
+  pairUsers: PairUserDTO[]
 
   public constructor(params: {
     id: string
     name: string
-    pairUsers: PairUser[]
+    pairUsers: PairUserDTO[]
   }) {
     this.id = params.id
     this.name = params.name

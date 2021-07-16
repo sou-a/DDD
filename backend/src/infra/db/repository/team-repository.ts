@@ -1,9 +1,8 @@
 import { PrismaClient } from '@prisma/client'
-import { ITeamRepository } from 'src/domain/entity/team/i-team-repository'
-import { Team } from 'src/domain/entity/team/team'
-import { TeamUser } from 'src/domain/entity/team/team'
-import { User } from 'src/domain/entity/user/user'
-import { UserStatus } from 'src/domain/valueOblect/user-status'
+import { ITeamRepository } from 'src/domain/team/i-team-repository'
+import { Team } from 'src/domain/team/team'
+import { User } from 'src/domain/user/user'
+import { UserStatus } from 'src/domain/user/user-status'
 
 export class TeamRepository implements ITeamRepository {
   private prismaClient: PrismaClient
@@ -230,7 +229,7 @@ export class TeamRepository implements ITeamRepository {
         name,
         users: {
           deleteMany: {},
-          create: teamUsers.map((teamUser: TeamUser) => {
+          create: teamUsers.map((teamUser) => {
             return {
               userId: teamUser.getAllProperties().userId,
             }
@@ -241,7 +240,7 @@ export class TeamRepository implements ITeamRepository {
         id,
         name,
         users: {
-          create: teamUsers.map((teamUser: TeamUser) => {
+          create: teamUsers.map((teamUser) => {
             return {
               userId: teamUser.getAllProperties().userId,
             }

@@ -20,10 +20,10 @@ import {
 } from './request/user-request'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { UserUseCase } from 'src/app/user-usecase'
-import { UserService } from 'src/domain/entity/user/user-service'
+import { UserService } from 'src/domain/user/user-service'
 import { PairRepository } from 'src/infra/db/repository/pair-repository'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
-import { TeamService } from 'src/domain/entity/team/team-service'
+import { TeamService } from 'src/domain/team/team-service'
 import { UserQS } from 'src/infra/db/query-service/user-qs'
 
 @ApiTags('users')

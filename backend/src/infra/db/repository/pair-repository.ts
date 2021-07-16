@@ -1,9 +1,8 @@
 import { PrismaClient } from '@prisma/client'
-import { IPairRepository } from 'src/domain/entity/pair/i-pair-repository'
-import { Pair } from 'src/domain/entity/pair/pair'
-import { PairUser } from 'src/domain/entity/pair/pair'
-import { User } from 'src/domain/entity/user/user'
-import { UserStatus } from 'src/domain/valueOblect/user-status'
+import { IPairRepository } from 'src/domain/pair/i-pair-repository'
+import { Pair } from 'src/domain/pair/pair'
+import { User } from 'src/domain/user/user'
+import { UserStatus } from 'src/domain/user/user-status'
 
 export class PairRepository implements IPairRepository {
   private prismaClient: PrismaClient
@@ -140,7 +139,7 @@ export class PairRepository implements IPairRepository {
           // ペアユーザー（子集約）全削除してcreateし直している（増減に対応するため）
           // @see https://github.com/little-hands/ddd-q-and-a/issues/129
           deleteMany: {},
-          create: pairUsers.map((pairUser: PairUser) => {
+          create: pairUsers.map((pairUser) => {
             return {
               userId: pairUser.getAllProperties().userId,
             }
@@ -151,7 +150,7 @@ export class PairRepository implements IPairRepository {
         id,
         name,
         users: {
-          create: pairUsers.map((pairUser: PairUser) => {
+          create: pairUsers.map((pairUser) => {
             return {
               userId: pairUser.getAllProperties().userId,
             }
