@@ -8,6 +8,7 @@ import { TaskGroupUseCase } from 'src/app/task-group-usecase'
 import { TaskGroupRepository } from 'src/infra/db/repository/task-group-repository'
 import { TaskRepository } from 'src/infra/db/repository/task-repository'
 import { UserBelongTaskRepository } from 'src/infra/db/repository/user-belong-task-repository'
+import { TaskGroupId } from 'src/domain/task-group/task-group-id'
 
 jest.mock('@prisma/client')
 jest.mock('src/infra/db/repository/task-group-repository')
@@ -98,7 +99,7 @@ describe('task-group-usecase.ts', () => {
 
       return expect(
         usecase.changeName({
-          taskGroupId: '1',
+          taskGroupId: new TaskGroupId('1'),
           name: 'name1',
         }),
       ).resolves.toEqual(expect.any(TaskGroupDTO))
@@ -113,7 +114,7 @@ describe('task-group-usecase.ts', () => {
       )
       return expect(
         usecase.changeName({
-          taskGroupId: '1',
+          taskGroupId: new TaskGroupId('1'),
           name: 'name1',
         }),
       ).rejects.toEqual(ERROR_MESSAGE)
@@ -129,9 +130,9 @@ describe('task-group-usecase.ts', () => {
       mockTaskGroupRepo.findById.mockResolvedValueOnce(createTaskGroup({}))
       mockTaskGroupService.delete.mockResolvedValueOnce()
 
-      return expect(usecase.delete({ taskGroupId: '1' })).resolves.toBe(
-        undefined,
-      )
+      return expect(
+        usecase.delete({ taskGroupId: new TaskGroupId('1') }),
+      ).resolves.toBe(undefined)
     })
     it('[準正常系]: deleteで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
@@ -141,9 +142,9 @@ describe('task-group-usecase.ts', () => {
         mockTaskGroupRepo,
         mockTaskGroupService,
       )
-      return expect(usecase.delete({ taskGroupId: '1' })).rejects.toEqual(
-        ERROR_MESSAGE,
-      )
+      return expect(
+        usecase.delete({ taskGroupId: new TaskGroupId('1') }),
+      ).rejects.toEqual(ERROR_MESSAGE)
     })
   })
 })

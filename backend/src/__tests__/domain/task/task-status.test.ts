@@ -1,11 +1,14 @@
-import { TaskStatus } from 'src/domain/task/task-status'
+import { TaskStatus } from 'src/domain/user-belong-task/task-status'
 
 describe('task-status.ts', () => {
   describe('constructor', () => {
     it('[正常系]statusListにあるステータスはインスタンス生成できる', () => {
       const statusList = TaskStatus.statusList
       statusList.map((status) => {
-        expect(new TaskStatus(status)).toEqual({ status: expect.anything() })
+        expect(new TaskStatus(status)).toEqual({
+          value: expect.anything(),
+          _: '',
+        })
       })
     })
 
@@ -38,14 +41,14 @@ describe('task-status.ts', () => {
     })
   })
 
-  describe('isEquals', () => {
+  describe('equals', () => {
     it('[正常系]等価性の保証', () => {
       const complete = new TaskStatus(TaskStatus.complete)
       const complete2 = new TaskStatus(TaskStatus.complete)
-      expect(complete.isEquals(complete2)).toBe(true)
+      expect(complete.equals(complete2)).toBe(true)
 
       const review = new TaskStatus(TaskStatus.review)
-      expect(complete.isEquals(review)).toBe(false)
+      expect(complete.equals(review)).toBe(false)
     })
   })
 })

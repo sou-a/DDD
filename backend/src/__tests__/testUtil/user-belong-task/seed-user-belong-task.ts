@@ -1,15 +1,17 @@
 import * as faker from 'faker'
 import { prisma } from 'src/__tests__/testUtil/prisma'
 import { UserBelongTask } from 'src/domain/user-belong-task/user-belong-task'
-import { TaskStatus } from 'src/domain/task/task-status'
+import { TaskStatus } from 'src/domain/user-belong-task/task-status'
+import { UserId } from 'src/domain/user/user-id'
+import { TaskId } from 'src/domain/task/task-id'
 
 export const seedUserBelongTask = async (params: {
   userId?: string
   taskId?: string
   status?: TaskStatus
 }) => {
-  let { userId, taskId, status } = params
-  userId = userId ?? faker.random.uuid()
+  let { taskId, status } = params
+  const userId = params.userId ?? faker.random.uuid()
   taskId = taskId ?? faker.random.uuid()
   status = status ?? new TaskStatus(TaskStatus.notYet)
   const taskUserStatus = await prisma.taskUserStatus.findFirst({
@@ -28,8 +30,8 @@ export const seedUserBelongTask = async (params: {
     },
   })
   return new UserBelongTask({
-    userId,
-    taskId,
+    userId: new UserId(userId),
+    taskId: new TaskId(taskId),
     status,
   })
 }

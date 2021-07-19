@@ -4,6 +4,8 @@ import { Task } from 'src/domain/task/task'
 import { seedTaskGroup } from 'src/__tests__/testUtil/task-group/seed-task-group'
 import { seedTask } from 'src/__tests__/testUtil/task/seed-task'
 import { TaskRepository } from 'src/infra/db/repository/task-repository'
+import { TaskId } from 'src/domain/task/task-id'
+import { TaskGroupId } from 'src/domain/task-group/task-group-id'
 
 describe('task-repository.integration.ts', () => {
   const taskRepo = new TaskRepository(prisma)
@@ -38,10 +40,10 @@ describe('task-repository.integration.ts', () => {
       await seedTask({ id: '1', taskGroupId: '1' })
       await seedTask({ id: '2', taskGroupId: '1' })
 
-      const task = await taskRepo.findById('1')
+      const task = await taskRepo.findById(new TaskId('1'))
       expect(task).toEqual(expect.any(Task))
       expect(task).toEqual({
-        id: '1',
+        id: new TaskId('1'),
         taskGroupId: '1',
         name: expect.any(String),
       })
@@ -52,7 +54,7 @@ describe('task-repository.integration.ts', () => {
     it('[正常系]taskを保存できる', async () => {
       await seedTaskGroup({ id: '1' })
       const taskExpected = {
-        id: createRandomIdString(),
+        id: new TaskId(createRandomIdString()),
         taskGroupId: '1',
         name: 'task1',
       }
@@ -61,7 +63,11 @@ describe('task-repository.integration.ts', () => {
       const tasks = await prisma.task.findMany()
       expect(tasks).toHaveLength(1)
       tasks.map((task) => {
-        expect(task).toEqual(taskExpected)
+        expect(task).toEqual({
+          id: expect.anything(),
+          taskGroupId: '1',
+          name: 'task1',
+        })
       })
     })
   })
@@ -72,7 +78,7 @@ describe('task-repository.integration.ts', () => {
       await seedTask({ id: '1', taskGroupId: '1' })
       await seedTask({ id: '2', taskGroupId: '1' })
 
-      await taskRepo.delete('1')
+      await taskRepo.delete(new TaskId('1'))
       const tasks = await prisma.task.findMany()
       tasks.map((task) => {
         expect(task).toEqual({
@@ -92,7 +98,7 @@ describe('task-repository.integration.ts', () => {
       await seedTask({ id: '2', taskGroupId: '1' })
       await seedTask({ id: '3', taskGroupId: '2' })
 
-      await taskRepo.deleteByTaskGroupId('1')
+      await taskRepo.deleteByTaskGroupId(new TaskGroupId('1'))
       const tasks = await prisma.task.findMany()
       tasks.map((task) => {
         expect(task).toEqual({

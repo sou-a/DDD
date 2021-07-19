@@ -3,6 +3,8 @@ import { Pair } from 'src/domain/pair/pair'
 import { createRandomIdString } from 'src/util/random'
 import { User } from 'src/domain/user/user'
 import { UserStatus } from 'src/domain/user/user-status'
+import { UserId } from 'src/domain/user/user-id'
+import { PairId } from 'src/domain/pair/pair-id'
 
 describe('pair.ts', () => {
   describe('constructor', () => {
@@ -10,7 +12,7 @@ describe('pair.ts', () => {
     it('[正常系]生成できる', () => {
       expect(
         new Pair({
-          id: createRandomIdString(),
+          id: new PairId(createRandomIdString()),
           name: 'a',
           users,
         }),
@@ -20,7 +22,7 @@ describe('pair.ts', () => {
       expect(
         () =>
           new Pair({
-            id: createRandomIdString(),
+            id: new PairId(createRandomIdString()),
             name: '1',
             users,
           }),
@@ -32,7 +34,7 @@ describe('pair.ts', () => {
       expect(
         () =>
           new Pair({
-            id: createRandomIdString(),
+            id: new PairId(createRandomIdString()),
             name: '1',
             users: user,
           }),
@@ -49,7 +51,7 @@ describe('pair.ts', () => {
       expect(
         () =>
           new Pair({
-            id: createRandomIdString(),
+            id: new PairId(createRandomIdString()),
             name: '1',
             users: tooManyUsers,
           }),
@@ -67,7 +69,7 @@ describe('pair.ts', () => {
       expect(
         () =>
           new Pair({
-            id: createRandomIdString(),
+            id: new PairId(createRandomIdString()),
             name: 'a',
             users: recessUsers,
           }),
@@ -75,7 +77,7 @@ describe('pair.ts', () => {
       expect(
         () =>
           new Pair({
-            id: createRandomIdString(),
+            id: new PairId(createRandomIdString()),
             name: 'a',
             users: leaveUsers,
           }),
@@ -84,7 +86,7 @@ describe('pair.ts', () => {
     describe('addPairUser', () => {
       it('[正常系]ペアユーザーを追加できる', () => {
         const pair = new Pair({
-          id: createRandomIdString(),
+          id: new PairId(createRandomIdString()),
           name: 'a',
           users,
         })
@@ -103,12 +105,12 @@ describe('pair.ts', () => {
           createUser({ id: '3' }),
         ]
         const pair = new Pair({
-          id: createRandomIdString(),
+          id: new PairId(createRandomIdString()),
           name: 'a',
           users: manyUsers,
         })
         expect(pair.getAllProperties().pairUsers).toHaveLength(3)
-        pair.removePairUser('1')
+        pair.removePairUser(new UserId('1'))
         expect(pair.getAllProperties().pairUsers).toHaveLength(2)
       })
     })

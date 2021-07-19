@@ -11,6 +11,7 @@ import { UserQS } from 'src/infra/db/query-service/user-qs'
 import { PairRepository } from 'src/infra/db/repository/pair-repository'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
+import { UserId } from 'src/domain/user/user-id'
 
 jest.mock('@prisma/client')
 jest.mock('src/infra/db/repository/user-repository')
@@ -65,7 +66,7 @@ describe('user-usecase.ts', () => {
       const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
       mockUserQS.findUsersByTasks.mockResolvedValue([
         new UserDTO({
-          id: '1',
+          id: new UserId('1'),
           name: 'n',
           mailAddress: 'mail',
           status: '在籍中',
@@ -129,7 +130,10 @@ describe('user-usecase.ts', () => {
       mockUserRepo.findById.mockResolvedValueOnce(createUser({}))
 
       return expect(
-        usecase.changeStatus({ userId: '1', status: UserStatus.leave }),
+        usecase.changeStatus({
+          userId: new UserId('1'),
+          status: UserStatus.leave,
+        }),
       ).resolves.toEqual(expect.any(UserDTO))
     })
     it('[準正常系]: saveで例外が発生した場合、例外が発生する', () => {
@@ -138,7 +142,10 @@ describe('user-usecase.ts', () => {
       mockUserRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
       return expect(
-        usecase.changeStatus({ userId: '1', status: UserStatus.leave }),
+        usecase.changeStatus({
+          userId: new UserId('1'),
+          status: UserStatus.leave,
+        }),
       ).rejects.toEqual(ERROR_MESSAGE)
     })
   })
@@ -147,15 +154,17 @@ describe('user-usecase.ts', () => {
     it('[正常系]: 例外が発生しない', async () => {
       const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
       mockUserService.deleteUser.mockResolvedValueOnce(true)
-      return expect(usecase.delete({ userId: '1' })).resolves.toBe(true)
+      return expect(usecase.delete({ userId: new UserId('1') })).resolves.toBe(
+        true,
+      )
     })
     it('[準正常系]: deleteで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
       mockUserService.deleteUser.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new UserUseCase(mockUserRepo, mockUserService, mockUserQS)
-      return expect(usecase.delete({ userId: '1' })).rejects.toEqual(
-        ERROR_MESSAGE,
-      )
+      return expect(
+        usecase.delete({ userId: new UserId('1') }),
+      ).rejects.toEqual(ERROR_MESSAGE)
     })
   })
 })

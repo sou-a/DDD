@@ -1,6 +1,6 @@
 import { prisma } from 'src/__tests__/testUtil/prisma'
 import { UserQS } from '../../../../infra/db/query-service/user-qs'
-import { TaskStatus } from 'src/domain/task/task-status'
+import { TaskStatus } from 'src/domain/user-belong-task/task-status'
 import { seedAllTaskStatus } from 'src/__tests__/testUtil/task-status-factory'
 import { seedTaskGroup } from 'src/__tests__/testUtil/task-group/seed-task-group'
 import { seedTask } from 'src/__tests__/testUtil/task/seed-task'

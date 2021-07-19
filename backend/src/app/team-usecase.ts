@@ -1,9 +1,11 @@
 import { ITeamRepository } from 'src/domain/team/i-team-repository'
 import { Team } from 'src/domain/team/team'
 import { TeamFactory } from 'src/domain/team/team-factory'
+import { TeamId } from 'src/domain/team/team-id'
 import { TeamService } from 'src/domain/team/team-service'
 import { IUserRepository } from 'src/domain/user/i-user-repository'
 import { User } from 'src/domain/user/user'
+import { UserId } from 'src/domain/user/user-id'
 import { TeamDTO } from './dto/team-dto'
 
 // チームの一覧取得、新規追加、更新（少なくとも所属するペアを変更できること）、削除
@@ -47,7 +49,7 @@ export class TeamUseCase {
 
   public async create(props: {
     name: string
-    userIds: string[]
+    userIds: UserId[]
   }): Promise<TeamDTO> {
     const { name, userIds } = props
     const users: User[] = await Promise.all(
@@ -77,8 +79,8 @@ export class TeamUseCase {
   }
 
   public async createTeamUser(props: {
-    teamId: string
-    userId: string
+    teamId: TeamId
+    userId: UserId
   }): Promise<TeamDTO> {
     const { teamId, userId } = props
 
@@ -104,8 +106,8 @@ export class TeamUseCase {
   }
 
   public async deleteTeamUser(props: {
-    teamId: string
-    userId: string
+    teamId: TeamId
+    userId: UserId
   }): Promise<TeamDTO> {
     const { teamId, userId } = props
     const user: User = await this.userRepository.findById(userId)
@@ -131,7 +133,7 @@ export class TeamUseCase {
     }
   }
 
-  public delete(prop: { teamId: string }): Promise<void> {
+  public delete(prop: { teamId: TeamId }): Promise<void> {
     const { teamId } = prop
 
     try {

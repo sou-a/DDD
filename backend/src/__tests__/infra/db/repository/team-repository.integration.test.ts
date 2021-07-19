@@ -5,6 +5,8 @@ import { seedAllUserStatus } from 'src/__tests__/testUtil/user-status-factory'
 import { seedUser } from 'src/__tests__/testUtil/user/seed-user'
 import { seedTeam, seedTeamUser } from 'src/__tests__/testUtil/team/seed-team'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
+import { UserId } from 'src/domain/user/user-id'
+import { TeamId } from 'src/domain/team/team-id'
 
 describe('team-repository.integration.ts', () => {
   const teamRepo = new TeamRepository(prisma)
@@ -57,7 +59,7 @@ describe('team-repository.integration.ts', () => {
       await seedTeamUser({ userId: '5', teamId: '2' })
       await seedTeamUser({ userId: '6', teamId: '2' })
 
-      const team = await teamRepo.findById('1')
+      const team = await teamRepo.findById(new TeamId('1'))
       expect(team).toEqual(expect.any(Team))
     })
   })
@@ -80,7 +82,7 @@ describe('team-repository.integration.ts', () => {
       await seedTeamUser({ userId: '5', teamId: '2' })
       await seedTeamUser({ userId: '6', teamId: '2' })
 
-      const team = await teamRepo.findByUserId('4')
+      const team = await teamRepo.findByUserId(new UserId('4'))
       expect(team).toEqual(expect.any(Team))
     })
   })
@@ -121,10 +123,10 @@ describe('team-repository.integration.ts', () => {
       await seedTeamUser({ userId: '6', teamId: '2' })
       await seedTeamUser({ userId: '7', teamId: '2' })
 
-      const team = await teamRepo.findMostLeastTeam('2')
+      const team = await teamRepo.findMostLeastTeam(new TeamId('2'))
       expect(team).toEqual(expect.any(Team))
       expect(team).toEqual({
-        id: '1',
+        id: new TeamId('1'),
         name: expect.anything(),
         teamUsers: expect.anything(),
       })
@@ -138,7 +140,7 @@ describe('team-repository.integration.ts', () => {
       const user2 = await seedUser({ id: '2' })
       const user3 = await seedUser({ id: '3' })
       const teamExpected = {
-        id: createRandomIdString(),
+        id: new TeamId(createRandomIdString()),
         name: '7',
         users: [user1, user2, user3],
       }
@@ -173,7 +175,7 @@ describe('team-repository.integration.ts', () => {
       let allTeams = await prisma.team.findMany()
       expect(allTeams).toHaveLength(2)
 
-      await teamRepo.delete('1')
+      await teamRepo.delete(new TeamId('1'))
       allTeams = await prisma.team.findMany()
       expect(allTeams).toHaveLength(1)
     })
@@ -199,7 +201,7 @@ describe('team-repository.integration.ts', () => {
       })
       expect(team?.users).toHaveLength(4)
 
-      await teamRepo.deleteTeamUser('3')
+      await teamRepo.deleteTeamUser(new UserId('3'))
       team = await prisma.team.findFirst({
         include: {
           users: true,

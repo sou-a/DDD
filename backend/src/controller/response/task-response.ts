@@ -9,7 +9,7 @@ export class FindAllTaskResponse {
     const { taskDTOs } = params
     this.tasks = taskDTOs.map(({ id, name, taskGroupId }) => {
       return new Task({
-        id,
+        id: id.value,
         name,
         taskGroupId,
       })
@@ -46,7 +46,7 @@ export class FindTasksByTasksResponse {
     const { taskDTOs } = params
     this.user = taskDTOs.map(({ id, name, taskGroupId }) => {
       return new Task({
-        id,
+        id: id.value,
         name,
         taskGroupId,
       })

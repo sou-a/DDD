@@ -7,6 +7,7 @@ import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { MockedObjectDeep } from 'ts-jest/dist/utils/testing'
 import { mocked } from 'ts-jest/utils'
+import { UserId } from 'src/domain/user/user-id'
 
 describe('team-service.integration.ts', () => {
   describe('deleteTeamUser', () => {
@@ -44,7 +45,7 @@ describe('team-service.integration.ts', () => {
         teamRepository: mockTeamRepo,
         userRepository: mockUserRepo,
       })
-      await teamService.deleteTeamUserAndSave(team, '1')
+      await teamService.deleteTeamUserAndSave(team, new UserId('1'))
       expect(team.getAllProperties().teamUsers).toHaveLength(3)
     })
 
@@ -69,7 +70,10 @@ describe('team-service.integration.ts', () => {
         teamRepository: mockTeamRepo,
         userRepository: mockUserRepo,
       })
-      const resultTeam = await teamService.deleteTeamUserAndSave(team, '1')
+      const resultTeam = await teamService.deleteTeamUserAndSave(
+        team,
+        new UserId('1'),
+      )
       expect(resultTeam.getAllProperties().teamUsers).toHaveLength(5)
     })
   })

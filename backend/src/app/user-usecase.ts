@@ -1,5 +1,6 @@
 import { IUserRepository } from 'src/domain/user/i-user-repository'
 import { User } from 'src/domain/user/user'
+import { UserId } from 'src/domain/user/user-id'
 import { UserService } from 'src/domain/user/user-service'
 import { UserStatus } from 'src/domain/user/user-status'
 import { createRandomIdString } from 'src/util/random'
@@ -55,7 +56,7 @@ export class UserUseCase {
   }): Promise<UserDTO> {
     const { name, mailAddress, status } = props
     const user = new User({
-      id: createRandomIdString(),
+      id: new UserId(createRandomIdString()),
       name: name,
       mailAddress: mailAddress,
       status: new UserStatus(status),
@@ -75,7 +76,7 @@ export class UserUseCase {
   }
 
   public async changeStatus(props: {
-    userId: string
+    userId: UserId
     status: string
   }): Promise<UserDTO> {
     const { userId, status } = props
@@ -96,7 +97,7 @@ export class UserUseCase {
     }
   }
 
-  public async delete(prop: { userId: string }): Promise<boolean> {
+  public async delete(prop: { userId: UserId }): Promise<boolean> {
     const { userId } = prop
     try {
       return this.userService.deleteUser(userId)

@@ -16,6 +16,8 @@ import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { TeamService } from 'src/domain/team/team-service'
 import { TeamFactory } from 'src/domain/team/team-factory'
 import { FindAllTeamResponse } from './response/team-response'
+import { UserId } from 'src/domain/user/user-id'
+import { TeamId } from 'src/domain/team/team-id'
 
 @ApiTags('teams')
 @Controller({
@@ -58,7 +60,9 @@ export class TeamController {
     )
     await usecase.create({
       name: teamDto.name,
-      userIds: teamDto.userIds,
+      userIds: teamDto.userIds.map((userId) => {
+        return new UserId(userId)
+      }),
     })
   }
 
@@ -80,8 +84,8 @@ export class TeamController {
       teamFactory,
     )
     await usecase.createTeamUser({
-      teamId: id,
-      userId: teamDto.userId,
+      teamId: new TeamId(id),
+      userId: new UserId(teamDto.userId),
     })
   }
 
@@ -103,8 +107,8 @@ export class TeamController {
       teamFactory,
     )
     await usecase.deleteTeamUser({
-      teamId: id,
-      userId: teamDto.userId,
+      teamId: new TeamId(id),
+      userId: new UserId(teamDto.userId),
     })
   }
 
@@ -123,7 +127,7 @@ export class TeamController {
       teamFactory,
     )
     await usecase.delete({
-      teamId: id,
+      teamId: new TeamId(id),
     })
   }
 }

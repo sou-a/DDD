@@ -1,13 +1,15 @@
-import { TaskStatus } from 'src/domain/task/task-status'
+import { TaskStatus } from 'src/domain/user-belong-task/task-status'
+import { TaskId } from '../task/task-id'
+import { UserId } from '../user/user-id'
 
 export class UserBelongTask {
-  private userId: string
-  private taskId: string
+  private userId: UserId
+  private taskId: TaskId
   private status: TaskStatus
 
   public constructor(props: {
-    userId: string
-    taskId: string
+    userId: UserId
+    taskId: TaskId
     status: TaskStatus
   }) {
     const { userId, taskId, status } = props
@@ -17,7 +19,7 @@ export class UserBelongTask {
     this.status = status
   }
 
-  public changeStatus(userId: string, status: TaskStatus): UserBelongTask {
+  public changeStatus(userId: UserId, status: TaskStatus): UserBelongTask {
     // - 進捗ステータスはいつでも変更可能
     // - ただし一度「完了」にした進捗ステータスを「レビュー待ち」「未着手」に戻すことはできない
     if (this.status.isComplete()) {
@@ -25,8 +27,7 @@ export class UserBelongTask {
     }
 
     // - 進捗ステータスを変更できるのは、課題の所有者だけ（Aさんの課題1の進捗ステータスを変えられるのはAさんだけ。Bさんが変更するのは不可能）
-    // 本来は引数で指定するのではなく、ログインユーザーでチェックするイメージ
-    if (this.userId !== userId) {
+    if (!this.userId.equals(userId)) {
       throw new Error('課題の所有者ではないので変更できません')
     }
 

@@ -12,6 +12,8 @@ import { seedUserBelongTask } from 'src/__tests__/testUtil/user-belong-task/seed
 import { TaskRepository } from 'src/infra/db/repository/task-repository'
 import { UserBelongTaskRepository } from 'src/infra/db/repository/user-belong-task-repository'
 import { TaskGroupRepository } from 'src/infra/db/repository/task-group-repository'
+import { TaskId } from 'src/domain/task/task-id'
+import { TaskGroupId } from 'src/domain/task-group/task-group-id'
 
 describe('task-group-service.integration.ts', () => {
   let mockTaskRepo: MockedObjectDeep<TaskRepository>
@@ -69,9 +71,9 @@ describe('task-group-service.integration.ts', () => {
 
       await taskGroupService.delete(
         new TaskGroup({
-          id: '1',
+          id: new TaskGroupId('1'),
           name: 'A',
-          tasks: ['1', '2', '3'],
+          tasks: [new TaskId('1'), new TaskId('2'), new TaskId('3')],
         }),
       )
 

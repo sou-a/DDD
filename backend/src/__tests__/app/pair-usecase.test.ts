@@ -7,6 +7,8 @@ import { createPair } from 'src/__tests__/testUtil/pair/pair-factory'
 import { createUser } from 'src/__tests__/testUtil/user/user-factory'
 import { PairRepository } from 'src/infra/db/repository/pair-repository'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
+import { UserId } from 'src/domain/user/user-id'
+import { PairId } from 'src/domain/pair/pair-id'
 
 jest.mock('@prisma/client')
 jest.mock('src/infra/db/repository/user-repository')
@@ -49,7 +51,10 @@ describe('pair-usecase.ts', () => {
       mockPairRepo.save.mockResolvedValueOnce(createPair({}))
 
       expect(
-        usecase.create({ name: 'a', userIds: ['1', '2'] }),
+        usecase.create({
+          name: 'a',
+          userIds: [new UserId('1'), new UserId('2')],
+        }),
       ).resolves.toEqual(expect.any(PairDTO))
     })
     it('[準正常系]: saveで例外が発生した場合、例外が発生する', () => {
@@ -61,7 +66,7 @@ describe('pair-usecase.ts', () => {
       return expect(
         usecase.create({
           name: 'a',
-          userIds: ['1', '2'],
+          userIds: [new UserId('1'), new UserId('2')],
         }),
       ).rejects.toEqual(ERROR_MESSAGE)
     })
@@ -75,7 +80,10 @@ describe('pair-usecase.ts', () => {
       mockPairRepo.save.mockResolvedValueOnce(createPair({}))
 
       return expect(
-        usecase.addPairUser({ pairId: '1', userId: '1' }),
+        usecase.addPairUser({
+          pairId: new PairId('1'),
+          userId: new UserId('1'),
+        }),
       ).resolves.toEqual(expect.any(PairDTO))
     })
     it('[準正常系]: saveで例外が発生した場合、例外が発生する', () => {
@@ -86,7 +94,10 @@ describe('pair-usecase.ts', () => {
       mockPairRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
 
       return expect(
-        usecase.addPairUser({ pairId: '1', userId: '1' }),
+        usecase.addPairUser({
+          pairId: new PairId('1'),
+          userId: new UserId('1'),
+        }),
       ).rejects.toEqual(ERROR_MESSAGE)
     })
   })
@@ -98,7 +109,10 @@ describe('pair-usecase.ts', () => {
       mockPairRepo.save.mockResolvedValueOnce(createPair({}))
 
       return expect(
-        usecase.removePairUser({ pairId: '1', userId: '1' }),
+        usecase.removePairUser({
+          pairId: new PairId('1'),
+          userId: new UserId('1'),
+        }),
       ).resolves.toEqual(expect.any(PairDTO))
     })
     it('[準正常系]: removePairUserで例外が発生した場合、例外が発生する', () => {
@@ -108,7 +122,10 @@ describe('pair-usecase.ts', () => {
       mockPairRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
 
       return expect(
-        usecase.removePairUser({ pairId: '1', userId: '1' }),
+        usecase.removePairUser({
+          pairId: new PairId('1'),
+          userId: new UserId('1'),
+        }),
       ).rejects.toEqual(ERROR_MESSAGE)
     })
   })
@@ -118,16 +135,18 @@ describe('pair-usecase.ts', () => {
       const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
       mockPairRepo.delete.mockResolvedValueOnce(true)
 
-      return expect(usecase.delete({ pairId: '1' })).resolves.toBe(true)
+      return expect(usecase.delete({ pairId: new PairId('1') })).resolves.toBe(
+        true,
+      )
     })
     it('[準正常系]: deleteで例外が発生した場合、例外が発生する', () => {
       const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
       const ERROR_MESSAGE = 'error!'
       mockPairRepo.delete.mockRejectedValueOnce(ERROR_MESSAGE)
 
-      return expect(usecase.delete({ pairId: '1' })).rejects.toEqual(
-        ERROR_MESSAGE,
-      )
+      return expect(
+        usecase.delete({ pairId: new PairId('1') }),
+      ).rejects.toEqual(ERROR_MESSAGE)
     })
   })
 })

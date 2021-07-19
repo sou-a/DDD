@@ -1,9 +1,12 @@
+import { PairId } from 'src/domain/pair/pair-id'
+import { UserId } from 'src/domain/user/user-id'
+
 export class PairDTO {
-  public readonly id: string
+  public readonly id: PairId
   public readonly name: string
   public readonly pairUsers: PairUserDTO[]
   public constructor(props: {
-    id: string
+    id: PairId
     name: string
     pairUsers: PairUserDTO[]
   }) {
@@ -15,6 +18,6 @@ export class PairDTO {
 }
 
 export type PairUserDTO = {
-  id: string
+  id: UserId
   status: string
 }

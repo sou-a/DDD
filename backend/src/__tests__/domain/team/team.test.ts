@@ -2,13 +2,15 @@ import { createUser } from 'src/__tests__/testUtil/user/user-factory'
 import { Team } from 'src/domain/team/team'
 import { UserStatus } from 'src/domain/user/user-status'
 import { createRandomIdString } from 'src/util/random'
+import { UserId } from 'src/domain/user/user-id'
+import { TeamId } from 'src/domain/team/team-id'
 
 describe('team.ts', () => {
   describe('constructor', () => {
     it('[正常系]生成できる', () => {
       expect(
         new Team({
-          id: createRandomIdString(),
+          id: new TeamId(createRandomIdString()),
           name: '1',
           users: [createUser({}), createUser({}), createUser({})],
         }),
@@ -19,7 +21,7 @@ describe('team.ts', () => {
       expect(
         () =>
           new Team({
-            id: createRandomIdString(),
+            id: new TeamId(createRandomIdString()),
             name: 'a',
             users: [createUser({}), createUser({}), createUser({})],
           }),
@@ -30,7 +32,7 @@ describe('team.ts', () => {
       expect(
         () =>
           new Team({
-            id: createRandomIdString(),
+            id: new TeamId(createRandomIdString()),
             name: '1',
             users: [createUser({}), createUser({})],
           }),
@@ -41,7 +43,7 @@ describe('team.ts', () => {
       expect(
         () =>
           new Team({
-            id: createRandomIdString(),
+            id: new TeamId(createRandomIdString()),
             name: '1',
             users: [
               createUser({ status: new UserStatus(UserStatus.recess) }),
@@ -53,7 +55,7 @@ describe('team.ts', () => {
       expect(
         () =>
           new Team({
-            id: createRandomIdString(),
+            id: new TeamId(createRandomIdString()),
             name: '1',
             users: [
               createUser({ status: new UserStatus(UserStatus.leave) }),
@@ -68,7 +70,7 @@ describe('team.ts', () => {
   describe('addTeamUser', () => {
     it('[正常系]チームユーザーを追加できる', () => {
       const team = new Team({
-        id: createRandomIdString(),
+        id: new TeamId(createRandomIdString()),
         name: '1',
         users: [createUser({}), createUser({}), createUser({})],
       })
@@ -81,7 +83,7 @@ describe('team.ts', () => {
   describe('removeTeamUserFromTeamService', () => {
     it('[正常系]チームユーザーを削除できる', () => {
       const team = new Team({
-        id: createRandomIdString(),
+        id: new TeamId(createRandomIdString()),
         name: '1',
         users: [
           createUser({ id: '1' }),
@@ -91,7 +93,7 @@ describe('team.ts', () => {
         ],
       })
       expect(team.getAllProperties().teamUsers).toHaveLength(4)
-      team.removeTeamUserFromTeamService('1')
+      team.removeTeamUserFromTeamService(new UserId('1'))
       expect(team.getAllProperties().teamUsers).toHaveLength(3)
     })
   })

@@ -1,5 +1,6 @@
 import { ITaskGroupRepository } from 'src/domain/task-group/i-task-group-repository'
 import { TaskGroup } from 'src/domain/task-group/task-group'
+import { TaskGroupId } from 'src/domain/task-group/task-group-id'
 import { TaskGroupService } from 'src/domain/task-group/task-group-service'
 import { createRandomIdString } from 'src/util/random'
 import { TaskGroupDTO } from './dto/task-group-dto'
@@ -31,7 +32,7 @@ export class TaskGroupUseCase {
   public async create(props: { name: string }): Promise<TaskGroupDTO> {
     const { name } = props
     const taskGroup: TaskGroup = new TaskGroup({
-      id: createRandomIdString(),
+      id: new TaskGroupId(createRandomIdString()),
       name,
       tasks: [],
     })
@@ -44,7 +45,7 @@ export class TaskGroupUseCase {
   }
 
   public async changeName(props: {
-    taskGroupId: string
+    taskGroupId: TaskGroupId
     name: string
   }): Promise<TaskGroupDTO> {
     const { taskGroupId, name } = props
@@ -66,7 +67,7 @@ export class TaskGroupUseCase {
     }
   }
 
-  public async delete(prop: { taskGroupId: string }): Promise<void> {
+  public async delete(prop: { taskGroupId: TaskGroupId }): Promise<void> {
     const { taskGroupId } = prop
     const taskGroup: TaskGroup = await this.taskGroupRepository.findById(
       taskGroupId,

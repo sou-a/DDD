@@ -3,6 +3,7 @@ import { prisma } from 'src/__tests__/testUtil/prisma'
 import { seedUser } from 'src/__tests__/testUtil/user/seed-user'
 import { Team } from 'src/domain/team/team'
 import { User } from 'src/domain/user/user'
+import { TeamId } from 'src/domain/team/team-id'
 
 export const seedTeam = async (params: { id?: string; name?: string }) => {
   let { id, name } = params
@@ -54,17 +55,17 @@ export const seedTeamAndUsers = async (params: {
       users.map(async (user: User) => {
         id = id ?? faker.random.uuid()
         await seedUser({
-          id: user.getAllProperties().id,
+          id: user.getAllProperties().id.value,
         })
         await prisma.teamUser.create({
           data: {
-            userId: user.getAllProperties().id,
+            userId: user.getAllProperties().id.value,
             teamId: id,
           },
         })
       }),
     )
-    return new Team({ id, name, users })
+    return new Team({ id: new TeamId(id), name, users })
   }
 
   const userId = faker.random.uuid()
@@ -96,5 +97,5 @@ export const seedTeamAndUsers = async (params: {
       },
     ],
   })
-  return new Team({ id, name, users: [user1, user2, user3] })
+  return new Team({ id: new TeamId(id), name, users: [user1, user2, user3] })
 }

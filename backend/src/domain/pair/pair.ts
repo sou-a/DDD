@@ -1,9 +1,10 @@
-import { type } from 'os'
 import { UserStatus } from 'src/domain/user/user-status'
 import { User } from '../user/user'
+import { UserId } from '../user/user-id'
+import { PairId } from './pair-id'
 
 export class Pair {
-  private id: string
+  private id: PairId
   private name: string
   private pairUsers: PairUser[]
 
@@ -11,7 +12,7 @@ export class Pair {
   upperLimit = 3
   alphabetRegex = /^[A-Za-z]*$/
 
-  public constructor(props: { id: string; name: string; users: User[] }) {
+  public constructor(props: { id: PairId; name: string; users: User[] }) {
     const { id, name, users } = props
 
     // ユーザーを詰め替えてペアユーザーインスタンス生成
@@ -73,9 +74,9 @@ export class Pair {
    * ペアユーザーを削除する
    * @param user
    */
-  public removePairUser(userId: string): Pair {
+  public removePairUser(userId: UserId): Pair {
     const removedPairUser = this.pairUsers.filter(
-      (pairUser) => userId !== pairUser.getAllProperties().userId,
+      (pairUser) => !userId.equals(pairUser.getAllProperties().userId),
     )
     // - 参加者2名以上から成る
     if (removedPairUser.length < this.lowerLimit) {
@@ -95,13 +96,13 @@ export class Pair {
 }
 
 class PairUser {
-  private pairId: string
-  private userId: string
+  private pairId: PairId
+  private userId: UserId
   private status: UserStatus
 
   public constructor(props: {
-    pairId: string
-    userId: string
+    pairId: PairId
+    userId: UserId
     status: UserStatus
   }) {
     const { pairId, userId, status } = props

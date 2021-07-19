@@ -9,7 +9,7 @@ export class FindAllTeamResponse {
     const { teamDTOs } = params
     this.teams = teamDTOs.map(({ id, name, teamUsers }) => {
       return new Team({
-        id,
+        id: id.value,
         name,
         teamUsers,
       })

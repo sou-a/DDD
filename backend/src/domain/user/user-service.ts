@@ -4,6 +4,7 @@ import { ITeamRepository } from '../team/i-team-repository'
 import { Team } from '../team/team'
 import { TeamService } from '../team/team-service'
 import { IUserRepository } from './i-user-repository'
+import { UserId } from './user-id'
 
 export class UserService {
   userRepository: IUserRepository
@@ -29,7 +30,7 @@ export class UserService {
     this.teamService = teamService
   }
 
-  public async deleteUser(userId: string): Promise<boolean> {
+  public async deleteUser(userId: UserId): Promise<boolean> {
     // ペアユーザー削除（ペアオブジェクト生成してそこに任せる）
     const pair: Pair | null = await this.pairRepository.findByUserId(userId)
     if (pair) {

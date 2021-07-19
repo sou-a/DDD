@@ -1,7 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 import { IPairRepository } from 'src/domain/pair/i-pair-repository'
 import { Pair } from 'src/domain/pair/pair'
+import { PairId } from 'src/domain/pair/pair-id'
 import { User } from 'src/domain/user/user'
+import { UserId } from 'src/domain/user/user-id'
 import { UserStatus } from 'src/domain/user/user-status'
 
 export class PairRepository implements IPairRepository {
@@ -29,14 +31,14 @@ export class PairRepository implements IPairRepository {
       (model): Pair => {
         const users = model.users.map((pairUser) => {
           return new User({
-            id: pairUser.user.id,
+            id: new UserId(pairUser.user.id),
             name: pairUser.user.name,
             mailAddress: pairUser.user.mailAddress,
             status: new UserStatus(pairUser.user.userStatus.name),
           })
         })
         return new Pair({
-          id: model.id,
+          id: new PairId(model.id),
           name: model.name,
           users: users,
         })
@@ -45,10 +47,10 @@ export class PairRepository implements IPairRepository {
     return entities
   }
 
-  public async findById(pairId: string): Promise<Pair> {
+  public async findById(pairId: PairId): Promise<Pair> {
     const model = await this.prismaClient.pair.findUnique({
       where: {
-        id: pairId,
+        id: pairId.value,
       },
       include: {
         users: {
@@ -68,7 +70,7 @@ export class PairRepository implements IPairRepository {
 
     const users = model.users.map((pairUser) => {
       return new User({
-        id: pairUser.user.id,
+        id: new UserId(pairUser.user.id),
         name: pairUser.user.name,
         mailAddress: pairUser.user.mailAddress,
         status: new UserStatus(pairUser.user.userStatus.name),
@@ -76,20 +78,20 @@ export class PairRepository implements IPairRepository {
     })
 
     const entity = new Pair({
-      id: model.id,
+      id: new PairId(model.id),
       name: model.name,
       users: users,
     })
     return entity
   }
 
-  public async findByUserId(userId: string): Promise<Pair | null> {
+  public async findByUserId(userId: UserId): Promise<Pair | null> {
     // findUniqueで探したい...
     const model = await this.prismaClient.pair.findFirst({
       where: {
         users: {
           some: {
-            userId,
+            userId: userId.value,
           },
         },
       },
@@ -111,7 +113,7 @@ export class PairRepository implements IPairRepository {
 
     const users = model.users.map((pairUser) => {
       return new User({
-        id: pairUser.user.id,
+        id: new UserId(pairUser.user.id),
         name: pairUser.user.name,
         mailAddress: pairUser.user.mailAddress,
         status: new UserStatus(pairUser.user.userStatus.name),
@@ -119,7 +121,7 @@ export class PairRepository implements IPairRepository {
     })
 
     const entity = new Pair({
-      id: model.id,
+      id: new PairId(model.id),
       name: model.name,
       users: users,
     })
@@ -131,7 +133,7 @@ export class PairRepository implements IPairRepository {
 
     const model = await this.prismaClient.pair.upsert({
       where: {
-        id,
+        id: id.value,
       },
       update: {
         name,
@@ -141,18 +143,18 @@ export class PairRepository implements IPairRepository {
           deleteMany: {},
           create: pairUsers.map((pairUser) => {
             return {
-              userId: pairUser.getAllProperties().userId,
+              userId: pairUser.getAllProperties().userId.value,
             }
           }),
         },
       },
       create: {
-        id,
+        id: id.value,
         name,
         users: {
           create: pairUsers.map((pairUser) => {
             return {
-              userId: pairUser.getAllProperties().userId,
+              userId: pairUser.getAllProperties().userId.value,
             }
           }),
         },
@@ -172,25 +174,25 @@ export class PairRepository implements IPairRepository {
 
     const userEntity = model.users.map((pairUser) => {
       return new User({
-        id: pairUser.user.id,
+        id: new UserId(pairUser.user.id),
         name: pairUser.user.name,
         mailAddress: pairUser.user.mailAddress,
         status: new UserStatus(pairUser.user.userStatus.name),
       })
     })
     const entity = new Pair({
-      id: model.id,
+      id: new PairId(model.id),
       name: model.name,
       users: userEntity,
     })
     return entity
   }
 
-  public async delete(pairId: string): Promise<boolean> {
+  public async delete(pairId: PairId): Promise<boolean> {
     // 関連するテーブル（ペアユーザー）を削除
     await this.prismaClient.pair.update({
       where: {
-        id: pairId,
+        id: pairId.value,
       },
       data: {
         users: {
@@ -200,16 +202,16 @@ export class PairRepository implements IPairRepository {
     })
     await this.prismaClient.pair.delete({
       where: {
-        id: pairId,
+        id: pairId.value,
       },
     })
     return true
   }
 
-  public async deletePairUser(userId: string): Promise<void> {
+  public async deletePairUser(userId: UserId): Promise<void> {
     await this.prismaClient.pairUser.delete({
       where: {
-        userId,
+        userId: userId.value,
       },
     })
   }

@@ -1,27 +1,23 @@
-export class UserStatus {
-  private status
+import ValueObject from '../shared/value-object'
 
+export class UserStatus extends ValueObject<string, 'UserStatus'> {
   static active = '在籍中'
   static recess = '休会中'
   static leave = '退会済'
   static statusList = [UserStatus.active, UserStatus.recess, UserStatus.leave]
 
-  constructor(status: string) {
-    if (!UserStatus.statusList.includes(status)) {
+  constructor(value: string) {
+    super(value)
+    if (!UserStatus.statusList.includes(value)) {
       throw new Error('存在しない在籍ステータスです')
     }
-    this.status = status
   }
 
   public getStatus() {
-    return this.status
+    return this.value
   }
 
   public isActive(): boolean {
-    return this.isEquals(new UserStatus(UserStatus.active))
-  }
-
-  public isEquals(status: UserStatus): boolean {
-    return this.status === status.status
+    return this.equals(new UserStatus(UserStatus.active))
   }
 }

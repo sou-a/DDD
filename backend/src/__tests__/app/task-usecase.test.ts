@@ -1,13 +1,15 @@
 import { PrismaClient } from '@prisma/client'
 import { mocked } from 'ts-jest/utils'
 import { MockedObjectDeep } from 'ts-jest/dist/utils/testing'
-import { TaskStatus } from 'src/domain/task/task-status'
+import { TaskStatus } from 'src/domain/user-belong-task/task-status'
 import { createTask } from 'src/__tests__/testUtil/task/task-factory'
 import { createUserBelongTask } from 'src/__tests__/testUtil/user-belong-task/user-belong-task-factory'
 import { TaskUseCase } from 'src/app/task-usecase'
 import { TaskDTO, UserBelongTaskDTO } from 'src/app/dto/task-dto'
 import { TaskRepository } from 'src/infra/db/repository/task-repository'
 import { UserBelongTaskRepository } from 'src/infra/db/repository/user-belong-task-repository'
+import { UserId } from 'src/domain/user/user-id'
+import { TaskId } from 'src/domain/task/task-id'
 
 jest.mock('@prisma/client')
 jest.mock('src/infra/db/repository/task-repository')
@@ -80,8 +82,8 @@ describe('task-usecase.ts', () => {
       )
       return expect(
         usecase.changeStatus({
-          userId: '1',
-          taskId: '1',
+          userId: new UserId('1'),
+          taskId: new TaskId('1'),
           status: TaskStatus.review,
         }),
       ).resolves.toEqual(expect.any(UserBelongTaskDTO))
@@ -96,8 +98,8 @@ describe('task-usecase.ts', () => {
 
       return expect(
         usecase.changeStatus({
-          userId: '1',
-          taskId: '1',
+          userId: new UserId('1'),
+          taskId: new TaskId('1'),
           status: TaskStatus.review,
         }),
       ).rejects.toEqual(ERROR_MESSAGE)
@@ -112,7 +114,7 @@ describe('task-usecase.ts', () => {
 
       return expect(
         usecase.changeTaskGroup({
-          taskId: '1',
+          taskId: new TaskId('1'),
           taskGroupId: '1',
         }),
       ).resolves.toEqual(expect.any(TaskDTO))
@@ -125,7 +127,7 @@ describe('task-usecase.ts', () => {
       const usecase = new TaskUseCase(mockTaskRepo, mockUserBelongTaskRepo)
       return expect(
         usecase.changeTaskGroup({
-          taskId: '1',
+          taskId: new TaskId('1'),
           taskGroupId: '1',
         }),
       ).rejects.toEqual(ERROR_MESSAGE)
@@ -137,16 +139,18 @@ describe('task-usecase.ts', () => {
       const usecase = new TaskUseCase(mockTaskRepo, mockUserBelongTaskRepo)
       mockTaskRepo.delete.mockResolvedValueOnce()
 
-      return expect(usecase.delete({ taskId: '1' })).resolves.toBe(undefined)
+      return expect(usecase.delete({ taskId: new TaskId('1') })).resolves.toBe(
+        undefined,
+      )
     })
     it('[準正常系]: deleteで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
       mockTaskRepo.delete.mockRejectedValueOnce(ERROR_MESSAGE)
       const usecase = new TaskUseCase(mockTaskRepo, mockUserBelongTaskRepo)
 
-      return expect(usecase.delete({ taskId: '1' })).rejects.toEqual(
-        ERROR_MESSAGE,
-      )
+      return expect(
+        usecase.delete({ taskId: new TaskId('1') }),
+      ).rejects.toEqual(ERROR_MESSAGE)
     })
   })
 })

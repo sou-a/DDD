@@ -5,7 +5,10 @@ describe('user-status.ts', () => {
     it('[正常系]statusListにあるステータスはインスタンス生成できる', () => {
       const statusList = UserStatus.statusList
       statusList.map((status) => {
-        expect(new UserStatus(status)).toEqual({ status: expect.anything() })
+        expect(new UserStatus(status)).toEqual({
+          value: expect.anything(),
+          _: '',
+        })
       })
     })
 
@@ -38,14 +41,14 @@ describe('user-status.ts', () => {
     })
   })
 
-  describe('isEquals', () => {
+  describe('equals', () => {
     it('[正常系]等価性の保証', () => {
       const active = new UserStatus(UserStatus.active)
       const active2 = new UserStatus(UserStatus.active)
-      expect(active.isEquals(active2)).toBe(true)
+      expect(active.equals(active2)).toBe(true)
 
       const recess = new UserStatus(UserStatus.recess)
-      expect(active.isEquals(recess)).toBe(false)
+      expect(active.equals(recess)).toBe(false)
     })
   })
 })

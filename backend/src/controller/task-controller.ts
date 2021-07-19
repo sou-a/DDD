@@ -18,6 +18,8 @@ import {
   UpdateTaskStatusRequest,
   UpdateTaskGroupRequest,
 } from './request/task-request'
+import { UserId } from 'src/domain/user/user-id'
+import { TaskId } from 'src/domain/task/task-id'
 
 @ApiTags('tasks')
 @Controller({
@@ -58,8 +60,8 @@ export class TaskController {
     const userBelongTaskRepository = new UserBelongTaskRepository(prisma)
     const usecase = new TaskUseCase(taskRepository, userBelongTaskRepository)
     await usecase.changeStatus({
-      taskId: id,
-      userId: postTaskDto.userId,
+      taskId: new TaskId(id),
+      userId: new UserId(postTaskDto.userId),
       status: postTaskDto.status,
     })
   }
@@ -74,7 +76,7 @@ export class TaskController {
     const userBelongTaskRepository = new UserBelongTaskRepository(prisma)
     const usecase = new TaskUseCase(taskRepository, userBelongTaskRepository)
     await usecase.changeTaskGroup({
-      taskId: id,
+      taskId: new TaskId(id),
       taskGroupId: postTaskDto.taskGroupId,
     })
   }
@@ -86,7 +88,7 @@ export class TaskController {
     const userBelongTaskRepository = new UserBelongTaskRepository(prisma)
     const usecase = new TaskUseCase(taskRepository, userBelongTaskRepository)
     await usecase.delete({
-      taskId: id,
+      taskId: new TaskId(id),
     })
   }
 }

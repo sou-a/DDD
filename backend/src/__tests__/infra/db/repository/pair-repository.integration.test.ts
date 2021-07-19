@@ -5,6 +5,8 @@ import { seedUser } from 'src/__tests__/testUtil/user/seed-user'
 import { seedAllUserStatus } from 'src/__tests__/testUtil/user-status-factory'
 import { seedPair, seedPairUser } from 'src/__tests__/testUtil/pair/seed-pair'
 import { PairRepository } from 'src/infra/db/repository/pair-repository'
+import { UserId } from 'src/domain/user/user-id'
+import { PairId } from 'src/domain/pair/pair-id'
 
 describe('pair-repository.integration.ts', () => {
   const pairRepo = new PairRepository(prisma)
@@ -50,7 +52,7 @@ describe('pair-repository.integration.ts', () => {
       await seedPairUser({ userId: '1', pairId: '1' })
       await seedPairUser({ userId: '2', pairId: '1' })
 
-      const pair = await pairRepo.findById('1')
+      const pair = await pairRepo.findById(new PairId('1'))
       expect(pair).toEqual(expect.any(Pair))
     })
   })
@@ -64,9 +66,9 @@ describe('pair-repository.integration.ts', () => {
       await seedPairUser({ userId: '1', pairId: '1' })
       await seedPairUser({ userId: '2', pairId: '1' })
 
-      const pair = await pairRepo.findByUserId('1')
+      const pair = await pairRepo.findByUserId(new UserId('1'))
       expect(pair).toEqual(expect.any(Pair))
-      expect(pair?.getAllProperties().id).toEqual('1')
+      expect(pair?.getAllProperties().id.value).toEqual('1')
     })
   })
 
@@ -76,7 +78,7 @@ describe('pair-repository.integration.ts', () => {
       const user1 = await seedUser({ id: '1' })
       const user2 = await seedUser({ id: '2' })
       const pairExpected = {
-        id: createRandomIdString(),
+        id: new PairId(createRandomIdString()),
         name: 'a',
         users: [user1, user2],
       }
@@ -107,7 +109,7 @@ describe('pair-repository.integration.ts', () => {
 
       let allPairs = await prisma.pair.findMany()
       expect(allPairs).toHaveLength(2)
-      await pairRepo.delete('1')
+      await pairRepo.delete(new PairId('1'))
       allPairs = await prisma.pair.findMany()
       expect(allPairs).toHaveLength(1)
     })
@@ -130,7 +132,7 @@ describe('pair-repository.integration.ts', () => {
         },
       })
       expect(allPairs?.users).toHaveLength(3)
-      await pairRepo.deletePairUser('1')
+      await pairRepo.deletePairUser(new UserId('1'))
       allPairs = await prisma.pair.findFirst({
         include: {
           users: true,

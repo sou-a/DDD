@@ -1,15 +1,17 @@
 import { UserStatus } from 'src/domain/user/user-status'
 import { User } from '../user/user'
+import { UserId } from '../user/user-id'
+import { TeamId } from './team-id'
 
 export class Team {
-  private id: string
+  private id: TeamId
   private name: string
   private teamUsers: TeamUser[]
 
   static lowerLimit = 3
   static numberRegex = /^[0-9]+$/
 
-  public constructor(props: { id: string; name: string; users: User[] }) {
+  public constructor(props: { id: TeamId; name: string; users: User[] }) {
     const { id, name, users } = props
 
     // ユーザーを詰め替えてチームユーザーインスタンス生成
@@ -58,9 +60,9 @@ export class Team {
    * チームユーザーを削除する
    * @param userId
    */
-  public removeTeamUserFromTeamService(userId: string): Team {
+  public removeTeamUserFromTeamService(userId: UserId): Team {
     const removeTeamUser = this.teamUsers.filter(
-      (teamUser) => userId !== teamUser.getAllProperties().userId,
+      (teamUser) => !userId.equals(teamUser.getAllProperties().userId),
     )
     this.teamUsers = removeTeamUser
     return this
@@ -76,13 +78,13 @@ export class Team {
 }
 
 class TeamUser {
-  private teamId: string
-  private userId: string
+  private teamId: TeamId
+  private userId: UserId
   private status: UserStatus
 
   public constructor(props: {
-    teamId: string
-    userId: string
+    teamId: TeamId
+    userId: UserId
     status: UserStatus
   }) {
     const { teamId, userId, status } = props

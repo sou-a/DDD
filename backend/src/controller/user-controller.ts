@@ -25,6 +25,7 @@ import { PairRepository } from 'src/infra/db/repository/pair-repository'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { TeamService } from 'src/domain/team/team-service'
 import { UserQS } from 'src/infra/db/query-service/user-qs'
+import { UserId } from 'src/domain/user/user-id'
 
 @ApiTags('users')
 @Controller({
@@ -122,7 +123,7 @@ export class UserController {
     })
     const usecase = new UserUseCase(userRepository, userService, userQS)
     await usecase.changeStatus({
-      userId: id,
+      userId: new UserId(id),
       status: postUserDto.status,
     })
   }
@@ -143,7 +144,7 @@ export class UserController {
     })
     const usecase = new UserUseCase(userRepository, userService, userQS)
     await usecase.delete({
-      userId: id,
+      userId: new UserId(id),
     })
   }
 }

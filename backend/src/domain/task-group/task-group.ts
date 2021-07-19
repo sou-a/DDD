@@ -1,9 +1,16 @@
-export class TaskGroup {
-  private id: string
-  private name: string
-  private tasks: string[]
+import { TaskId } from '../task/task-id'
+import { TaskGroupId } from './task-group-id'
 
-  public constructor(props: { id: string; name: string; tasks: string[] }) {
+export class TaskGroup {
+  private id: TaskGroupId
+  private name: string
+  private tasks: TaskId[]
+
+  public constructor(props: {
+    id: TaskGroupId
+    name: string
+    tasks: TaskId[]
+  }) {
     const { id, name, tasks } = props
 
     this.id = id

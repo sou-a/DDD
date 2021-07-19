@@ -9,7 +9,7 @@ export class FindAllPairResponse {
     const { pairDTOs } = params
     this.pairs = pairDTOs.map(({ id, name, pairUsers }) => {
       return new Pair({
-        id,
+        id: id.value,
         name,
         pairUsers,
       })

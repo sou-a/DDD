@@ -2,6 +2,7 @@ import { Team } from './team'
 import { ITeamRepository } from './i-team-repository'
 import { IUserRepository } from '../user/i-user-repository'
 import { User } from '../user/user'
+import { UserId } from '../user/user-id'
 
 export class TeamService {
   private teamRepository: ITeamRepository
@@ -17,13 +18,11 @@ export class TeamService {
   }
 
   /**
-   *
    * チームユーザーを削除する（saveもします）
-   * @param user
    */
   public async deleteTeamUserAndSave(
     team: Team,
-    userId: string,
+    userId: UserId,
   ): Promise<Team> {
     const resultTeam = team.removeTeamUserFromTeamService(userId)
 

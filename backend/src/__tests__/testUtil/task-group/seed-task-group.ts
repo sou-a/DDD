@@ -1,10 +1,12 @@
 import * as faker from 'faker'
 import { prisma } from 'src/__tests__/testUtil/prisma'
 import { TaskGroup } from 'src/domain/task-group/task-group'
+import { TaskId } from 'src/domain/task/task-id'
+import { TaskGroupId } from 'src/domain/task-group/task-group-id'
 
 export const seedTaskGroup = async (params: { id?: string; name?: string }) => {
-  let { id, name } = params
-  id = id ?? faker.random.uuid()
+  let { name } = params
+  const id = params.id ?? faker.random.uuid()
   name = name ?? 'A'
   const taskGroup = await prisma.taskGroup.create({
     data: {
@@ -16,7 +18,7 @@ export const seedTaskGroup = async (params: { id?: string; name?: string }) => {
     },
   })
   const tasks = taskGroup.tasks.map((task) => {
-    return task.id
+    return new TaskId(task.id)
   })
-  return new TaskGroup({ id, name, tasks })
+  return new TaskGroup({ id: new TaskGroupId(id), name, tasks })
 }

@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { IUserRepository } from 'src/domain/user/i-user-repository'
 import { User } from 'src/domain/user/user'
+import { UserId } from 'src/domain/user/user-id'
 import { UserStatus } from 'src/domain/user/user-status'
 
 export class UserRepository implements IUserRepository {
@@ -19,7 +20,7 @@ export class UserRepository implements IUserRepository {
     const entity: User[] = models.map(
       (model): User => {
         return new User({
-          id: model.id,
+          id: new UserId(model.id),
           name: model.name,
           mailAddress: model.mailAddress,
           status: new UserStatus(model.userStatus.name),
@@ -29,10 +30,10 @@ export class UserRepository implements IUserRepository {
     return entity
   }
 
-  public async findById(userId: string): Promise<User> {
+  public async findById(userId: UserId): Promise<User> {
     const userModel = await this.prismaClient.user.findUnique({
       where: {
-        id: userId,
+        id: userId.value,
       },
       include: {
         userStatus: true,
@@ -43,7 +44,7 @@ export class UserRepository implements IUserRepository {
     }
 
     const entity = new User({
-      id: userModel.id,
+      id: new UserId(userModel.id),
       name: userModel.name,
       mailAddress: userModel.mailAddress,
       status: new UserStatus(userModel.userStatus.name),
@@ -65,7 +66,7 @@ export class UserRepository implements IUserRepository {
 
     const savedUsermodel = await this.prismaClient.user.upsert({
       where: {
-        id,
+        id: id.value,
       },
       update: {
         name,
@@ -73,14 +74,14 @@ export class UserRepository implements IUserRepository {
         userStatusId: userStatusModel.id,
       },
       create: {
-        id,
+        id: id.value,
         name,
         mailAddress,
         userStatusId: userStatusModel.id,
       },
     })
     const savedUserEntity = new User({
-      id: savedUsermodel.id,
+      id: new UserId(savedUsermodel.id),
       name: savedUsermodel.name,
       mailAddress: savedUsermodel.mailAddress,
       status: new UserStatus(userStatusModel.name),
@@ -88,10 +89,10 @@ export class UserRepository implements IUserRepository {
     return savedUserEntity
   }
 
-  public async delete(userId: string): Promise<void> {
+  public async delete(userId: UserId): Promise<void> {
     await this.prismaClient.user.delete({
       where: {
-        id: userId,
+        id: userId.value,
       },
     })
   }

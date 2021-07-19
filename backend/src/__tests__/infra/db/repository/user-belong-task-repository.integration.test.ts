@@ -1,13 +1,15 @@
 import { prisma } from 'src/__tests__/testUtil/prisma'
 import { seedAllTaskStatus } from 'src/__tests__/testUtil/task-status-factory'
 import { UserBelongTask } from 'src/domain/user-belong-task/user-belong-task'
-import { TaskStatus } from 'src/domain/task/task-status'
+import { TaskStatus } from 'src/domain/user-belong-task/task-status'
 import { seedUser } from 'src/__tests__/testUtil/user/seed-user'
 import { seedTaskGroup } from 'src/__tests__/testUtil/task-group/seed-task-group'
 import { seedTask } from 'src/__tests__/testUtil/task/seed-task'
 import { seedAllUserStatus } from 'src/__tests__/testUtil/user-status-factory'
 import { seedUserBelongTask } from 'src/__tests__/testUtil/user-belong-task/seed-user-belong-task'
 import { UserBelongTaskRepository } from 'src/infra/db/repository/user-belong-task-repository'
+import { UserId } from 'src/domain/user/user-id'
+import { TaskId } from 'src/domain/task/task-id'
 
 describe('user-belong-task-repository.integration.ts', () => {
   const userBelongTaskRepo = new UserBelongTaskRepository(prisma)
@@ -60,11 +62,13 @@ describe('user-belong-task-repository.integration.ts', () => {
       await seedUserBelongTask({ userId: '1', taskId: '1' })
       await seedUserBelongTask({ userId: '2', taskId: '1' })
 
-      const userBelongTasks = await userBelongTaskRepo.findByUserId('1')
+      const userBelongTasks = await userBelongTaskRepo.findByUserId(
+        new UserId('1'),
+      )
       expect(userBelongTasks[0]).toEqual(expect.any(UserBelongTask))
       expect(userBelongTasks[0]).toEqual({
-        userId: '1',
-        taskId: '1',
+        userId: new UserId('1'),
+        taskId: new TaskId('1'),
         status: expect.any(TaskStatus),
       })
     })
@@ -79,8 +83,8 @@ describe('user-belong-task-repository.integration.ts', () => {
       await seedUser({ id: '1' })
 
       const userBelongTaskExpected = {
-        userId: '1',
-        taskId: '1',
+        userId: new UserId('1'),
+        taskId: new TaskId('1'),
         status: new TaskStatus(TaskStatus.notYet),
       }
       await userBelongTaskRepo.save(new UserBelongTask(userBelongTaskExpected))
@@ -110,7 +114,7 @@ describe('user-belong-task-repository.integration.ts', () => {
       await seedUserBelongTask({ userId: '2', taskId: '1' })
       await seedUserBelongTask({ userId: '1', taskId: '2' })
 
-      await userBelongTaskRepo.deleteByTaskId('1')
+      await userBelongTaskRepo.deleteByTaskId(new TaskId('1'))
       const userBelongTasks = await prisma.taskUser.findMany()
       expect(userBelongTasks).toHaveLength(1)
       userBelongTasks.map((userBelongTask) => {
@@ -136,7 +140,7 @@ describe('user-belong-task-repository.integration.ts', () => {
       await seedUserBelongTask({ userId: '1', taskId: '2' })
       await seedUserBelongTask({ userId: '2', taskId: '1' })
 
-      await userBelongTaskRepo.deleteByUserId('1')
+      await userBelongTaskRepo.deleteByUserId(new UserId('1'))
       const userBelongTasks = await prisma.taskUser.findMany()
       expect(userBelongTasks).toHaveLength(1)
       userBelongTasks.map((userBelongTask) => {

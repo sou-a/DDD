@@ -14,6 +14,8 @@ import { PairRepository } from 'src/infra/db/repository/pair-repository'
 import { PairUseCase } from 'src/app/pair-usecase'
 import { FindAllPairResponse } from './response/pair-response'
 import { CreatePairRequest, PairUserRequest } from './request/pair-request'
+import { UserId } from 'src/domain/user/user-id'
+import { PairId } from 'src/domain/pair/pair-id'
 
 @ApiTags('pairs')
 @Controller({
@@ -42,7 +44,9 @@ export class PairController {
     const usecase = new PairUseCase(pairRepository, userRepository)
     await usecase.create({
       name: pairDto.name,
-      userIds: pairDto.userIds,
+      userIds: pairDto.userIds.map((userId) => {
+        return new UserId(userId)
+      }),
     })
   }
 
@@ -57,8 +61,8 @@ export class PairController {
 
     const usecase = new PairUseCase(pairRepository, userRepository)
     await usecase.addPairUser({
-      pairId: id,
-      userId: pairDto.userId,
+      pairId: new PairId(id),
+      userId: new UserId(pairDto.userId),
     })
   }
 
@@ -73,8 +77,8 @@ export class PairController {
 
     const usecase = new PairUseCase(pairRepository, userRepository)
     await usecase.removePairUser({
-      pairId: id,
-      userId: pairDto.userId,
+      pairId: new PairId(id),
+      userId: new UserId(pairDto.userId),
     })
   }
 
@@ -86,7 +90,7 @@ export class PairController {
 
     const usecase = new PairUseCase(pairRepository, userRepository)
     await usecase.delete({
-      pairId: id,
+      pairId: new PairId(id),
     })
   }
 }

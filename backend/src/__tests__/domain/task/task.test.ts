@@ -1,4 +1,5 @@
 import { Task } from 'src/domain/task/task'
+import { TaskId } from 'src/domain/task/task-id'
 import { createRandomIdString } from 'src/util/random'
 
 describe('task.ts', () => {
@@ -6,7 +7,7 @@ describe('task.ts', () => {
     it('[正常系]生成できる', () => {
       expect(
         new Task({
-          id: createRandomIdString(),
+          id: new TaskId(createRandomIdString()),
           name: 'タスク',
           taskGroupId: createRandomIdString(),
         }),
@@ -16,7 +17,7 @@ describe('task.ts', () => {
   describe('changeTaskGroupId', () => {
     it('[正常系]タスクグループIdを変更できる', () => {
       const task = new Task({
-        id: createRandomIdString(),
+        id: new TaskId(createRandomIdString()),
         name: 'タスク',
         taskGroupId: createRandomIdString(),
       })

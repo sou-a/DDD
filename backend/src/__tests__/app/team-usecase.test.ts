@@ -9,6 +9,8 @@ import { TeamDTO } from 'src/app/dto/team-dto'
 import { TeamUseCase } from 'src/app/team-usecase'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
+import { UserId } from 'src/domain/user/user-id'
+import { TeamId } from 'src/domain/team/team-id'
 
 jest.mock('@prisma/client')
 jest.mock('src/infra/db/repository/user-repository')
@@ -86,7 +88,7 @@ describe('team-usecase.ts', () => {
       return expect(
         usecase.create({
           name: 'team1',
-          userIds: ['1', '2'],
+          userIds: [new UserId('1'), new UserId('2')],
         }),
       ).resolves.toEqual(expect.any(TeamDTO))
     })
@@ -105,7 +107,7 @@ describe('team-usecase.ts', () => {
       return expect(
         usecase.create({
           name: 'team1',
-          userIds: ['1', '2'],
+          userIds: [new UserId('1'), new UserId('2')],
         }),
       ).rejects.toEqual(ERROR_MESSAGE)
     })
@@ -124,7 +126,10 @@ describe('team-usecase.ts', () => {
       mockTeamRepo.save.mockResolvedValueOnce(createTeam({}))
 
       return expect(
-        usecase.createTeamUser({ teamId: '1', userId: '1' }),
+        usecase.createTeamUser({
+          teamId: new TeamId('1'),
+          userId: new UserId('1'),
+        }),
       ).resolves.toEqual(expect.any(TeamDTO))
     })
     it('[準正常系]: createTeamUserで例外が発生した場合、例外が発生する', () => {
@@ -140,7 +145,10 @@ describe('team-usecase.ts', () => {
       mockTeamRepo.save.mockRejectedValueOnce(ERROR_MESSAGE)
 
       return expect(
-        usecase.createTeamUser({ teamId: '1', userId: '1' }),
+        usecase.createTeamUser({
+          teamId: new TeamId('1'),
+          userId: new UserId('1'),
+        }),
       ).rejects.toEqual(ERROR_MESSAGE)
     })
   })
@@ -160,7 +168,10 @@ describe('team-usecase.ts', () => {
       )
 
       return expect(
-        usecase.deleteTeamUser({ teamId: '1', userId: '1' }),
+        usecase.deleteTeamUser({
+          teamId: new TeamId('1'),
+          userId: new UserId('1'),
+        }),
       ).resolves.toEqual(expect.any(TeamDTO))
     })
     it('[準正常系]: deleteTeamUserで例外が発生した場合、例外が発生する', () => {
@@ -176,7 +187,10 @@ describe('team-usecase.ts', () => {
       mockTeamService.deleteTeamUserAndSave.mockRejectedValueOnce(ERROR_MESSAGE)
 
       return expect(
-        usecase.deleteTeamUser({ teamId: '1', userId: '1' }),
+        usecase.deleteTeamUser({
+          teamId: new TeamId('1'),
+          userId: new UserId('1'),
+        }),
       ).rejects.toEqual(ERROR_MESSAGE)
     })
   })
@@ -191,7 +205,9 @@ describe('team-usecase.ts', () => {
       )
       mockTeamRepo.delete.mockResolvedValueOnce()
 
-      return expect(usecase.delete({ teamId: '1' })).resolves.toBe(undefined)
+      return expect(usecase.delete({ teamId: new TeamId('1') })).resolves.toBe(
+        undefined,
+      )
     })
     it('[準正常系]: deleteで例外が発生した場合、例外が発生する', () => {
       const ERROR_MESSAGE = 'error!'
@@ -203,9 +219,9 @@ describe('team-usecase.ts', () => {
       )
       mockTeamRepo.delete.mockRejectedValueOnce(ERROR_MESSAGE)
 
-      return expect(usecase.delete({ teamId: '1' })).rejects.toEqual(
-        ERROR_MESSAGE,
-      )
+      return expect(
+        usecase.delete({ teamId: new TeamId('1') }),
+      ).rejects.toEqual(ERROR_MESSAGE)
     })
   })
 })

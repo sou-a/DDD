@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 import { ITaskGroupRepository } from 'src/domain/task-group/i-task-group-repository'
 import { TaskGroup } from 'src/domain/task-group/task-group'
+import { TaskGroupId } from 'src/domain/task-group/task-group-id'
+import { TaskId } from 'src/domain/task/task-id'
 
 export class TaskGroupRepository implements ITaskGroupRepository {
   private prismaClient: PrismaClient
@@ -17,11 +19,11 @@ export class TaskGroupRepository implements ITaskGroupRepository {
     })
     const entities: TaskGroup[] = models.map(
       (model): TaskGroup => {
-        const taskIds: string[] = model.tasks.map((task) => {
-          return task.id
+        const taskIds: TaskId[] = model.tasks.map((task) => {
+          return new TaskId(task.id)
         })
         return new TaskGroup({
-          id: model.id,
+          id: new TaskGroupId(model.id),
           name: model.name,
           tasks: taskIds,
         })
@@ -30,10 +32,10 @@ export class TaskGroupRepository implements ITaskGroupRepository {
     return entities
   }
 
-  public async findById(taskGroupId: string): Promise<TaskGroup> {
+  public async findById(taskGroupId: TaskGroupId): Promise<TaskGroup> {
     const model = await this.prismaClient.taskGroup.findUnique({
       where: {
-        id: taskGroupId,
+        id: taskGroupId.value,
       },
       include: {
         tasks: true,
@@ -43,12 +45,12 @@ export class TaskGroupRepository implements ITaskGroupRepository {
       throw new Error(`ID: ${taskGroupId}が見つかりませんでした`)
     }
 
-    const taskIds: string[] = model.tasks.map((task) => {
-      return task.id
+    const taskIds: TaskId[] = model.tasks.map((task) => {
+      return new TaskId(task.id)
     })
 
     const entity = new TaskGroup({
-      id: model.id,
+      id: new TaskGroupId(model.id),
       name: model.name,
       tasks: taskIds,
     })
@@ -60,34 +62,34 @@ export class TaskGroupRepository implements ITaskGroupRepository {
 
     const model = await this.prismaClient.taskGroup.upsert({
       where: {
-        id,
+        id: id.value,
       },
       update: {
         name,
       },
       create: {
-        id,
+        id: id.value,
         name,
       },
       include: {
         tasks: true,
       },
     })
-    const taskIds: string[] = model.tasks.map((task) => {
-      return task.id
+    const taskIds: TaskId[] = model.tasks.map((task) => {
+      return new TaskId(task.id)
     })
     const entity = new TaskGroup({
-      id: model.id,
+      id: new TaskGroupId(model.id),
       name: model.name,
       tasks: taskIds,
     })
     return entity
   }
 
-  public async delete(id: string): Promise<void> {
+  public async delete(id: TaskGroupId): Promise<void> {
     await this.prismaClient.taskGroup.delete({
       where: {
-        id,
+        id: id.value,
       },
     })
   }

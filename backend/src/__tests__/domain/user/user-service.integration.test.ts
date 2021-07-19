@@ -10,6 +10,7 @@ import { seedPair, seedPairUser } from 'src/__tests__/testUtil/pair/seed-pair'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { PairRepository } from 'src/infra/db/repository/pair-repository'
+import { UserId } from 'src/domain/user/user-id'
 
 describe('user-service.integration.ts', () => {
   let mockUserRepo: MockedObjectDeep<UserRepository>
@@ -77,7 +78,7 @@ describe('user-service.integration.ts', () => {
       expect(pairUser).toHaveLength(3)
       expect(teamUser).toHaveLength(4)
 
-      await userService.deleteUser('1')
+      await userService.deleteUser(new UserId('1'))
 
       user = await prisma.user.findMany()
       pairUser = await prisma.pairUser.findMany()

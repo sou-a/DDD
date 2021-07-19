@@ -19,6 +19,7 @@ import { TaskGroupUseCase } from 'src/app/task-group-usecase'
 import { TaskGroupRepository } from 'src/infra/db/repository/task-group-repository'
 import { TaskGroupService } from 'src/domain/task-group/task-group-service'
 import { FindAllTaskGroupResponse } from './response/task-group-response'
+import { TaskGroupId } from 'src/domain/task-group/task-group-id'
 
 @ApiTags('task-groups')
 @Controller({
@@ -78,7 +79,7 @@ export class TaskGroupController {
     })
     const usecase = new TaskGroupUseCase(taskGroupRepository, taskGroupService)
     await usecase.changeName({
-      taskGroupId: id,
+      taskGroupId: new TaskGroupId(id),
       name: postTaskGroupDto.name,
     })
   }
@@ -96,7 +97,7 @@ export class TaskGroupController {
     })
     const usecase = new TaskGroupUseCase(taskGroupRepository, taskGroupService)
     await usecase.delete({
-      taskGroupId: id,
+      taskGroupId: new TaskGroupId(id),
     })
   }
 }

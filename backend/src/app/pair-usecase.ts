@@ -1,7 +1,9 @@
 import { IPairRepository } from 'src/domain/pair/i-pair-repository'
 import { Pair } from 'src/domain/pair/pair'
+import { PairId } from 'src/domain/pair/pair-id'
 import { IUserRepository } from 'src/domain/user/i-user-repository'
 import { User } from 'src/domain/user/user'
+import { UserId } from 'src/domain/user/user-id'
 import { createRandomIdString } from 'src/util/random'
 import { PairDTO } from './dto/pair-dto'
 
@@ -40,7 +42,7 @@ export class PairUseCase {
 
   public async create(props: {
     name: string
-    userIds: string[]
+    userIds: UserId[]
   }): Promise<PairDTO> {
     const { name, userIds } = props
     const users: User[] = await Promise.all(
@@ -49,7 +51,7 @@ export class PairUseCase {
       }),
     )
     const pair: Pair = new Pair({
-      id: createRandomIdString(),
+      id: new PairId(createRandomIdString()),
       name,
       users,
     })
@@ -71,8 +73,8 @@ export class PairUseCase {
   }
 
   public async addPairUser(props: {
-    pairId: string
-    userId: string
+    pairId: PairId
+    userId: UserId
   }): Promise<PairDTO> {
     const { pairId, userId } = props
 
@@ -98,8 +100,8 @@ export class PairUseCase {
   }
 
   public async removePairUser(props: {
-    pairId: string
-    userId: string
+    pairId: PairId
+    userId: UserId
   }): Promise<PairDTO> {
     const { pairId, userId } = props
     const pair: Pair = await this.pairRepository.findById(pairId)
@@ -122,7 +124,7 @@ export class PairUseCase {
     }
   }
 
-  public delete(prop: { pairId: string }): Promise<boolean> {
+  public delete(prop: { pairId: PairId }): Promise<boolean> {
     const { pairId } = prop
 
     try {

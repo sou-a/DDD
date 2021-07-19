@@ -2,6 +2,7 @@ import * as faker from 'faker'
 import { prisma } from 'src/__tests__/testUtil/prisma'
 import { User } from 'src/domain/user/user'
 import { UserStatus } from 'src/domain/user/user-status'
+import { UserId } from 'src/domain/user/user-id'
 
 export const seedUser = async (params: {
   id?: string
@@ -32,7 +33,7 @@ export const seedUser = async (params: {
     throw new Error('想定外のエラー')
   }
   return new User({
-    id,
+    id: new UserId(id),
     name,
     mailAddress,
     status: new UserStatus(userStatus.name),

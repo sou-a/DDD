@@ -2,6 +2,7 @@ import { createRandomIdString } from 'src/util/random'
 import { User } from '../user/user'
 import { Team } from './team'
 import { ITeamRepository } from './i-team-repository'
+import { TeamId } from './team-id'
 
 export class TeamFactory {
   private teamRepository: ITeamRepository
@@ -22,7 +23,7 @@ export class TeamFactory {
       throw new Error('チーム名が重複しています')
     }
     return new Team({
-      id: createRandomIdString(),
+      id: new TeamId(createRandomIdString()),
       name: name,
       users: users,
     })

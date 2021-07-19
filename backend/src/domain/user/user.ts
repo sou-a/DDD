@@ -1,13 +1,14 @@
+import { UserId } from './user-id'
 import { UserStatus } from './user-status'
 
 export class User {
-  private id: string
+  private id: UserId
   private name: string
   private mailAddress: string
   private status: UserStatus
 
   public constructor(props: {
-    id: string
+    id: UserId
     name: string
     mailAddress: string
     status: UserStatus

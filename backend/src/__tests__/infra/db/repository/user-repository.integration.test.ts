@@ -5,6 +5,7 @@ import { UserStatus } from 'src/domain/user/user-status'
 import { seedAllUserStatus } from 'src/__tests__/testUtil/user-status-factory'
 import { seedUser } from 'src/__tests__/testUtil/user/seed-user'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
+import { UserId } from 'src/domain/user/user-id'
 
 describe('user-repository.integration.ts', () => {
   const userRepo = new UserRepository(prisma)
@@ -34,23 +35,24 @@ describe('user-repository.integration.ts', () => {
       await seedAllUserStatus()
       await seedUser({ id: '1' })
       await seedUser({ id: '2' })
-      const user = await userRepo.findById('1')
+      const user = await userRepo.findById(new UserId('1'))
       expect(user).toEqual(expect.any(User))
     })
   })
 
-  describe.skip('save', () => {
+  describe('save', () => {
     it('[正常系]userを保存できる', async () => {
+      await seedAllUserStatus()
       const userExpected = {
-        id: createRandomIdString(),
+        id: new UserId(createRandomIdString()),
         name: 'user1',
         mailAddress: 'sample@example.com',
         status: new UserStatus(UserStatus.active),
       }
       await userRepo.save(new User(userExpected))
 
-      const allUsers = await prisma.user.findFirst()
-      expect(allUsers).toEqual(new User(userExpected))
+      const allUsers = await prisma.user.findMany()
+      expect(allUsers).toHaveLength(1)
     })
   })
 
@@ -72,7 +74,7 @@ describe('user-repository.integration.ts', () => {
         },
       ]
       await prisma.user.createMany({ data })
-      await userRepo.delete('1')
+      await userRepo.delete(new UserId('1'))
       const allUsers = await prisma.user.findMany()
       expect(allUsers).toHaveLength(1)
       expect(allUsers[0]).toEqual(data[1])

@@ -1,9 +1,12 @@
+import { TeamId } from 'src/domain/team/team-id'
+import { UserId } from 'src/domain/user/user-id'
+
 export class TeamDTO {
-  public readonly id: string
+  public readonly id: TeamId
   public readonly name: string
   public readonly teamUsers: TeamUserDTO[]
   public constructor(props: {
-    id: string
+    id: TeamId
     name: string
     teamUsers: TeamUserDTO[]
   }) {
@@ -15,5 +18,5 @@ export class TeamDTO {
 }
 
 export type TeamUserDTO = {
-  id: string
+  id: UserId
 }

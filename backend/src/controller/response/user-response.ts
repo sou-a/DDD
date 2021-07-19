@@ -9,7 +9,7 @@ export class FindAllUserResponse {
     const { userDTOs } = params
     this.user = userDTOs.map(({ id, name, mailAddress, status }) => {
       return new User({
-        id,
+        id: id.value,
         name,
         mailAddress,
         status,
@@ -52,7 +52,7 @@ export class FindUsersByTasksResponse {
     const { userDTOs } = params
     this.user = userDTOs.map(({ id, name, mailAddress, status }) => {
       return new User({
-        id,
+        id: id.value,
         name,
         mailAddress,
         status,

@@ -1,10 +1,12 @@
+import { UserId } from 'src/domain/user/user-id'
+
 export class UserDTO {
-  public readonly id: string
+  public readonly id: UserId
   public readonly name: string
   public readonly mailAddress: string
   public readonly status: string
   public constructor(props: {
-    id: string
+    id: UserId
     name: string
     mailAddress: string
     status: string

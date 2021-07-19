@@ -1,7 +1,7 @@
-// - 課題には、参加者ごとに進捗ステータスがある
-export class TaskStatus {
-  private status: string
+import ValueObject from '../shared/value-object'
 
+// - 課題には、参加者ごとに進捗ステータスがある
+export class TaskStatus extends ValueObject<string, 'TaskStatus'> {
   // - 進捗ステータスは「未着手、レビュー待ち、完了」いずれかの値を持つ
   static notYet = '未着手'
   static review = 'レビュー待ち'
@@ -12,22 +12,18 @@ export class TaskStatus {
     TaskStatus.complete,
   ]
 
-  constructor(status: string) {
-    if (!TaskStatus.statusList.includes(status)) {
+  constructor(value: string) {
+    super(value)
+    if (!TaskStatus.statusList.includes(value)) {
       throw new Error('存在しない在籍ステータスです')
     }
-    this.status = status
   }
 
   public getStatus(): string {
-    return this.status
+    return this.value
   }
 
   public isComplete(): boolean {
-    return this.isEquals(new TaskStatus(TaskStatus.complete))
-  }
-
-  public isEquals(status: TaskStatus): boolean {
-    return this.status === status.status
+    return this.equals(new TaskStatus(TaskStatus.complete))
   }
 }

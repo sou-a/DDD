@@ -1,8 +1,11 @@
+import { TaskId } from 'src/domain/task/task-id'
+import { UserId } from 'src/domain/user/user-id'
+
 export class TaskDTO {
-  public readonly id: string
+  public readonly id: TaskId
   public readonly taskGroupId: string
   public readonly name: string
-  public constructor(props: { id: string; name: string; taskGroupId: string }) {
+  public constructor(props: { id: TaskId; name: string; taskGroupId: string }) {
     const { id, name, taskGroupId } = props
     this.id = id
     this.name = name
@@ -11,12 +14,12 @@ export class TaskDTO {
 }
 
 export class UserBelongTaskDTO {
-  public readonly userId: string
-  public readonly taskId: string
+  public readonly userId: UserId
+  public readonly taskId: TaskId
   public readonly status: string
   public constructor(props: {
-    userId: string
-    taskId: string
+    userId: UserId
+    taskId: TaskId
     status: string
   }) {
     const { userId, taskId, status } = props

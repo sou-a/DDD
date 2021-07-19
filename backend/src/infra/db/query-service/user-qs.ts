@@ -2,8 +2,9 @@ import { PrismaClient } from '@prisma/client'
 import { UserDTO } from 'src/app/dto/user-dto'
 import { IUserQS } from 'src/app/query-service-interface/i-user-qs'
 import { User } from 'src/domain/user/user'
-import { TaskStatus } from 'src/domain/task/task-status'
+import { TaskStatus } from 'src/domain/user-belong-task/task-status'
 import { UserStatus } from 'src/domain/user/user-status'
+import { UserId } from 'src/domain/user/user-id'
 
 export class UserQS implements IUserQS {
   private prismaClient: PrismaClient
@@ -42,7 +43,7 @@ export class UserQS implements IUserQS {
       })
     }
     const results = await this.prismaClient.$queryRaw(query)
-    const userIds = results.map((result: { userId: string }) => {
+    const userIds = results.map((result: { userId: UserId }) => {
       return result.userId
     })
 
@@ -64,7 +65,7 @@ export class UserQS implements IUserQS {
 
     const usersByTasksEntity: User[] = usersByTasks.map((userByTask) => {
       return new User({
-        id: userByTask.id,
+        id: new UserId(userByTask.id),
         name: userByTask.name,
         mailAddress: userByTask.mailAddress,
         status: new UserStatus(userByTask.userStatus.name),

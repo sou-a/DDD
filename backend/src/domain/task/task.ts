@@ -1,9 +1,11 @@
+import { TaskId } from './task-id'
+
 export class Task {
-  private id: string
+  private id: TaskId
   private taskGroupId: string
   private name: string
 
-  public constructor(props: { id: string; taskGroupId: string; name: string }) {
+  public constructor(props: { id: TaskId; taskGroupId: string; name: string }) {
     const { id, name, taskGroupId } = props
 
     this.id = id

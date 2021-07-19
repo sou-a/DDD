@@ -2,9 +2,11 @@ import { ITaskRepository } from 'src/domain/task/i-task-repository'
 import { Task } from 'src/domain/task/task'
 import { IUserBelongTaskRepository } from 'src/domain/user-belong-task/i-user-belong-task-repository'
 import { UserBelongTask } from 'src/domain/user-belong-task/user-belong-task'
-import { TaskStatus } from 'src/domain/task/task-status'
+import { TaskStatus } from 'src/domain/user-belong-task/task-status'
 import { createRandomIdString } from 'src/util/random'
 import { TaskDTO, UserBelongTaskDTO } from './dto/task-dto'
+import { UserId } from 'src/domain/user/user-id'
+import { TaskId } from 'src/domain/task/task-id'
 
 // 課題の一覧取得、新規追加、更新（少なくとも進捗ステータスを変更、所属する課題グループを変更できること）、削除
 export class TaskUseCase {
@@ -36,7 +38,7 @@ export class TaskUseCase {
   }): Promise<TaskDTO> {
     const { taskGroupId, name } = props
     const task: Task = new Task({
-      id: createRandomIdString(),
+      id: new TaskId(createRandomIdString()),
       taskGroupId,
       name,
     })
@@ -49,8 +51,8 @@ export class TaskUseCase {
   }
 
   public async changeStatus(props: {
-    taskId: string
-    userId: string
+    taskId: TaskId
+    userId: UserId
     status: string
   }): Promise<UserBelongTaskDTO> {
     const { taskId, userId, status } = props
@@ -79,7 +81,7 @@ export class TaskUseCase {
   }
 
   public async changeTaskGroup(props: {
-    taskId: string
+    taskId: TaskId
     taskGroupId: string
   }): Promise<TaskDTO> {
     const { taskId, taskGroupId } = props
@@ -97,7 +99,7 @@ export class TaskUseCase {
     }
   }
 
-  public async delete(prop: { taskId: string }): Promise<void> {
+  public async delete(prop: { taskId: TaskId }): Promise<void> {
     const { taskId } = prop
     try {
       return this.taskRepository.delete(taskId)

@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client'
+import { TaskGroupId } from 'src/domain/task-group/task-group-id'
 import { ITaskRepository } from 'src/domain/task/i-task-repository'
 import { Task } from 'src/domain/task/task'
+import { TaskId } from 'src/domain/task/task-id'
 
 export class TaskRepository implements ITaskRepository {
   private prismaClient: PrismaClient
@@ -14,7 +16,7 @@ export class TaskRepository implements ITaskRepository {
     const entities: Task[] = models.map(
       (model): Task => {
         return new Task({
-          id: model.id,
+          id: new TaskId(model.id),
           name: model.name,
           taskGroupId: model.taskGroupId,
         })
@@ -23,10 +25,10 @@ export class TaskRepository implements ITaskRepository {
     return entities
   }
 
-  public async findById(taskId: string): Promise<Task> {
+  public async findById(taskId: TaskId): Promise<Task> {
     const model = await this.prismaClient.task.findUnique({
       where: {
-        id: taskId,
+        id: taskId.value,
       },
       include: {
         users: true,
@@ -37,7 +39,7 @@ export class TaskRepository implements ITaskRepository {
     }
 
     const entity = new Task({
-      id: model.id,
+      id: new TaskId(model.id),
       name: model.name,
       taskGroupId: model.taskGroupId,
     })
@@ -49,38 +51,38 @@ export class TaskRepository implements ITaskRepository {
 
     const model = await this.prismaClient.task.upsert({
       where: {
-        id,
+        id: id.value,
       },
       update: {
         taskGroupId,
         name,
       },
       create: {
-        id,
+        id: id.value,
         name,
         taskGroupId,
       },
     })
     const entity = new Task({
-      id: model.id,
+      id: new TaskId(model.id),
       name: model.name,
       taskGroupId: model.taskGroupId,
     })
     return entity
   }
 
-  public async delete(taskId: string): Promise<void> {
+  public async delete(taskId: TaskId): Promise<void> {
     await this.prismaClient.task.delete({
       where: {
-        id: taskId,
+        id: taskId.value,
       },
     })
   }
 
-  public async deleteByTaskGroupId(taskGroupId: string): Promise<void> {
+  public async deleteByTaskGroupId(taskGroupId: TaskGroupId): Promise<void> {
     await this.prismaClient.task.deleteMany({
       where: {
-        taskGroupId,
+        taskGroupId: taskGroupId.value,
       },
     })
   }
