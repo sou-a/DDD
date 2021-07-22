@@ -1,9 +1,9 @@
-import { createUser } from 'src/__tests__/testUtil/user/user-factory'
 import { Team } from 'src/domain/team/team'
 import { UserStatus } from 'src/domain/user/user-status'
 import { createRandomIdString } from 'src/util/random'
 import { UserId } from 'src/domain/user/user-id'
 import { TeamId } from 'src/domain/team/team-id'
+import { createUser } from '@testUtil/user/user-factory'
 
 describe('team.ts', () => {
   describe('constructor', () => {

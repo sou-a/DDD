@@ -5,6 +5,7 @@ import { User } from 'src/domain/user/user'
 import { TaskStatus } from 'src/domain/user-belong-task/task-status'
 import { UserStatus } from 'src/domain/user/user-status'
 import { UserId } from 'src/domain/user/user-id'
+import { TaskId } from 'src/domain/task/task-id'
 
 export class UserQS implements IUserQS {
   private prismaClient: PrismaClient
@@ -16,11 +17,18 @@ export class UserQS implements IUserQS {
   }
 
   public async findUsersByTasks(props: {
-    taskIds: string[]
+    taskIds: TaskId[]
     taskStatus: string
-    offset: number
+    page: number
   }): Promise<UserDTO[]> {
-    const { taskIds, taskStatus, offset } = props
+    const { taskIds, taskStatus, page } = props
+    const offset = page - 1
+    if (offset < 0) {
+      throw new Error('想定外のエラー')
+    }
+    if (!taskIds[0]) {
+      throw new Error('想定外のエラー')
+    }
     const status = await this.prismaClient.taskUserStatus.findFirst({
       where: {
         name: new TaskStatus(taskStatus).getStatus(),
@@ -32,13 +40,13 @@ export class UserQS implements IUserQS {
     if (!status) {
       throw new Error('想定外のエラー')
     }
-    const firstQuery = `SELECT tu."userId" from "TaskUser" as tu WHERE tu."taskId" = '${taskIds[0]}' AND tu."taskUserStatusId" = '${status.id}'`
+    const firstQuery = `SELECT tu."userId" from "TaskUser" as tu WHERE tu."taskId" = '${taskIds[0].value}' AND tu."taskUserStatusId" = '${status.id}'`
 
     let query = firstQuery
     if (taskIds.length >= 2) {
       taskIds.shift()
       taskIds.map((taskId) => {
-        const nextQuery = ` INTERSECT SELECT tu."userId" from "TaskUser" as tu WHERE tu."taskId" = '${taskId}' AND tu."taskUserStatusId" = '${status.id}'`
+        const nextQuery = ` INTERSECT SELECT tu."userId" from "TaskUser" as tu WHERE tu."taskId" = '${taskId.value}' AND tu."taskUserStatusId" = '${status.id}'`
         query = query + nextQuery
       })
     }

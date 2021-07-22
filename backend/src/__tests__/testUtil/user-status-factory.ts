@@ -1,5 +1,5 @@
-import { prisma } from 'src/__tests__/testUtil/prisma'
 import { UserStatus } from 'src/domain/user/user-status'
+import { prisma } from './prisma'
 
 export const seedAllUserStatus = async () => {
   const data = [

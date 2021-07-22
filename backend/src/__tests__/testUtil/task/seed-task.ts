@@ -1,5 +1,5 @@
+import { prisma } from '@testUtil/prisma'
 import * as faker from 'faker'
-import { prisma } from 'src/__tests__/testUtil/prisma'
 import { Task } from 'src/domain/task/task'
 import { TaskId } from 'src/domain/task/task-id'
 

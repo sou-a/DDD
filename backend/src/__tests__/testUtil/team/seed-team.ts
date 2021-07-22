@@ -1,14 +1,14 @@
 import * as faker from 'faker'
-import { prisma } from 'src/__tests__/testUtil/prisma'
-import { seedUser } from 'src/__tests__/testUtil/user/seed-user'
 import { Team } from 'src/domain/team/team'
 import { User } from 'src/domain/user/user'
 import { TeamId } from 'src/domain/team/team-id'
+import { prisma } from '@testUtil/prisma'
+import { seedUser } from '@testUtil/user/seed-user'
 
 export const seedTeam = async (params: { id?: string; name?: string }) => {
   let { id, name } = params
   id = id ?? faker.random.uuid()
-  name = name ?? `${faker.random.number()}`
+  name = name ?? `${faker.random.number(999)}`
   await prisma.team.create({
     data: {
       id,
@@ -41,7 +41,7 @@ export const seedTeamAndUsers = async (params: {
   const { users } = params
 
   id = id ?? faker.random.uuid()
-  name = name ?? `${faker.random.number()}`
+  name = name ?? `${faker.random.number(999)}`
 
   await prisma.team.create({
     data: {

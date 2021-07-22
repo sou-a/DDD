@@ -1,9 +1,9 @@
 import * as faker from 'faker'
-import { prisma } from 'src/__tests__/testUtil/prisma'
 import { UserBelongTask } from 'src/domain/user-belong-task/user-belong-task'
 import { TaskStatus } from 'src/domain/user-belong-task/task-status'
 import { UserId } from 'src/domain/user/user-id'
 import { TaskId } from 'src/domain/task/task-id'
+import { prisma } from '@testUtil/prisma'
 
 export const seedUserBelongTask = async (params: {
   userId?: string

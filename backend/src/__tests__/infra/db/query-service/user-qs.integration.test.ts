@@ -1,11 +1,12 @@
-import { prisma } from 'src/__tests__/testUtil/prisma'
 import { UserQS } from '../../../../infra/db/query-service/user-qs'
 import { TaskStatus } from 'src/domain/user-belong-task/task-status'
-import { seedAllTaskStatus } from 'src/__tests__/testUtil/task-status-factory'
-import { seedTaskGroup } from 'src/__tests__/testUtil/task-group/seed-task-group'
-import { seedTask } from 'src/__tests__/testUtil/task/seed-task'
-import { seedAllUserStatus } from 'src/__tests__/testUtil/user-status-factory'
 import { UserDTO } from 'src/app/dto/user-dto'
+import { prisma } from '@testUtil/prisma'
+import { seedTaskGroup } from '@testUtil/task-group/seed-task-group'
+import { seedAllTaskStatus } from '@testUtil/task-status-factory'
+import { seedTask } from '@testUtil/task/seed-task'
+import { seedAllUserStatus } from '@testUtil/user-status-factory'
+import { TaskId } from 'src/domain/task/task-id'
 
 describe('user-qs.ts', () => {
   const userQS = new UserQS(prisma)
@@ -110,9 +111,9 @@ describe('user-qs.ts', () => {
       }
 
       let usertDTOs = await userQS.findUsersByTasks({
-        taskIds: ['1'],
+        taskIds: [new TaskId('1')],
         taskStatus: TaskStatus.notYet,
-        offset: 0,
+        page: 1,
       })
       expect(usertDTOs).toHaveLength(10)
       usertDTOs.map((usertDTO) => {
@@ -120,16 +121,16 @@ describe('user-qs.ts', () => {
       })
 
       usertDTOs = await userQS.findUsersByTasks({
-        taskIds: ['1'],
+        taskIds: [new TaskId('1')],
         taskStatus: TaskStatus.notYet,
-        offset: 1,
+        page: 2,
       })
       expect(usertDTOs).toHaveLength(0)
 
       usertDTOs = await userQS.findUsersByTasks({
-        taskIds: ['1'],
+        taskIds: [new TaskId('1')],
         taskStatus: TaskStatus.review,
-        offset: 0,
+        page: 1,
       })
       expect(usertDTOs).toHaveLength(10)
       usertDTOs.map((usertDTO) => {
@@ -137,16 +138,16 @@ describe('user-qs.ts', () => {
       })
 
       usertDTOs = await userQS.findUsersByTasks({
-        taskIds: ['1'],
+        taskIds: [new TaskId('1')],
         taskStatus: TaskStatus.review,
-        offset: 1,
+        page: 2,
       })
       expect(usertDTOs).toHaveLength(0)
 
       usertDTOs = await userQS.findUsersByTasks({
-        taskIds: ['1', '2'],
+        taskIds: [new TaskId('1'), new TaskId('2')],
         taskStatus: TaskStatus.notYet,
-        offset: 0,
+        page: 1,
       })
       expect(usertDTOs).toHaveLength(5)
       usertDTOs.map((usertDTO) => {
@@ -154,9 +155,9 @@ describe('user-qs.ts', () => {
       })
 
       usertDTOs = await userQS.findUsersByTasks({
-        taskIds: ['1', '2'],
+        taskIds: [new TaskId('1'), new TaskId('2')],
         taskStatus: TaskStatus.review,
-        offset: 0,
+        page: 1,
       })
       expect(usertDTOs).toHaveLength(5)
       usertDTOs.map((usertDTO) => {
@@ -164,16 +165,16 @@ describe('user-qs.ts', () => {
       })
 
       usertDTOs = await userQS.findUsersByTasks({
-        taskIds: ['1', '2'],
+        taskIds: [new TaskId('1'), new TaskId('2')],
         taskStatus: TaskStatus.complete,
-        offset: 0,
+        page: 1,
       })
       expect(usertDTOs).toHaveLength(0)
 
       usertDTOs = await userQS.findUsersByTasks({
-        taskIds: ['1', '2'],
+        taskIds: [new TaskId('1'), new TaskId('2')],
         taskStatus: TaskStatus.notYet,
-        offset: 1,
+        page: 2,
       })
       expect(usertDTOs).toHaveLength(0)
     })

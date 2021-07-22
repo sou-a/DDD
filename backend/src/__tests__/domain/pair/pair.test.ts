@@ -1,10 +1,10 @@
-import { createUser } from 'src/__tests__/testUtil/user/user-factory'
 import { Pair } from 'src/domain/pair/pair'
 import { createRandomIdString } from 'src/util/random'
 import { User } from 'src/domain/user/user'
 import { UserStatus } from 'src/domain/user/user-status'
 import { UserId } from 'src/domain/user/user-id'
 import { PairId } from 'src/domain/pair/pair-id'
+import { createUser } from '@testUtil/user/user-factory'
 
 describe('pair.ts', () => {
   describe('constructor', () => {

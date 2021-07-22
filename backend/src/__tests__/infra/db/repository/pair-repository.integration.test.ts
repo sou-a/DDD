@@ -1,12 +1,12 @@
 import { createRandomIdString } from 'src/util/random'
-import { prisma } from 'src/__tests__/testUtil/prisma'
 import { Pair } from 'src/domain/pair/pair'
-import { seedUser } from 'src/__tests__/testUtil/user/seed-user'
-import { seedAllUserStatus } from 'src/__tests__/testUtil/user-status-factory'
-import { seedPair, seedPairUser } from 'src/__tests__/testUtil/pair/seed-pair'
 import { PairRepository } from 'src/infra/db/repository/pair-repository'
 import { UserId } from 'src/domain/user/user-id'
 import { PairId } from 'src/domain/pair/pair-id'
+import { seedPair, seedPairUser } from '@testUtil/pair/seed-pair'
+import { prisma } from '@testUtil/prisma'
+import { seedAllUserStatus } from '@testUtil/user-status-factory'
+import { seedUser } from '@testUtil/user/seed-user'
 
 describe('pair-repository.integration.ts', () => {
   const pairRepo = new PairRepository(prisma)

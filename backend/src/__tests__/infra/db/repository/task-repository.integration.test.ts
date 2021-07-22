@@ -1,11 +1,11 @@
 import { createRandomIdString } from 'src/util/random'
-import { prisma } from 'src/__tests__/testUtil/prisma'
 import { Task } from 'src/domain/task/task'
-import { seedTaskGroup } from 'src/__tests__/testUtil/task-group/seed-task-group'
-import { seedTask } from 'src/__tests__/testUtil/task/seed-task'
 import { TaskRepository } from 'src/infra/db/repository/task-repository'
 import { TaskId } from 'src/domain/task/task-id'
 import { TaskGroupId } from 'src/domain/task-group/task-group-id'
+import { prisma } from '@testUtil/prisma'
+import { seedTaskGroup } from '@testUtil/task-group/seed-task-group'
+import { seedTask } from '@testUtil/task/seed-task'
 
 describe('task-repository.integration.ts', () => {
   const taskRepo = new TaskRepository(prisma)

@@ -1,11 +1,11 @@
 import { createRandomIdString } from 'src/util/random'
-import { prisma } from 'src/__tests__/testUtil/prisma'
 import { User } from 'src/domain/user/user'
 import { UserStatus } from 'src/domain/user/user-status'
-import { seedAllUserStatus } from 'src/__tests__/testUtil/user-status-factory'
-import { seedUser } from 'src/__tests__/testUtil/user/seed-user'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { UserId } from 'src/domain/user/user-id'
+import { prisma } from '@testUtil/prisma'
+import { seedAllUserStatus } from '@testUtil/user-status-factory'
+import { seedUser } from '@testUtil/user/seed-user'
 
 describe('user-repository.integration.ts', () => {
   const userRepo = new UserRepository(prisma)

@@ -2,13 +2,13 @@ import { PrismaClient } from '@prisma/client'
 import { mocked } from 'ts-jest/utils'
 import { MockedObjectDeep } from 'ts-jest/dist/utils/testing'
 import { TaskGroupService } from 'src/domain/task-group/task-group-service'
-import { createTaskGroup } from 'src/__tests__/testUtil/task-group/task-group-factory'
 import { TaskGroupDTO } from 'src/app/dto/task-group-dto'
 import { TaskGroupUseCase } from 'src/app/task-group-usecase'
 import { TaskGroupRepository } from 'src/infra/db/repository/task-group-repository'
 import { TaskRepository } from 'src/infra/db/repository/task-repository'
 import { UserBelongTaskRepository } from 'src/infra/db/repository/user-belong-task-repository'
 import { TaskGroupId } from 'src/domain/task-group/task-group-id'
+import { createTaskGroup } from '@testUtil/task-group/task-group-factory'
 
 jest.mock('@prisma/client')
 jest.mock('src/infra/db/repository/task-group-repository')

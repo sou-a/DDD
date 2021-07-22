@@ -1,3 +1,4 @@
+import { TaskId } from 'src/domain/task/task-id'
 import { IUserRepository } from 'src/domain/user/i-user-repository'
 import { User } from 'src/domain/user/user'
 import { UserId } from 'src/domain/user/user-id'
@@ -41,12 +42,12 @@ export class UserUseCase {
 
   // 「特定の課題（複数可能）」が「特定の進捗ステータス」になっている参加者の一覧を、10人単位でページングして取得する
   public async findUsersByTasks(props: {
-    taskIds: string[]
+    taskIds: TaskId[]
     taskStatus: string
-    offset: number
+    page: number
   }): Promise<UserDTO[]> {
-    const { taskIds, taskStatus, offset } = props
-    return this.userQS.findUsersByTasks({ taskIds, taskStatus, offset })
+    const { taskIds, taskStatus, page } = props
+    return this.userQS.findUsersByTasks({ taskIds, taskStatus, page })
   }
 
   public async create(props: {
@@ -84,7 +85,10 @@ export class UserUseCase {
     const user = await this.userRepository.findById(userId)
 
     try {
-      const changedUser = user.changeStatus(new UserStatus(status))
+      const changedUser = await this.userService.changeStatus(
+        user,
+        new UserStatus(status),
+      )
       const savedUser = await this.userRepository.save(changedUser)
       return new UserDTO({
         id: savedUser.getAllProperties().id,
@@ -97,10 +101,10 @@ export class UserUseCase {
     }
   }
 
-  public async delete(prop: { userId: UserId }): Promise<boolean> {
+  public async delete(prop: { userId: UserId }): Promise<void> {
     const { userId } = prop
     try {
-      return this.userService.deleteUser(userId)
+      await this.userService.deleteUser(userId)
     } catch (error) {
       throw error
     }

@@ -26,20 +26,22 @@ export class TeamService {
   ): Promise<Team> {
     const resultTeam = team.removeTeamUserFromTeamService(userId)
 
-    // もし2名以下になった場合チームは存続できず、他のチームに合併する必要がある。合併先は、最も参加人数が少ないチームから優先的に選ばれる
-    if (resultTeam.getAllProperties().teamUsers.length >= Team.lowerLimit) {
+    // - もし2名以下になった場合チームは存続できず、他のチームに合併する必要がある。合併先は、最も参加人数が少ないチームから優先的に選ばれる
+    if (
+      resultTeam.getAllProperties().teamUsers.length >= Team.teamUsersLowerLimit
+    ) {
       return await this.teamRepository.save(team)
     } else {
       // 最も参加人数が少ないチームを選ぶ
-      const mostLeastTeam = await this.teamRepository.findMostLeastTeam(
+      const leastTeamUsersTeam = await this.teamRepository.findLeastTeamUsersTeam(
         resultTeam.getAllProperties().id,
       )
 
-      // 最も参加人数が少ないチームは複数いる可能性があるが、それを決めるロジックがリポジトリのfindMostLeastTeam()に入ってしまっている
-      const mergeTeam = mostLeastTeam
+      // 最も参加人数が少ないチームは複数いる可能性があるが、それを決めるロジックがリポジトリのfindLeastTeamUsersTeam()に入ってしまっている
+      const mergeTeam = leastTeamUsersTeam
 
       if (!mergeTeam) {
-        // もし自動的に合併できない（例：プラハチャレンジ全体の参加者が2名しかいない）場合は合併せず、エラーも発生しない
+        // - もし自動的に合併できない（例：プラハチャレンジ全体の参加者が2名しかいない）場合は合併せず、エラーも発生しない
         return team
       }
 

@@ -1,5 +1,5 @@
+import { prisma } from '@testUtil/prisma'
 import * as faker from 'faker'
-import { prisma } from 'src/__tests__/testUtil/prisma'
 
 export const seedPair = async (params: { id?: string; name?: string }) => {
   let { id, name } = params

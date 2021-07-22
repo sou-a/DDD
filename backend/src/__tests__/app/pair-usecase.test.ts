@@ -3,12 +3,12 @@ import { mocked } from 'ts-jest/utils'
 import { MockedObjectDeep } from 'ts-jest/dist/utils/testing'
 import { PairUseCase } from '../../app/pair-usecase'
 import { PairDTO } from '../../app/dto/pair-dto'
-import { createPair } from 'src/__tests__/testUtil/pair/pair-factory'
-import { createUser } from 'src/__tests__/testUtil/user/user-factory'
 import { PairRepository } from 'src/infra/db/repository/pair-repository'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { UserId } from 'src/domain/user/user-id'
 import { PairId } from 'src/domain/pair/pair-id'
+import { createPair } from '@testUtil/pair/pair-factory'
+import { createUser } from '@testUtil/user/user-factory'
 
 jest.mock('@prisma/client')
 jest.mock('src/infra/db/repository/user-repository')
@@ -133,10 +133,10 @@ describe('pair-usecase.ts', () => {
   describe('delete', () => {
     it('[正常系]: 例外が発生しない', () => {
       const usecase = new PairUseCase(mockPairRepo, mockUserRepo)
-      mockPairRepo.delete.mockResolvedValueOnce(true)
+      mockPairRepo.delete.mockResolvedValueOnce()
 
       return expect(usecase.delete({ pairId: new PairId('1') })).resolves.toBe(
-        true,
+        undefined,
       )
     })
     it('[準正常系]: deleteで例外が発生した場合、例外が発生する', () => {

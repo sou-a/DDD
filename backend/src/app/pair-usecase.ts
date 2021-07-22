@@ -124,7 +124,7 @@ export class PairUseCase {
     }
   }
 
-  public delete(prop: { pairId: PairId }): Promise<boolean> {
+  public delete(prop: { pairId: PairId }): Promise<void> {
     const { pairId } = prop
 
     try {

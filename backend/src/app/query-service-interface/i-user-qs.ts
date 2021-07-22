@@ -1,9 +1,10 @@
+import { TaskId } from 'src/domain/task/task-id'
 import { UserDTO } from '../dto/user-dto'
 
 export interface IUserQS {
   findUsersByTasks(props: {
-    taskIds: string[]
+    taskIds: TaskId[]
     taskStatus: string
-    offset: number
+    page: number
   }): Promise<UserDTO[]>
 }

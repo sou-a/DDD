@@ -26,6 +26,7 @@ import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { TeamService } from 'src/domain/team/team-service'
 import { UserQS } from 'src/infra/db/query-service/user-qs'
 import { UserId } from 'src/domain/user/user-id'
+import { TaskId } from 'src/domain/task/task-id'
 
 @ApiTags('users')
 @Controller({
@@ -58,7 +59,7 @@ export class UserController {
   async findUsersByTasks(
     @Query('taskIds') taskIds: string[],
     @Query('taskStatus') taskStatus: string,
-    @Query('offset') offset: number,
+    @Query('page') page: number,
   ): Promise<FindUsersByTasksResponse> {
     const prisma = new PrismaClient()
     const userRepository = new UserRepository(prisma)
@@ -74,9 +75,11 @@ export class UserController {
     })
     const usecase = new UserUseCase(userRepository, userService, userQS)
     const result = await usecase.findUsersByTasks({
-      taskIds,
+      taskIds: taskIds.map((taskId) => {
+        return new TaskId(taskId)
+      }),
       taskStatus,
-      offset,
+      page,
     })
     const response = new FindUsersByTasksResponse({ userDTOs: result })
     return response

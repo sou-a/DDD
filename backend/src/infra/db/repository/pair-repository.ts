@@ -86,7 +86,6 @@ export class PairRepository implements IPairRepository {
   }
 
   public async findByUserId(userId: UserId): Promise<Pair | null> {
-    // findUniqueで探したい...
     const model = await this.prismaClient.pair.findFirst({
       where: {
         users: {
@@ -139,7 +138,6 @@ export class PairRepository implements IPairRepository {
         name,
         users: {
           // ペアユーザー（子集約）全削除してcreateし直している（増減に対応するため）
-          // @see https://github.com/little-hands/ddd-q-and-a/issues/129
           deleteMany: {},
           create: pairUsers.map((pairUser) => {
             return {
@@ -188,7 +186,7 @@ export class PairRepository implements IPairRepository {
     return entity
   }
 
-  public async delete(pairId: PairId): Promise<boolean> {
+  public async delete(pairId: PairId): Promise<void> {
     // 関連するテーブル（ペアユーザー）を削除
     await this.prismaClient.pair.update({
       where: {
@@ -205,7 +203,6 @@ export class PairRepository implements IPairRepository {
         id: pairId.value,
       },
     })
-    return true
   }
 
   public async deletePairUser(userId: UserId): Promise<void> {

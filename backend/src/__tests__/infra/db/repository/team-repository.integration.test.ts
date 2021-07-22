@@ -1,12 +1,12 @@
 import { createRandomIdString } from 'src/util/random'
-import { prisma } from 'src/__tests__/testUtil/prisma'
 import { Team } from 'src/domain/team/team'
-import { seedAllUserStatus } from 'src/__tests__/testUtil/user-status-factory'
-import { seedUser } from 'src/__tests__/testUtil/user/seed-user'
-import { seedTeam, seedTeamUser } from 'src/__tests__/testUtil/team/seed-team'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { UserId } from 'src/domain/user/user-id'
 import { TeamId } from 'src/domain/team/team-id'
+import { prisma } from '@testUtil/prisma'
+import { seedTeam, seedTeamUser } from '@testUtil/team/seed-team'
+import { seedAllUserStatus } from '@testUtil/user-status-factory'
+import { seedUser } from '@testUtil/user/seed-user'
 
 describe('team-repository.integration.ts', () => {
   const teamRepo = new TeamRepository(prisma)
@@ -103,7 +103,7 @@ describe('team-repository.integration.ts', () => {
     })
   })
 
-  describe('findMostLeastTeam', () => {
+  describe('findLeastTeamUsersTeam', () => {
     it('[正常系]チーム参加者が最小のteamを取得できる', async () => {
       await seedAllUserStatus()
       await seedUser({ id: '1' })
@@ -123,7 +123,7 @@ describe('team-repository.integration.ts', () => {
       await seedTeamUser({ userId: '6', teamId: '2' })
       await seedTeamUser({ userId: '7', teamId: '2' })
 
-      const team = await teamRepo.findMostLeastTeam(new TeamId('2'))
+      const team = await teamRepo.findLeastTeamUsersTeam(new TeamId('2'))
       expect(team).toEqual(expect.any(Team))
       expect(team).toEqual({
         id: new TeamId('1'),

@@ -1,15 +1,15 @@
-import { prisma } from 'src/__tests__/testUtil/prisma'
-import { seedAllTaskStatus } from 'src/__tests__/testUtil/task-status-factory'
 import { UserBelongTask } from 'src/domain/user-belong-task/user-belong-task'
 import { TaskStatus } from 'src/domain/user-belong-task/task-status'
-import { seedUser } from 'src/__tests__/testUtil/user/seed-user'
-import { seedTaskGroup } from 'src/__tests__/testUtil/task-group/seed-task-group'
-import { seedTask } from 'src/__tests__/testUtil/task/seed-task'
-import { seedAllUserStatus } from 'src/__tests__/testUtil/user-status-factory'
-import { seedUserBelongTask } from 'src/__tests__/testUtil/user-belong-task/seed-user-belong-task'
 import { UserBelongTaskRepository } from 'src/infra/db/repository/user-belong-task-repository'
 import { UserId } from 'src/domain/user/user-id'
 import { TaskId } from 'src/domain/task/task-id'
+import { prisma } from '@testUtil/prisma'
+import { seedTaskGroup } from '@testUtil/task-group/seed-task-group'
+import { seedAllTaskStatus } from '@testUtil/task-status-factory'
+import { seedTask } from '@testUtil/task/seed-task'
+import { seedUserBelongTask } from '@testUtil/user-belong-task/seed-user-belong-task'
+import { seedAllUserStatus } from '@testUtil/user-status-factory'
+import { seedUser } from '@testUtil/user/seed-user'
 
 describe('user-belong-task-repository.integration.ts', () => {
   const userBelongTaskRepo = new UserBelongTaskRepository(prisma)

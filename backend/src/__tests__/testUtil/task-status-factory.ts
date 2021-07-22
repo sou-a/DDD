@@ -1,4 +1,4 @@
-import { prisma } from 'src/__tests__/testUtil/prisma'
+import { prisma } from './prisma'
 
 export const seedAllTaskStatus = async () => {
   const data = [

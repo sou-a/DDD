@@ -4,7 +4,9 @@ import { ITeamRepository } from '../team/i-team-repository'
 import { Team } from '../team/team'
 import { TeamService } from '../team/team-service'
 import { IUserRepository } from './i-user-repository'
+import { User } from './user'
 import { UserId } from './user-id'
+import { UserStatus } from './user-status'
 
 export class UserService {
   userRepository: IUserRepository
@@ -30,7 +32,24 @@ export class UserService {
     this.teamService = teamService
   }
 
-  public async deleteUser(userId: UserId): Promise<boolean> {
+  public async changeStatus(user: User, status: UserStatus): Promise<User> {
+    const pair: Pair | null = await this.pairRepository.findByUserId(
+      user.getAllProperties().id,
+    )
+    const team: Team | null = await this.teamRepository.findByUserId(
+      user.getAllProperties().id,
+    )
+    // - ステータスが「在籍中」以外の場合、どのチームにもペアにも所属してはいけない
+    if (!status.isActive() && (pair || team)) {
+      throw new Error(
+        `チームまたはペアに所属しているため${status}ステータスに変更できません`,
+      )
+    }
+
+    return user.changeStatusFromUserService(status)
+  }
+
+  public async deleteUser(userId: UserId): Promise<void> {
     // ペアユーザー削除（ペアオブジェクト生成してそこに任せる）
     const pair: Pair | null = await this.pairRepository.findByUserId(userId)
     if (pair) {
@@ -46,7 +65,5 @@ export class UserService {
 
     // ユーザー削除
     await this.userRepository.delete(userId)
-
-    return true
   }
 }

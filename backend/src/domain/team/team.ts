@@ -8,8 +8,8 @@ export class Team {
   private name: string
   private teamUsers: TeamUser[]
 
-  static lowerLimit = 3
-  static numberRegex = /^[0-9]+$/
+  static teamUsersLowerLimit = 3
+  static nameRuleRegex = /^[0-9]{1,3}$/
 
   public constructor(props: { id: TeamId; name: string; users: User[] }) {
     const { id, name, users } = props
@@ -24,14 +24,14 @@ export class Team {
       })
     })
 
-    // - 名前がある（1,2,3,4のような数字でなければいけない。）
-    if (name.match(Team.numberRegex) === null) {
+    // - 名前がある（1,2,3,4のような数字かつ3文字以下でなければいけない）
+    if (name.match(Team.nameRuleRegex) === null) {
       throw new Error('チーム名は数字のみです')
     }
 
     // - 参加者3名以上から成る
-    if (teamUsers.length < Team.lowerLimit) {
-      throw new Error(`参加者は${Team.lowerLimit}名以上必要です`)
+    if (teamUsers.length < Team.teamUsersLowerLimit) {
+      throw new Error(`参加者は${Team.teamUsersLowerLimit}名以上必要です`)
     }
 
     this.id = id

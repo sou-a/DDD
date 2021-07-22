@@ -8,9 +8,9 @@ export class Pair {
   private name: string
   private pairUsers: PairUser[]
 
-  lowerLimit = 2
-  upperLimit = 3
-  alphabetRegex = /^[A-Za-z]*$/
+  pairUsersLowerLimit = 2
+  nameUpperLimit = 3
+  nameRuleRegex = /^[A-Za-z]$/
 
   public constructor(props: { id: PairId; name: string; users: User[] }) {
     const { id, name, users } = props
@@ -26,20 +26,20 @@ export class Pair {
       })
     })
 
-    // - 名前がある（a,b,c,d,eのような英文字でなければいけない）
-    if (name.match(this.alphabetRegex) === null) {
+    // - 名前がある（a,b,c,d,eのような英文字かつ１文字でなければいけない）
+    if (name.match(this.nameRuleRegex) === null) {
       throw new Error('ペア名は英字のみです')
     }
 
     // - 参加者2名以上から成る
-    if (pairUsers.length < this.lowerLimit) {
-      throw new Error(`ペアユーザーは${this.lowerLimit}名以上必要です`)
+    if (pairUsers.length < this.pairUsersLowerLimit) {
+      throw new Error(`ペアユーザーは${this.pairUsersLowerLimit}名以上必要です`)
     }
 
     // - 上限は3名まで。4名以上のペアは存続できない（他のペアに合併する必要がある）
-    if (pairUsers.length > this.upperLimit) {
+    if (pairUsers.length > this.nameUpperLimit) {
       throw new Error(
-        `ペアユーザーは${this.upperLimit}名以下である必要があります`,
+        `ペアユーザーは${this.nameUpperLimit}名以下である必要があります`,
       )
     }
 
@@ -54,9 +54,9 @@ export class Pair {
    */
   public addPairUser(user: User): Pair {
     // - 上限は3名まで。4名以上のペアは存続できない（他のペアに合併する必要がある）
-    if (this.pairUsers.length === this.upperLimit) {
+    if (this.pairUsers.length === this.nameUpperLimit) {
       throw new Error(
-        `ペアユーザーは${this.upperLimit}名以下である必要があります`,
+        `ペアユーザーは${this.nameUpperLimit}名以下である必要があります`,
       )
     }
     const userProperties = user.getAllProperties()
@@ -79,8 +79,8 @@ export class Pair {
       (pairUser) => !userId.equals(pairUser.getAllProperties().userId),
     )
     // - 参加者2名以上から成る
-    if (removedPairUser.length < this.lowerLimit) {
-      throw new Error(`ペアユーザーは${this.lowerLimit}名以上必要です`)
+    if (removedPairUser.length < this.pairUsersLowerLimit) {
+      throw new Error(`ペアユーザーは${this.pairUsersLowerLimit}名以上必要です`)
     }
     this.pairUsers = removedPairUser
     return this

@@ -1,8 +1,8 @@
 import * as faker from 'faker'
-import { prisma } from 'src/__tests__/testUtil/prisma'
 import { TaskGroup } from 'src/domain/task-group/task-group'
 import { TaskId } from 'src/domain/task/task-id'
 import { TaskGroupId } from 'src/domain/task-group/task-group-id'
+import { prisma } from '@testUtil/prisma'
 
 export const seedTaskGroup = async (params: { id?: string; name?: string }) => {
   let { name } = params

@@ -3,14 +3,14 @@ import { mocked } from 'ts-jest/utils'
 import { MockedObjectDeep } from 'ts-jest/dist/utils/testing'
 import { TeamService } from 'src/domain/team/team-service'
 import { TeamFactory } from 'src/domain/team/team-factory'
-import { createTeam } from 'src/__tests__/testUtil/team/team-factory'
-import { createUser } from 'src/__tests__/testUtil/user/user-factory'
 import { TeamDTO } from 'src/app/dto/team-dto'
 import { TeamUseCase } from 'src/app/team-usecase'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { UserId } from 'src/domain/user/user-id'
 import { TeamId } from 'src/domain/team/team-id'
+import { createTeam } from '@testUtil/team/team-factory'
+import { createUser } from '@testUtil/user/user-factory'
 
 jest.mock('@prisma/client')
 jest.mock('src/infra/db/repository/user-repository')

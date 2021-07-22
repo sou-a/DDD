@@ -1,13 +1,13 @@
-import { prisma } from 'src/__tests__/testUtil/prisma'
-import { seedTeamAndUsers } from 'src/__tests__/testUtil/team/seed-team'
-import { seedAllUserStatus } from 'src/__tests__/testUtil/user-status-factory'
-import { createUser } from 'src/__tests__/testUtil/user/user-factory'
 import { TeamService } from 'src/domain/team/team-service'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
 import { MockedObjectDeep } from 'ts-jest/dist/utils/testing'
 import { mocked } from 'ts-jest/utils'
 import { UserId } from 'src/domain/user/user-id'
+import { prisma } from '@testUtil/prisma'
+import { seedTeamAndUsers } from '@testUtil/team/seed-team'
+import { seedAllUserStatus } from '@testUtil/user-status-factory'
+import { createUser } from '@testUtil/user/user-factory'
 
 describe('team-service.integration.ts', () => {
   describe('deleteTeamUser', () => {

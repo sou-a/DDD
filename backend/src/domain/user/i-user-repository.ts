@@ -4,6 +4,6 @@ import { UserId } from './user-id'
 export interface IUserRepository {
   findAll(): Promise<User[]>
   findById(userId: UserId): Promise<User>
-  save(user: User): Promise<User> // upsertのイメージ
+  save(user: User): Promise<User>
   delete(userId: UserId): Promise<void>
 }

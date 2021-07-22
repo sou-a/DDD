@@ -21,7 +21,7 @@ export class User {
     this.status = status
   }
 
-  public changeStatus(status: UserStatus): User {
+  public changeStatusFromUserService(status: UserStatus): User {
     this.status = status
     return this
   }
