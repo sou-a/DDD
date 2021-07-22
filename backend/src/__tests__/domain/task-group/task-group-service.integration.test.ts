@@ -15,6 +15,7 @@ import { seedUserBelongTask } from '@testUtil/user-belong-task/seed-user-belong-
 import { seedAllUserStatus } from '@testUtil/user-status-factory'
 import { seedUser } from '@testUtil/user/seed-user'
 
+// 他のドメインサービスは単体テストにしたが、テストの意味があるかよくわからなくなってきたので、一旦これだけインテグレーションのまま残しておく。
 describe('task-group-service.integration.ts', () => {
   let mockTaskRepo: MockedObjectDeep<TaskRepository>
   let mockTaskGroupRepo: MockedObjectDeep<TaskGroupRepository>
