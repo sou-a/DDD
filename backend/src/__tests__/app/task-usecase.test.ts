@@ -10,6 +10,7 @@ import { UserId } from 'src/domain/user/user-id'
 import { TaskId } from 'src/domain/task/task-id'
 import { createTask } from '@testUtil/task/task-factory'
 import { createUserBelongTask } from '@testUtil/user-belong-task/user-belong-task-factory'
+import { TaskGroupId } from 'src/domain/task-group/task-group-id'
 
 jest.mock('@prisma/client')
 jest.mock('src/infra/db/repository/task-repository')
@@ -52,7 +53,7 @@ describe('task-usecase.ts', () => {
 
       return expect(
         usecase.create({
-          taskGroupId: '1',
+          taskGroupId: new TaskGroupId('1'),
           name: 'task1',
         }),
       ).resolves.toEqual(expect.any(TaskDTO))
@@ -64,7 +65,7 @@ describe('task-usecase.ts', () => {
 
       return expect(
         usecase.create({
-          taskGroupId: '1',
+          taskGroupId: new TaskGroupId('1'),
           name: 'task1',
         }),
       ).rejects.toEqual(ERROR_MESSAGE)
@@ -115,7 +116,7 @@ describe('task-usecase.ts', () => {
       return expect(
         usecase.changeTaskGroup({
           taskId: new TaskId('1'),
-          taskGroupId: '1',
+          taskGroupId: new TaskGroupId('1'),
         }),
       ).resolves.toEqual(expect.any(TaskDTO))
     })
@@ -128,7 +129,7 @@ describe('task-usecase.ts', () => {
       return expect(
         usecase.changeTaskGroup({
           taskId: new TaskId('1'),
-          taskGroupId: '1',
+          taskGroupId: new TaskGroupId('1'),
         }),
       ).rejects.toEqual(ERROR_MESSAGE)
     })

@@ -11,7 +11,7 @@ export class FindAllTaskResponse {
       return new Task({
         id: id.value,
         name,
-        taskGroupId,
+        taskGroupId: taskGroupId.value,
       })
     })
   }
@@ -48,7 +48,7 @@ export class FindTasksByTasksResponse {
       return new Task({
         id: id.value,
         name,
-        taskGroupId,
+        taskGroupId: taskGroupId.value,
       })
     })
   }

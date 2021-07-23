@@ -5,7 +5,7 @@ export class TaskId extends ValueObject<string, 'TaskId'> {
   public constructor(value: string) {
     super(value)
     if (isEmpty(value)) {
-      throw new Error('user id must be not empty')
+      throw new Error('TaskIdの値が空です')
     }
   }
 }

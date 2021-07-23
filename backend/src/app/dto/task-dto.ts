@@ -1,11 +1,16 @@
+import { TaskGroupId } from 'src/domain/task-group/task-group-id'
 import { TaskId } from 'src/domain/task/task-id'
 import { UserId } from 'src/domain/user/user-id'
 
 export class TaskDTO {
   public readonly id: TaskId
-  public readonly taskGroupId: string
+  public readonly taskGroupId: TaskGroupId
   public readonly name: string
-  public constructor(props: { id: TaskId; name: string; taskGroupId: string }) {
+  public constructor(props: {
+    id: TaskId
+    name: string
+    taskGroupId: TaskGroupId
+  }) {
     const { id, name, taskGroupId } = props
     this.id = id
     this.name = name

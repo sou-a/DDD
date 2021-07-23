@@ -44,7 +44,7 @@ describe('task-repository.integration.ts', () => {
       expect(task).toEqual(expect.any(Task))
       expect(task).toEqual({
         id: new TaskId('1'),
-        taskGroupId: '1',
+        taskGroupId: new TaskGroupId('1'),
         name: expect.any(String),
       })
     })
@@ -55,7 +55,7 @@ describe('task-repository.integration.ts', () => {
       await seedTaskGroup({ id: '1' })
       const taskExpected = {
         id: new TaskId(createRandomIdString()),
-        taskGroupId: '1',
+        taskGroupId: new TaskGroupId('1'),
         name: 'task1',
       }
       await taskRepo.save(new Task(taskExpected))

@@ -5,7 +5,7 @@ export class TaskGroupId extends ValueObject<string, 'TaskGroupId'> {
   public constructor(value: string) {
     super(value)
     if (isEmpty(value)) {
-      throw new Error('user id must be not empty')
+      throw new Error('TaskGroupIdの値が空です')
     }
   }
 }

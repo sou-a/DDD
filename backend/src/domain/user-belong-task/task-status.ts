@@ -3,10 +3,10 @@ import ValueObject from '../shared/value-object'
 // - 課題には、参加者ごとに進捗ステータスがある
 export class TaskStatus extends ValueObject<string, 'TaskStatus'> {
   // - 進捗ステータスは「未着手、レビュー待ち、完了」いずれかの値を持つ
-  static notYet = '未着手'
-  static review = 'レビュー待ち'
-  static complete = '完了'
-  static statusList = [
+  static readonly notYet = '未着手'
+  static readonly review = 'レビュー待ち'
+  static readonly complete = '完了'
+  static readonly statusList = [
     TaskStatus.notYet,
     TaskStatus.review,
     TaskStatus.complete,

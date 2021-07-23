@@ -62,7 +62,7 @@ export class UserRepository implements IUserRepository {
       },
     })
     if (userModel === null) {
-      throw new Error(`userId: ${mailAddress}が見つかりませんでした`)
+      return null
     }
 
     const entity = User.createFromRepository({

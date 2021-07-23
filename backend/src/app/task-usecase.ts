@@ -7,6 +7,7 @@ import { createRandomIdString } from 'src/util/random'
 import { TaskDTO, UserBelongTaskDTO } from './dto/task-dto'
 import { UserId } from 'src/domain/user/user-id'
 import { TaskId } from 'src/domain/task/task-id'
+import { TaskGroupId } from 'src/domain/task-group/task-group-id'
 
 // 課題の一覧取得、新規追加、更新（少なくとも進捗ステータスを変更、所属する課題グループを変更できること）、削除
 export class TaskUseCase {
@@ -33,7 +34,7 @@ export class TaskUseCase {
   }
 
   public async create(props: {
-    taskGroupId: string
+    taskGroupId: TaskGroupId
     name: string
   }): Promise<TaskDTO> {
     const { taskGroupId, name } = props
@@ -82,7 +83,7 @@ export class TaskUseCase {
 
   public async changeTaskGroup(props: {
     taskId: TaskId
-    taskGroupId: string
+    taskGroupId: TaskGroupId
   }): Promise<TaskDTO> {
     const { taskId, taskGroupId } = props
 

@@ -10,7 +10,7 @@ import { TaskId } from 'src/domain/task/task-id'
 export class UserQS implements IUserQS {
   private prismaClient: PrismaClient
 
-  take = 10
+  private readonly take = 10
 
   public constructor(prismaClient: PrismaClient) {
     this.prismaClient = prismaClient

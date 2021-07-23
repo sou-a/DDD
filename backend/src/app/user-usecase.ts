@@ -5,7 +5,6 @@ import { UserFactory } from 'src/domain/user/user-factory'
 import { UserId } from 'src/domain/user/user-id'
 import { UserService } from 'src/domain/user/user-service'
 import { UserStatus } from 'src/domain/user/user-status'
-import { createRandomIdString } from 'src/util/random'
 import { UserDTO } from './dto/user-dto'
 import { IUserQS } from './query-service-interface/i-user-qs'
 

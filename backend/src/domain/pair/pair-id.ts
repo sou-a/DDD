@@ -5,7 +5,7 @@ export class PairId extends ValueObject<string, 'PairId'> {
   public constructor(value: string) {
     super(value)
     if (isEmpty(value)) {
-      throw new Error('user id must be not empty')
+      throw new Error('PairIdの値が空です')
     }
   }
 }

@@ -1,10 +1,14 @@
 import ValueObject from '../shared/value-object'
 
 export class UserStatus extends ValueObject<string, 'UserStatus'> {
-  static active = '在籍中'
-  static recess = '休会中'
-  static leave = '退会済'
-  static statusList = [UserStatus.active, UserStatus.recess, UserStatus.leave]
+  static readonly active = '在籍中'
+  static readonly recess = '休会中'
+  static readonly leave = '退会済'
+  static readonly statusList = [
+    UserStatus.active,
+    UserStatus.recess,
+    UserStatus.leave,
+  ]
 
   constructor(value: string) {
     super(value)

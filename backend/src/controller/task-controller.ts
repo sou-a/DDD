@@ -20,6 +20,7 @@ import {
 } from './request/task-request'
 import { UserId } from 'src/domain/user/user-id'
 import { TaskId } from 'src/domain/task/task-id'
+import { TaskGroupId } from 'src/domain/task-group/task-group-id'
 
 @ApiTags('tasks')
 @Controller({
@@ -46,7 +47,7 @@ export class TaskController {
     const usecase = new TaskUseCase(taskRepository, userBelongTaskRepository)
     await usecase.create({
       name: postTaskDto.name,
-      taskGroupId: postTaskDto.taskGroupId,
+      taskGroupId: new TaskGroupId(postTaskDto.taskGroupId),
     })
   }
 
@@ -77,7 +78,7 @@ export class TaskController {
     const usecase = new TaskUseCase(taskRepository, userBelongTaskRepository)
     await usecase.changeTaskGroup({
       taskId: new TaskId(id),
-      taskGroupId: postTaskDto.taskGroupId,
+      taskGroupId: new TaskGroupId(postTaskDto.taskGroupId),
     })
   }
 

@@ -8,9 +8,9 @@ export class Pair {
   private name: string
   private pairUsers: PairUser[]
 
-  pairUsersLowerLimit = 2
-  nameUpperLimit = 3
-  nameRuleRegex = /^[A-Za-z]$/
+  readonly pairUsersLowerLimit = 2
+  readonly nameUpperLimit = 3
+  readonly nameRuleRegex = /^[A-Za-z]$/
 
   public constructor(props: { id: PairId; name: string; users: User[] }) {
     const { id, name, users } = props

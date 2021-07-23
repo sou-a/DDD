@@ -18,7 +18,7 @@ export class TaskRepository implements ITaskRepository {
         return new Task({
           id: new TaskId(model.id),
           name: model.name,
-          taskGroupId: model.taskGroupId,
+          taskGroupId: new TaskGroupId(model.taskGroupId),
         })
       },
     )
@@ -41,7 +41,7 @@ export class TaskRepository implements ITaskRepository {
     const entity = new Task({
       id: new TaskId(model.id),
       name: model.name,
-      taskGroupId: model.taskGroupId,
+      taskGroupId: new TaskGroupId(model.taskGroupId),
     })
     return entity
   }
@@ -54,19 +54,19 @@ export class TaskRepository implements ITaskRepository {
         id: id.value,
       },
       update: {
-        taskGroupId,
+        taskGroupId: taskGroupId.value,
         name,
       },
       create: {
         id: id.value,
         name,
-        taskGroupId,
+        taskGroupId: taskGroupId.value,
       },
     })
     const entity = new Task({
       id: new TaskId(model.id),
       name: model.name,
-      taskGroupId: model.taskGroupId,
+      taskGroupId: new TaskGroupId(model.taskGroupId),
     })
     return entity
   }

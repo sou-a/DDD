@@ -1,11 +1,16 @@
+import { TaskGroupId } from '../task-group/task-group-id'
 import { TaskId } from './task-id'
 
 export class Task {
   private id: TaskId
-  private taskGroupId: string
+  private taskGroupId: TaskGroupId
   private name: string
 
-  public constructor(props: { id: TaskId; taskGroupId: string; name: string }) {
+  public constructor(props: {
+    id: TaskId
+    taskGroupId: TaskGroupId
+    name: string
+  }) {
     const { id, name, taskGroupId } = props
 
     this.id = id
@@ -14,7 +19,7 @@ export class Task {
     this.taskGroupId = taskGroupId
   }
 
-  public changeTaskGroupId(taskGroupId: string): Task {
+  public changeTaskGroupId(taskGroupId: TaskGroupId): Task {
     this.taskGroupId = taskGroupId
     return this
   }
