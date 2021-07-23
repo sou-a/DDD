@@ -1,2 +1,2 @@
 # 概要
-PrAha Challengeの設計課題の雛形に使用するレポジトリです
+PrAha Challengeの設計課題
