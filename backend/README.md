@@ -1,3 +1,6 @@
+## ドメインモデル図
+![PrahaChallengeDomainModel](https://user-images.githubusercontent.com/59814377/126744465-9c259385-52e2-4bc3-9ec6-c76b85dd15c1.png)
+
 ## アーキテクチャ
 ### 各層の役割
 | 層の名前 | 層の役割 | 依存しても良い層 | 依存してはいけない層 |
