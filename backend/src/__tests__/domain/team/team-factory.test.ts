@@ -32,6 +32,39 @@ describe('team-factory.ts', () => {
       )
     })
 
+    it('[準正常系]チーム名は数字のみ', () => {
+      const users = [createUser({}), createUser({}), createUser({})]
+      mockTeamRepo.findByName.mockResolvedValueOnce(null)
+      const teamFactory = new TeamFactory({
+        teamRepository: mockTeamRepo,
+      })
+      expect(teamFactory.createTeam({ name: 'a', users })).rejects.toThrow(
+        Error,
+      )
+    })
+
+    it('[準正常系]チーム名は3文字以下', () => {
+      const users = [createUser({}), createUser({}), createUser({})]
+      mockTeamRepo.findByName.mockResolvedValueOnce(null)
+      const teamFactory = new TeamFactory({
+        teamRepository: mockTeamRepo,
+      })
+      expect(teamFactory.createTeam({ name: '1111', users })).rejects.toThrow(
+        Error,
+      )
+    })
+
+    it('[準正常系]参加者2名以下の場合エラー', () => {
+      const users = [createUser({}), createUser({})]
+      mockTeamRepo.findByName.mockResolvedValueOnce(null)
+      const teamFactory = new TeamFactory({
+        teamRepository: mockTeamRepo,
+      })
+      expect(teamFactory.createTeam({ name: '1', users })).rejects.toThrow(
+        Error,
+      )
+    })
+
     it('[準正常系]チーム名が重複している場合エラー', async () => {
       const users = [createUser({}), createUser({}), createUser({})]
       mockTeamRepo.findByName.mockResolvedValueOnce(createTeam({ users }))

@@ -11,7 +11,7 @@ export const createUser = (params: {
 }) => {
   const { name, mailAddress, status } = params
   const id = params.id ?? faker.random.uuid()
-  return new User({
+  return User.createFromRepository({
     id: new UserId(id),
     name: name ?? 'A',
     mailAddress: mailAddress ?? 'B',

@@ -49,7 +49,7 @@ describe('user-repository.integration.ts', () => {
         mailAddress: 'sample@example.com',
         status: new UserStatus(UserStatus.active),
       }
-      await userRepo.save(new User(userExpected))
+      await userRepo.save(User.createFromRepository(userExpected))
 
       const allUsers = await prisma.user.findMany()
       expect(allUsers).toHaveLength(1)

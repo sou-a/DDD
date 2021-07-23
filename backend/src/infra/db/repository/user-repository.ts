@@ -19,7 +19,7 @@ export class UserRepository implements IUserRepository {
     })
     const entity: User[] = models.map(
       (model): User => {
-        return new User({
+        return User.createFromRepository({
           id: new UserId(model.id),
           name: model.name,
           mailAddress: model.mailAddress,
@@ -43,7 +43,29 @@ export class UserRepository implements IUserRepository {
       throw new Error(`userId: ${userId}が見つかりませんでした`)
     }
 
-    const entity = new User({
+    const entity = User.createFromRepository({
+      id: new UserId(userModel.id),
+      name: userModel.name,
+      mailAddress: userModel.mailAddress,
+      status: new UserStatus(userModel.userStatus.name),
+    })
+    return entity
+  }
+
+  public async findByMailAddress(mailAddress: string): Promise<User | null> {
+    const userModel = await this.prismaClient.user.findFirst({
+      where: {
+        mailAddress,
+      },
+      include: {
+        userStatus: true,
+      },
+    })
+    if (userModel === null) {
+      throw new Error(`userId: ${mailAddress}が見つかりませんでした`)
+    }
+
+    const entity = User.createFromRepository({
       id: new UserId(userModel.id),
       name: userModel.name,
       mailAddress: userModel.mailAddress,
@@ -80,7 +102,7 @@ export class UserRepository implements IUserRepository {
         userStatusId: userStatusModel.id,
       },
     })
-    const savedUserEntity = new User({
+    const savedUserEntity = User.createFromRepository({
       id: new UserId(savedUsermodel.id),
       name: savedUsermodel.name,
       mailAddress: savedUsermodel.mailAddress,

@@ -30,7 +30,7 @@ export class PairRepository implements IPairRepository {
     const entities: Pair[] = models.map(
       (model): Pair => {
         const users = model.users.map((pairUser) => {
-          return new User({
+          return User.createFromRepository({
             id: new UserId(pairUser.user.id),
             name: pairUser.user.name,
             mailAddress: pairUser.user.mailAddress,
@@ -69,7 +69,7 @@ export class PairRepository implements IPairRepository {
     }
 
     const users = model.users.map((pairUser) => {
-      return new User({
+      return User.createFromRepository({
         id: new UserId(pairUser.user.id),
         name: pairUser.user.name,
         mailAddress: pairUser.user.mailAddress,
@@ -111,7 +111,7 @@ export class PairRepository implements IPairRepository {
     }
 
     const users = model.users.map((pairUser) => {
-      return new User({
+      return User.createFromRepository({
         id: new UserId(pairUser.user.id),
         name: pairUser.user.name,
         mailAddress: pairUser.user.mailAddress,
@@ -171,7 +171,7 @@ export class PairRepository implements IPairRepository {
     })
 
     const userEntity = model.users.map((pairUser) => {
-      return new User({
+      return User.createFromRepository({
         id: new UserId(pairUser.user.id),
         name: pairUser.user.name,
         mailAddress: pairUser.user.mailAddress,

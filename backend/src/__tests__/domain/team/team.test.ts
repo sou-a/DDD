@@ -9,7 +9,7 @@ describe('team.ts', () => {
   describe('constructor', () => {
     it('[正常系]生成できる', () => {
       expect(
-        new Team({
+        Team.createFromRepository({
           id: new TeamId(createRandomIdString()),
           name: '1',
           users: [createUser({}), createUser({}), createUser({})],
@@ -17,59 +17,35 @@ describe('team.ts', () => {
       ).toEqual(expect.any(Team))
     })
 
-    it('[準正常系]チーム名は数字のみ', () => {
-      expect(
-        () =>
-          new Team({
-            id: new TeamId(createRandomIdString()),
-            name: 'a',
-            users: [createUser({}), createUser({}), createUser({})],
-          }),
-      ).toThrow(Error)
-    })
-
-    it('[準正常系]参加者2名以下の場合エラー', () => {
-      expect(
-        () =>
-          new Team({
-            id: new TeamId(createRandomIdString()),
-            name: '1',
-            users: [createUser({}), createUser({})],
-          }),
-      ).toThrow(Error)
-    })
-
     it('[準正常系]activeの参加者のみチームに入れる', () => {
-      expect(
-        () =>
-          new Team({
-            id: new TeamId(createRandomIdString()),
-            name: '1',
-            users: [
-              createUser({ status: new UserStatus(UserStatus.recess) }),
-              createUser({ status: new UserStatus(UserStatus.recess) }),
-              createUser({ status: new UserStatus(UserStatus.recess) }),
-            ],
-          }),
+      expect(() =>
+        Team.createFromRepository({
+          id: new TeamId(createRandomIdString()),
+          name: '1',
+          users: [
+            createUser({ status: new UserStatus(UserStatus.recess) }),
+            createUser({ status: new UserStatus(UserStatus.recess) }),
+            createUser({ status: new UserStatus(UserStatus.recess) }),
+          ],
+        }),
       ).toThrow(Error)
-      expect(
-        () =>
-          new Team({
-            id: new TeamId(createRandomIdString()),
-            name: '1',
-            users: [
-              createUser({ status: new UserStatus(UserStatus.leave) }),
-              createUser({ status: new UserStatus(UserStatus.leave) }),
-              createUser({ status: new UserStatus(UserStatus.leave) }),
-            ],
-          }),
+      expect(() =>
+        Team.createFromRepository({
+          id: new TeamId(createRandomIdString()),
+          name: '1',
+          users: [
+            createUser({ status: new UserStatus(UserStatus.leave) }),
+            createUser({ status: new UserStatus(UserStatus.leave) }),
+            createUser({ status: new UserStatus(UserStatus.leave) }),
+          ],
+        }),
       ).toThrow(Error)
     })
   })
 
   describe('addTeamUser', () => {
     it('[正常系]チームユーザーを追加できる', () => {
-      const team = new Team({
+      const team = Team.createFromRepository({
         id: new TeamId(createRandomIdString()),
         name: '1',
         users: [createUser({}), createUser({}), createUser({})],
@@ -82,7 +58,7 @@ describe('team.ts', () => {
 
   describe('removeTeamUserFromTeamService', () => {
     it('[正常系]チームユーザーを削除できる', () => {
-      const team = new Team({
+      const team = Team.createFromRepository({
         id: new TeamId(createRandomIdString()),
         name: '1',
         users: [

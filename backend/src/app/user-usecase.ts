@@ -1,6 +1,7 @@
 import { TaskId } from 'src/domain/task/task-id'
 import { IUserRepository } from 'src/domain/user/i-user-repository'
 import { User } from 'src/domain/user/user'
+import { UserFactory } from 'src/domain/user/user-factory'
 import { UserId } from 'src/domain/user/user-id'
 import { UserService } from 'src/domain/user/user-service'
 import { UserStatus } from 'src/domain/user/user-status'
@@ -11,15 +12,18 @@ import { IUserQS } from './query-service-interface/i-user-qs'
 // 参加者の一覧取得、新規追加、更新（少なくとも在籍ステータスを変更できること）、削除
 export class UserUseCase {
   private userRepository: IUserRepository
+  private userFactory: UserFactory
   private userService: UserService
   private userQS: IUserQS
 
   public constructor(
     userRepository: IUserRepository,
+    userFactory: UserFactory,
     userService: UserService,
     userQS: IUserQS,
   ) {
     this.userRepository = userRepository
+    this.userFactory = userFactory
     this.userService = userService
     this.userQS = userQS
   }
@@ -56,8 +60,7 @@ export class UserUseCase {
     status: string
   }): Promise<UserDTO> {
     const { name, mailAddress, status } = props
-    const user = new User({
-      id: new UserId(createRandomIdString()),
+    const user = await this.userFactory.createUser({
       name: name,
       mailAddress: mailAddress,
       status: new UserStatus(status),

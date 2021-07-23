@@ -147,7 +147,7 @@ describe('team-repository.integration.ts', () => {
       let allTeams = await prisma.team.findMany()
       expect(allTeams).toHaveLength(0)
 
-      await teamRepo.save(new Team(teamExpected))
+      await teamRepo.save(Team.createFromRepository(teamExpected))
 
       allTeams = await prisma.team.findMany()
       expect(allTeams).toHaveLength(1)

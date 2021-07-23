@@ -3,15 +3,21 @@ import { User } from '../user/user'
 import { UserId } from '../user/user-id'
 import { TeamId } from './team-id'
 
+type TeamProps = {
+  id: TeamId
+  name: string
+  users: User[]
+}
+
 export class Team {
   private id: TeamId
   private name: string
   private teamUsers: TeamUser[]
 
-  static teamUsersLowerLimit = 3
-  static nameRuleRegex = /^[0-9]{1,3}$/
+  static readonly teamUsersLowerLimit = 3
+  static readonly nameRuleRegex = /^[0-9]{1,3}$/
 
-  public constructor(props: { id: TeamId; name: string; users: User[] }) {
+  private constructor(props: TeamProps) {
     const { id, name, users } = props
 
     // ユーザーを詰め替えてチームユーザーインスタンス生成
@@ -19,6 +25,24 @@ export class Team {
       const userProperties = user.getAllProperties()
       return new TeamUser({
         teamId: this.id,
+        userId: userProperties.id,
+        status: userProperties.status,
+      })
+    })
+
+    this.id = id
+    this.name = name
+    this.teamUsers = teamUsers
+  }
+
+  public static createFromFactory(props: TeamProps): Team {
+    const { id, name, users } = props
+
+    // ユーザーを詰め替えてチームユーザーインスタンス生成
+    const teamUsers = users.map((user) => {
+      const userProperties = user.getAllProperties()
+      return new TeamUser({
+        teamId: id,
         userId: userProperties.id,
         status: userProperties.status,
       })
@@ -33,10 +57,11 @@ export class Team {
     if (teamUsers.length < Team.teamUsersLowerLimit) {
       throw new Error(`参加者は${Team.teamUsersLowerLimit}名以上必要です`)
     }
+    return new Team(props)
+  }
 
-    this.id = id
-    this.name = name
-    this.teamUsers = teamUsers
+  public static createFromRepository(props: TeamProps): Team {
+    return new Team(props)
   }
 
   /**

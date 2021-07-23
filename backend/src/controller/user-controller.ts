@@ -27,6 +27,7 @@ import { TeamService } from 'src/domain/team/team-service'
 import { UserQS } from 'src/infra/db/query-service/user-qs'
 import { UserId } from 'src/domain/user/user-id'
 import { TaskId } from 'src/domain/task/task-id'
+import { UserFactory } from 'src/domain/user/user-factory'
 
 @ApiTags('users')
 @Controller({
@@ -38,6 +39,7 @@ export class UserController {
   async findAllUser(): Promise<FindAllUserResponse> {
     const prisma = new PrismaClient()
     const userRepository = new UserRepository(prisma)
+    const userFactory = new UserFactory({ userRepository })
     const pairRepository = new PairRepository(prisma)
     const teamRepository = new TeamRepository(prisma)
     const teamService = new TeamService({ teamRepository, userRepository })
@@ -48,7 +50,12 @@ export class UserController {
       teamRepository,
       teamService,
     })
-    const usecase = new UserUseCase(userRepository, userService, userQS)
+    const usecase = new UserUseCase(
+      userRepository,
+      userFactory,
+      userService,
+      userQS,
+    )
     const result = await usecase.findAll()
     const response = new FindAllUserResponse({ userDTOs: result })
     return response
@@ -63,6 +70,7 @@ export class UserController {
   ): Promise<FindUsersByTasksResponse> {
     const prisma = new PrismaClient()
     const userRepository = new UserRepository(prisma)
+    const userFactory = new UserFactory({ userRepository })
     const pairRepository = new PairRepository(prisma)
     const teamRepository = new TeamRepository(prisma)
     const teamService = new TeamService({ teamRepository, userRepository })
@@ -73,7 +81,12 @@ export class UserController {
       teamRepository,
       teamService,
     })
-    const usecase = new UserUseCase(userRepository, userService, userQS)
+    const usecase = new UserUseCase(
+      userRepository,
+      userFactory,
+      userService,
+      userQS,
+    )
     const result = await usecase.findUsersByTasks({
       taskIds: taskIds.map((taskId) => {
         return new TaskId(taskId)
@@ -89,6 +102,7 @@ export class UserController {
   async createUser(@Body() postUserDto: CreateUserRequest): Promise<void> {
     const prisma = new PrismaClient()
     const userRepository = new UserRepository(prisma)
+    const userFactory = new UserFactory({ userRepository })
     const pairRepository = new PairRepository(prisma)
     const teamRepository = new TeamRepository(prisma)
     const teamService = new TeamService({ teamRepository, userRepository })
@@ -99,7 +113,12 @@ export class UserController {
       teamRepository,
       teamService,
     })
-    const usecase = new UserUseCase(userRepository, userService, userQS)
+    const usecase = new UserUseCase(
+      userRepository,
+      userFactory,
+      userService,
+      userQS,
+    )
     await usecase.create({
       name: postUserDto.name,
       mailAddress: postUserDto.mailAddress,
@@ -114,6 +133,7 @@ export class UserController {
   ): Promise<void> {
     const prisma = new PrismaClient()
     const userRepository = new UserRepository(prisma)
+    const userFactory = new UserFactory({ userRepository })
     const pairRepository = new PairRepository(prisma)
     const teamRepository = new TeamRepository(prisma)
     const teamService = new TeamService({ teamRepository, userRepository })
@@ -124,7 +144,12 @@ export class UserController {
       teamRepository,
       teamService,
     })
-    const usecase = new UserUseCase(userRepository, userService, userQS)
+    const usecase = new UserUseCase(
+      userRepository,
+      userFactory,
+      userService,
+      userQS,
+    )
     await usecase.changeStatus({
       userId: new UserId(id),
       status: postUserDto.status,
@@ -135,6 +160,7 @@ export class UserController {
   async deleteUser(@Param('id') id: string): Promise<void> {
     const prisma = new PrismaClient()
     const userRepository = new UserRepository(prisma)
+    const userFactory = new UserFactory({ userRepository })
     const pairRepository = new PairRepository(prisma)
     const teamRepository = new TeamRepository(prisma)
     const teamService = new TeamService({ teamRepository, userRepository })
@@ -145,7 +171,12 @@ export class UserController {
       teamRepository,
       teamService,
     })
-    const usecase = new UserUseCase(userRepository, userService, userQS)
+    const usecase = new UserUseCase(
+      userRepository,
+      userFactory,
+      userService,
+      userQS,
+    )
     await usecase.delete({
       userId: new UserId(id),
     })

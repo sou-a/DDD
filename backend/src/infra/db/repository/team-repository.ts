@@ -30,14 +30,14 @@ export class TeamRepository implements ITeamRepository {
     const entities: Team[] = models.map(
       (model): Team => {
         const users = model.users.map((teamUser) => {
-          return new User({
+          return User.createFromRepository({
             id: new UserId(teamUser.user.id),
             name: teamUser.user.name,
             mailAddress: teamUser.user.mailAddress,
             status: new UserStatus(teamUser.user.userStatus.name),
           })
         })
-        return new Team({
+        return Team.createFromRepository({
           id: new TeamId(model.id),
           name: model.name,
           users: users,
@@ -69,7 +69,7 @@ export class TeamRepository implements ITeamRepository {
     }
 
     const users = model.users.map((teamUser) => {
-      return new User({
+      return User.createFromRepository({
         id: new UserId(teamUser.user.id),
         name: teamUser.user.name,
         mailAddress: teamUser.user.mailAddress,
@@ -77,7 +77,7 @@ export class TeamRepository implements ITeamRepository {
       })
     })
 
-    const entity = new Team({
+    const entity = Team.createFromRepository({
       id: new TeamId(model.id),
       name: model.name,
       users: users,
@@ -111,7 +111,7 @@ export class TeamRepository implements ITeamRepository {
     }
 
     const users = model.users.map((teamUser) => {
-      return new User({
+      return User.createFromRepository({
         id: new UserId(teamUser.user.id),
         name: teamUser.user.name,
         mailAddress: teamUser.user.mailAddress,
@@ -119,7 +119,7 @@ export class TeamRepository implements ITeamRepository {
       })
     })
 
-    const entity = new Team({
+    const entity = Team.createFromRepository({
       id: new TeamId(model.id),
       name: model.name,
       users: users,
@@ -149,7 +149,7 @@ export class TeamRepository implements ITeamRepository {
     }
 
     const users = model.users.map((teamUser) => {
-      return new User({
+      return User.createFromRepository({
         id: new UserId(teamUser.user.id),
         name: teamUser.user.name,
         mailAddress: teamUser.user.mailAddress,
@@ -157,7 +157,7 @@ export class TeamRepository implements ITeamRepository {
       })
     })
 
-    const entity = new Team({
+    const entity = Team.createFromRepository({
       id: new TeamId(model.id),
       name: model.name,
       users: users,
@@ -207,7 +207,7 @@ export class TeamRepository implements ITeamRepository {
       return model
     }
     const userEntity = model.users.map((teamUser) => {
-      return new User({
+      return User.createFromRepository({
         id: new UserId(teamUser.user.id),
         name: teamUser.user.name,
         mailAddress: teamUser.user.mailAddress,
@@ -215,7 +215,7 @@ export class TeamRepository implements ITeamRepository {
       })
     })
 
-    return new Team({
+    return Team.createFromRepository({
       id: new TeamId(model.id),
       name: model.name,
       users: userEntity,
@@ -265,14 +265,14 @@ export class TeamRepository implements ITeamRepository {
     })
 
     const userEntity = model.users.map((teamUser) => {
-      return new User({
+      return User.createFromRepository({
         id: new UserId(teamUser.user.id),
         name: teamUser.user.name,
         mailAddress: teamUser.user.mailAddress,
         status: new UserStatus(teamUser.user.userStatus.name),
       })
     })
-    const entity = new Team({
+    const entity = Team.createFromRepository({
       id: new TeamId(model.id),
       name: model.name,
       users: userEntity,

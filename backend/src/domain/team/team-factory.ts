@@ -22,7 +22,7 @@ export class TeamFactory {
     if (team) {
       throw new Error('チーム名が重複しています')
     }
-    return new Team({
+    return Team.createFromFactory({
       id: new TeamId(createRandomIdString()),
       name: name,
       users: users,

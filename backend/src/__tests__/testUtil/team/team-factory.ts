@@ -13,5 +13,5 @@ export const createTeam = (params: {
   const id = params.id ?? faker.random.uuid()
   name = name ?? `${faker.random.number(999)}`
   users = users ?? [createUser({}), createUser({}), createUser({})]
-  return new Team({ id: new TeamId(id), name, users })
+  return Team.createFromRepository({ id: new TeamId(id), name, users })
 }

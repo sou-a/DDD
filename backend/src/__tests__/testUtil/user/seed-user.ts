@@ -32,7 +32,7 @@ export const seedUser = async (params: {
   if (!userStatus) {
     throw new Error('想定外のエラー')
   }
-  return new User({
+  return User.createFromRepository({
     id: new UserId(id),
     name,
     mailAddress,

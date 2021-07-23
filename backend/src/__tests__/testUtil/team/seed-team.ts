@@ -65,7 +65,7 @@ export const seedTeamAndUsers = async (params: {
         })
       }),
     )
-    return new Team({ id: new TeamId(id), name, users })
+    return Team.createFromRepository({ id: new TeamId(id), name, users })
   }
 
   const userId = faker.random.uuid()
@@ -97,5 +97,9 @@ export const seedTeamAndUsers = async (params: {
       },
     ],
   })
-  return new Team({ id: new TeamId(id), name, users: [user1, user2, user3] })
+  return Team.createFromRepository({
+    id: new TeamId(id),
+    name,
+    users: [user1, user2, user3],
+  })
 }

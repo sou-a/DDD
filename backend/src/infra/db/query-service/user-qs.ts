@@ -72,7 +72,7 @@ export class UserQS implements IUserQS {
     })
 
     const usersByTasksEntity: User[] = usersByTasks.map((userByTask) => {
-      return new User({
+      return User.createFromRepository({
         id: new UserId(userByTask.id),
         name: userByTask.name,
         mailAddress: userByTask.mailAddress,

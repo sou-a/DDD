@@ -5,7 +5,7 @@ import { UserStatus } from 'src/domain/user/user-status'
 describe('user.ts', () => {
   describe('changeStatusFromUserService', () => {
     it('[正常系]userStatusを変更できる', async () => {
-      const user = new User({
+      const user = User.createFromRepository({
         id: new UserId('1'),
         name: 'user1',
         mailAddress: 'sample@example.com',
