@@ -65,7 +65,7 @@ export class TeamRepository implements ITeamRepository {
       },
     })
     if (model === null) {
-      throw new Error(`${teamId}が見つかりませんでした`)
+      throw new Error(`teamId: ${teamId.value}が見つかりませんでした`)
     }
 
     const users = model.users.map((teamUser) => {

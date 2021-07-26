@@ -9,7 +9,7 @@ export class Pair {
   private pairUsers: PairUser[]
 
   readonly pairUsersLowerLimit = 2
-  readonly nameUpperLimit = 3
+  readonly pairUsersUpperLimit = 3
   readonly nameRuleRegex = /^[A-Za-z]$/
 
   public constructor(props: { id: PairId; name: string; users: User[] }) {
@@ -37,9 +37,9 @@ export class Pair {
     }
 
     // - 上限は3名まで。4名以上のペアは存続できない（他のペアに合併する必要がある）
-    if (pairUsers.length > this.nameUpperLimit) {
+    if (pairUsers.length > this.pairUsersUpperLimit) {
       throw new Error(
-        `ペアユーザーは${this.nameUpperLimit}名以下である必要があります`,
+        `ペアユーザーは${this.pairUsersUpperLimit}名以下である必要があります`,
       )
     }
 
@@ -54,9 +54,9 @@ export class Pair {
    */
   public addPairUser(user: User): Pair {
     // - 上限は3名まで。4名以上のペアは存続できない（他のペアに合併する必要がある）
-    if (this.pairUsers.length === this.nameUpperLimit) {
+    if (this.pairUsers.length === this.pairUsersUpperLimit) {
       throw new Error(
-        `ペアユーザーは${this.nameUpperLimit}名以下である必要があります`,
+        `ペアユーザーは${this.pairUsersUpperLimit}名以下である必要があります`,
       )
     }
     const userProperties = user.getAllProperties()

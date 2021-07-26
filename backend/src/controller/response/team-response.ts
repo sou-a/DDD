@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { TeamDTO, TeamUserDTO } from 'src/app/dto/team-dto'
+import { TeamDTO } from 'src/app/dto/team-dto'
 
 export class FindAllTeamResponse {
   @ApiProperty({ type: () => [Team] })
@@ -11,7 +11,11 @@ export class FindAllTeamResponse {
       return new Team({
         id: id.value,
         name,
-        teamUsers,
+        teamUsers: teamUsers.map((teamUser) => {
+          return new TeamUser({
+            id: teamUser.id.value,
+          })
+        }),
       })
     })
   }
@@ -25,15 +29,24 @@ class Team {
   name: string
 
   @ApiProperty()
-  teamUsers: TeamUserDTO[]
+  teamUsers: TeamUser[]
 
   public constructor(params: {
     id: string
     name: string
-    teamUsers: TeamUserDTO[]
+    teamUsers: TeamUser[]
   }) {
     this.id = params.id
     this.name = params.name
     this.teamUsers = params.teamUsers
+  }
+}
+
+class TeamUser {
+  @ApiProperty()
+  id: string
+
+  public constructor(params: { id: string }) {
+    this.id = params.id
   }
 }

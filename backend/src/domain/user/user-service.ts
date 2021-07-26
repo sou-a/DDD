@@ -42,7 +42,7 @@ export class UserService {
     // - ステータスが「在籍中」以外の場合、どのチームにもペアにも所属してはいけない
     if (!status.isActive() && (pair || team)) {
       throw new Error(
-        `チームまたはペアに所属しているため${status}ステータスに変更できません`,
+        `チームまたはペアに所属しているため${status.value}ステータスに変更できません`,
       )
     }
 

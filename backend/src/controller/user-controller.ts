@@ -87,6 +87,9 @@ export class UserController {
       userService,
       userQS,
     )
+    if (typeof taskIds === 'string') {
+      taskIds = [taskIds]
+    }
     const result = await usecase.findUsersByTasks({
       taskIds: taskIds.map((taskId) => {
         return new TaskId(taskId)

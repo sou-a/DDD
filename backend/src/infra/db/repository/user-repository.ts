@@ -40,7 +40,7 @@ export class UserRepository implements IUserRepository {
       },
     })
     if (userModel === null) {
-      throw new Error(`userId: ${userId}が見つかりませんでした`)
+      throw new Error(`userId: ${userId.value}が見つかりませんでした`)
     }
 
     const entity = User.createFromRepository({
