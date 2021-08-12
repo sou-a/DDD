@@ -13,7 +13,7 @@ export class UserStatus extends ValueObject<string, 'UserStatus'> {
   constructor(value: string) {
     super(value)
     if (!UserStatus.statusList.includes(value)) {
-      throw new Error('存在しない在籍ステータスです')
+      throw new Error('存在しない在籍ステータスです') // ドメイン情報追加していいですね！
     }
   }
 

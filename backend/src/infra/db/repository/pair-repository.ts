@@ -137,6 +137,10 @@ export class PairRepository implements IPairRepository {
       update: {
         name,
         users: {
+          // ん？？ここでpairテーブルの更新とpairuserテーブルの更新も行っているであってます？？
+          // prismaのドキュメントから紐解けなかったですが、どこかにありました？以下私が参考にしたドキュメント
+          // 確かに、これだったら1集約1リポジトリで複数のテーブルも更新とかもできるのかぁ...これがよくわからなかったんですよね...
+          // https://www.prisma.io/docs/concepts/components/prisma-client/crud#update
           // ペアユーザー（子集約）全削除してcreateし直している（増減に対応するため）
           deleteMany: {},
           create: pairUsers.map((pairUser) => {

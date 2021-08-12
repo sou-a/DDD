@@ -1,4 +1,4 @@
-import { isEmpty } from 'class-validator'
+import { isEmpty } from 'class-validator' // こんなライブラリあるんですね〜便利👀
 import ValueObject from '../shared/value-object'
 
 export class UserId extends ValueObject<string, 'UserId'> {

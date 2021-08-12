@@ -49,7 +49,7 @@ export class UserService {
     return user.changeStatusFromUserService(status)
   }
 
-  public async deleteUser(userId: UserId): Promise<void> {
+  public async deleteUser(userId: UserId): Promise<void> { // ここの引数はドメインオブジェクトの引数になっていますね！コントローラーでもドメインオブジェクトを呼び出しているようですが、ドメイン情報がコントローラ層まで出てしまうのはよくなさそうです〜👀
     // ペアユーザー削除（ペアオブジェクト生成してそこに任せる）
     const pair: Pair | null = await this.pairRepository.findByUserId(userId)
     if (pair) {

@@ -10,7 +10,7 @@ type UserProps = {
 
 export class User {
   private id: UserId
-  private name: string
+  private name: string // こことメールアドレスだけ、別ファイルで定義しなかった理由ってあったんですか？？
   private mailAddress: string
   private status: UserStatus
 
@@ -22,7 +22,7 @@ export class User {
     this.mailAddress = mailAddress
     this.status = status
   }
-
+  // このメソッドを介さなくてもそのままFactory内でreturn new User(props)でもいいのかな？と思ったんですがどうでしょう？
   public static createFromFactory(props: UserProps): User {
     return new User(props)
   }

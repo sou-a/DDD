@@ -33,7 +33,7 @@ export class TaskGroupController {
     const taskRepository = new TaskRepository(prisma)
     const taskGroupRepository = new TaskGroupRepository(prisma)
     const userBelongTaskRepository = new UserBelongTaskRepository(prisma)
-    const taskGroupService = new TaskGroupService({
+    const taskGroupService = new TaskGroupService({ // ドメインの情報はコントローラー層まで露出しなくてよいのかなぁと思いました🙏
       taskGroupRepository,
       taskRepository,
       userBelongTaskRepository,

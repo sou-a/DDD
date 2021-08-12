@@ -20,6 +20,9 @@ model User {
   tasks      TaskUser[]
 }
 
+// ここDBのアンチパーンに該当するので新井さんのようにわけるのがベターのはずなのですが、
+// リポジトリでの処理が1集約1リポジトリでどうやるんだ？と思っていたので、私わけられなかったんですよね-...
+// リポジトリも見させていただきますね
 model UserStatus {
   id   String @id
   name String @unique
@@ -41,6 +44,8 @@ model PairUser {
   user User @relation(fields: [userId], references: [id])
   pair Pair @relation(fields: [pairId], references: [id])
 
+  // 複合主キーですか👀これは思いつかなかったです！なるほど...
+  // これで所属するということを実現できるのかぁ
   @@id([pairId, userId])
 }
 

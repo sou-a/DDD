@@ -5,7 +5,8 @@ import { TaskId } from 'src/domain/task/task-id'
 import { TaskGroupId } from 'src/domain/task-group/task-group-id'
 import { prisma } from '@testUtil/prisma'
 import { seedTaskGroup } from '@testUtil/task-group/seed-task-group'
-
+// テストがアプリケーション層もインフラ層もやられていて素晴らしすぎる...!!!
+// にしても、これだけやって1ヶ月ほどで完了してしまう新井さん、爆速すぎないかっ...！！！？？？すごい
 describe('task-group-repository.integration.ts', () => {
   const taskGroupRepo = new TaskGroupRepository(prisma)
   beforeEach(async () => {

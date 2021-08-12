@@ -59,7 +59,7 @@ export class UserUseCase {
     status: string
   }): Promise<UserDTO> {
     const { name, mailAddress, status } = props
-    const user = await this.userFactory.createUser({
+    const user = await this.userFactory.createUser({ // ここでメールアドレスの重複をチェックされていますが、catchで補足できていないかもです👀
       name: name,
       mailAddress: mailAddress,
       status: new UserStatus(status),
@@ -77,7 +77,7 @@ export class UserUseCase {
       throw error
     }
   }
-
+　// あぁ〜こうやって処理する・やりたい内容で関数きってやるのがいいですねーー！頭が完全にCRUDになっていましたー(TдT)
   public async changeStatus(props: {
     userId: UserId
     status: string
